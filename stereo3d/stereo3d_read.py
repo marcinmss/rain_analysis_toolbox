@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Generator, List
 
 from numpy import array
-from stereo3d_dataclass import Stereo3DSeries, Stereo3DRow
+from stereo3d.stereo3d_dataclass import Stereo3DSeries, Stereo3DRow
 from csv import reader
 from zipfile import ZipFile
 from aux_funcs.aux_funcs_read_files import (

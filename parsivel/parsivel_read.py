@@ -1,4 +1,4 @@
-from parsivel_dataclass import ParsivelInfo, ParsivelTimeSeries
+from parsivel.parsivel_dataclass import ParsivelTimeSeries, ParsivelInfo
 from pathlib import Path
 from zipfile import ZipFile
 from numpy import array

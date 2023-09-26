@@ -68,11 +68,10 @@ class Stereo3DSeries:
 
     def rain_rate(self, interval_seconds: int) -> ndarray[float, Any]:
         # Define the ends of the time series
-        # start, stop = (self[0].timestamp, self[-1].timestamp)
         start, stop = self.duration
 
         # Create an empty object with the slots to fit the data
-        rain_rate = zeros(shape=((stop - start) // interval_seconds,), dtype=float)
+        rain_rate = zeros(shape=((stop - start) // interval_seconds + 1,), dtype=float)
 
         # Loop thought every row of data and add the rate until you have a value
         for item in self:

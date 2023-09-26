@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, Tuple
-from numpy import array, cumsum, fromiter, ndarray, zeros
+from numpy import array, cumsum, ndarray, zeros
 from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
