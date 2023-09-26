@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, Tuple
-from numpy import array, cumsum, ndarray, zeros
+from numpy import array, cumsum, nan, ndarray, zeros
 from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
@@ -28,6 +28,10 @@ class ParsivelInfo:
     @classmethod
     def empty(cls, timestamp: int):
         return ParsivelInfo(timestamp, 0.0, 0.0, zeros((32, 32)))
+
+    @classmethod
+    def nan_obj(cls, timestamp: int):
+        return ParsivelInfo(timestamp, nan, nan, zeros((32, 32)))
 
 
 @dataclass

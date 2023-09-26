@@ -87,6 +87,7 @@ def read_from_source(
 
         if not curr_file_path.exists():
             missing_time_steps.append(int(date.timestamp()))
+            time_series.append(ParsivelInfo.nan_obj(int(date.timestamp())))
             continue
 
         time_series.append(read_file(curr_file_path))

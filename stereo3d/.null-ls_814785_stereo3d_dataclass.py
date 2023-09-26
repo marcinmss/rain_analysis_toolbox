@@ -56,11 +56,9 @@ class Stereo3DSeries:
     Return the itens from each category in a numpy array
     """
 
-    @property
-    def diameters(self) -> ndarray[float, Any]:
+    def diameter(self) -> ndarray[float, Any]:
         return fromiter((item.diameter for item in self), float)
 
-    @property
     def velocity(self) -> ndarray[float, Any]:
         return fromiter((item.velocity for item in self), float)
 
@@ -73,7 +71,7 @@ class Stereo3DSeries:
         start, stop = self.duration
 
         # Create an empty object with the slots to fit the data
-        rain_rate = zeros(shape=((stop - start) // interval_seconds,), dtype=float)
+        rain_rate = zeros(shape=((stop - start) // interval_seconds + 1,), dtype=float)
 
         # Loop thought every row of data and add the rate until you have a value
         for item in self:

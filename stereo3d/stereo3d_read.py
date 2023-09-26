@@ -45,6 +45,11 @@ Function for reading the file between two periods from a source folder
 """
 
 
+def start_finish_to_timestamp(start_finish: datetime) -> int:
+    start_finish = start_finish.replace(second=start_finish.second // 30 * 30)
+    return int(start_finish.timestamp())
+
+
 def read_from_source(beg: int, end: int, source_folder: str | Path) -> Stereo3DSeries:
     # Checks if the source folder is there
     source_folder = Path(source_folder)
@@ -93,8 +98,13 @@ def read_from_source(beg: int, end: int, source_folder: str | Path) -> Stereo3DS
     temporary_storage_folder.rmdir()
 
     # Filter for the objects that are in the period requested
-    start = int((datetime.strptime(str(beg), "%Y%m%d%H%M%S").timestamp())) + OFFSET
-    finish = int(datetime.strptime(str(end), "%Y%m%d%H%M%S").timestamp()) + OFFSET
+    start = (
+        start_finish_to_timestamp(datetime.strptime(str(beg), "%Y%m%d%H%M%S")) + OFFSET
+    )
+
+    finish = (
+        start_finish_to_timestamp(datetime.strptime(str(end), "%Y%m%d%H%M%S")) + OFFSET
+    )
     series = [item for item in series if start < item.timestamp < finish]
 
     return Stereo3DSeries((start, finish), array(series))
