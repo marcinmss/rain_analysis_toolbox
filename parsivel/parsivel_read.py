@@ -7,7 +7,9 @@ from aux_funcs.aux_funcs_read_files import (
     get_parser,
     range_between_dates,
     range_between_timestamps_30s,
+    start_finish_to_timestamp,
 )
+from datetime import datetime
 
 
 """
@@ -97,4 +99,7 @@ def read_from_source(
         f.unlink()
     temporary_storage_folder.rmdir()
 
-    return ParsivelTimeSeries((beg, end), missing_time_steps, time_series, 30)
+    start = start_finish_to_timestamp(datetime.strptime(str(beg), "%Y%m%d%H%M%S"))
+    finish = start_finish_to_timestamp(datetime.strptime(str(end), "%Y%m%d%H%M%S"))
+
+    return ParsivelTimeSeries((start, finish), missing_time_steps, time_series, 30)

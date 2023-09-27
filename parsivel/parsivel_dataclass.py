@@ -107,6 +107,7 @@ class ParsivelTimeSeries:
         new_missing_time_steps: List[int] = [
             ((time_step - self.duration[0]) // new_resolution_seconds)
             * new_resolution_seconds
+            + self.duration[0]
             for time_step in self.missing_time_steps
         ]
 
