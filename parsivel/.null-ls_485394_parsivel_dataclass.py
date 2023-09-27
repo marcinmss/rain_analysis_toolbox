@@ -57,21 +57,17 @@ class ParsivelTimeSeries:
     def calculated_rate(self) -> ndarray[float, Any]:
         return array([item.calculated_rate() for item in self])
 
-    def calculated_rate2(self) -> ndarray[float, Any]:
+    def get_calculated_rate2(self) -> ndarray[float, Any]:
         return array([item.calculated_rate2() for item in self])
 
-    def cumulative_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum([item.rain_rate * self.resolution_seconds for item in self])
+    def get_cumulative_rain_depth(self) -> ndarray[float, Any]:
+        return cumsum([item.rain_rate * 30.0 for item in self])
 
     def calculated_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum(
-            [item.calculated_rate() * self.resolution_seconds for item in self]
-        )
+        return cumsum([item.calculated_rate() * 30.0 for item in self])
 
     def calculated_rain_depth2(self) -> ndarray[float, Any]:
-        return cumsum(
-            [item.calculated_rate2() * self.resolution_seconds for item in self]
-        )
+        return cumsum([item.calculated_rate2() * 30.0 for item in self])
 
     def get_sensor_temperature(self) -> ndarray[ndarray, Any]:
         return array([item.temperature for item in self])
@@ -90,37 +86,7 @@ class ParsivelTimeSeries:
     Change the resolution of the series
     """
 
-    def change_resolution(self, new_resolution_seconds: int):
-        if new_resolution_seconds % self.resolution_seconds != 0:
-            error_msg = (
-                f" Factor new resolution ({new_resolution_seconds}) must"
-                "be a multiple of the old one ({self.resolution_seconds})"
-            )
-            assert False, error_msg
-
+    def change_resolution(self, new_resolution_seconds: int) -> ParsivelTimeSeries:
+        assert new_resolution_seconds % self.resolution_seconds == 0
         factor = new_resolution_seconds // self.resolution_seconds
-
-        new_series = [
-            agregate(self.series[i : i + factor]) for i in range(0, len(self), factor)
-        ]
-
-        new_missing_time_steps: List[int] = [
-            ((time_step - self.duration[0]) // new_resolution_seconds)
-            * new_resolution_seconds
-            for time_step in self.missing_time_steps
-        ]
-
-        return ParsivelTimeSeries(
-            self.duration, new_missing_time_steps, new_series, new_resolution_seconds
-        )
-
-
-# TODO: Handle the case where there are missing time steps
-def agregate(data: List[ParsivelInfo]) -> ParsivelInfo:
-    n = len(data)
-    timestamp = data[0].timestamp
-    temp = sum((item.temperature for item in data)) / n
-    matrix = sum((item.matrix for item in data))
-    assert isinstance(matrix, ndarray)
-    rate = sum((item.rain_rate for item in data)) / n
-    return ParsivelInfo(timestamp, rate, temp, matrix)
+        return self

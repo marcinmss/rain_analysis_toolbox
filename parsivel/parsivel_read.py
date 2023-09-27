@@ -87,7 +87,7 @@ def read_from_source(
 
         if not curr_file_path.exists():
             missing_time_steps.append(int(date.timestamp()))
-            time_series.append(ParsivelInfo.nan_obj(int(date.timestamp())))
+            time_series.append(ParsivelInfo.empty(int(date.timestamp())))
             continue
 
         time_series.append(read_file(curr_file_path))
@@ -97,8 +97,4 @@ def read_from_source(
         f.unlink()
     temporary_storage_folder.rmdir()
 
-    return ParsivelTimeSeries(
-        (beg, end),
-        missing_time_steps,
-        time_series,
-    )
+    return ParsivelTimeSeries((beg, end), missing_time_steps, time_series, 30)

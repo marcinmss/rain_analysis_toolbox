@@ -91,16 +91,17 @@ class Stereo3DSeries:
     def convert_to_parsivel(self) -> ParsivelTimeSeries:
         start = datetime.utcfromtimestamp(self.duration[0])
         finish = datetime.utcfromtimestamp(self.duration[1])
-        range_timesteps = [
+        range_timesteps = (
             item.timestamp() for item in range_between_times_30s(start, finish)
-        ]
+        )
         series: ndarray[ParsivelInfo, Any] = array(
-            [ParsivelInfo.empty(int(timestamp)) for timestamp in range_timesteps],
+            [ParsivelInfo.zero_like(int(timestamp)) for timestamp in range_timesteps],
             dtype=ParsivelInfo,
         )
 
         factor = AREAPARSIVEL / AREA3DSTEREO
         for item in self:
+            # generate the matrix for the
             idx = int((item.timestamp - self.duration[0]) // 30)
             class_velocity = bin_velocity(item.velocity)
             class_diameter = bin_diameter(item.diameter)
@@ -108,4 +109,4 @@ class Stereo3DSeries:
             if 1 <= class_velocity <= 32 and 0 < class_diameter < 33:
                 series[idx].matrix[class_diameter - 1, class_velocity - 1] += factor
 
-        return ParsivelTimeSeries(self.duration, [], series.tolist())
+        return ParsivelTimeSeries(self.duration, [], series.tolist(), 30)
