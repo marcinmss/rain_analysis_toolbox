@@ -7,8 +7,9 @@ from aux_funcs.aux_funcs_read_files import (
     get_parser,
     range_between_dates,
     range_between_timestamps_30s,
-    start_finish_to_timestamp,
+    start_finish_to_tstamp,
 )
+from aux_funcs.aux_datetime import standard_to_tstamp
 from datetime import datetime
 
 
@@ -22,8 +23,8 @@ def read_file(parsivel_file: str | Path) -> ParsivelInfo:
     # Checks if the file exists
     assert file_path.is_file(), "File does not exists"
 
-    # Extracts the date and the time from the file
-    timestamp = int("".join(file_path.name.strip(".txt").split("_")[-2:]))
+    # # Extracts the date and the time from the file
+    # timestamp = int("".join(file_path.name.strip(".txt").split("_")[-2:]))
 
     # Take the lines of the file using the proper linebreak
     with open(file_path, "r") as f:
@@ -42,7 +43,7 @@ def read_file(parsivel_file: str | Path) -> ParsivelInfo:
 
     distribution_matrix = array([int(i) for i in str_items]).reshape((32, 32)).T
 
-    return ParsivelInfo(timestamp, precipitation_rate, temperature, distribution_matrix)
+    return ParsivelInfo(0, precipitation_rate, temperature, distribution_matrix)
 
 
 """
@@ -92,14 +93,17 @@ def read_from_source(
             time_series.append(ParsivelInfo.empty(int(date.timestamp())))
             continue
 
-        time_series.append(read_file(curr_file_path))
+        # TODO: Make so that i dont have to create this object and then reasing it
+        pars_obj = read_file(curr_file_path)
+        pars_obj.timestamp = int(date.timestamp())
+        time_series.append(pars_obj)
 
     # Clears the temporary folder and deletes its
     for f in temporary_storage_folder.iterdir():
         f.unlink()
     temporary_storage_folder.rmdir()
 
-    start = start_finish_to_timestamp(datetime.strptime(str(beg), "%Y%m%d%H%M%S"))
-    finish = start_finish_to_timestamp(datetime.strptime(str(end), "%Y%m%d%H%M%S"))
+    start = start_finish_to_tstamp(datetime.strptime(str(beg), "%Y%m%d%H%M%S"))
+    finish = start_finish_to_tstamp(datetime.strptime(str(end), "%Y%m%d%H%M%S"))
 
     return ParsivelTimeSeries((start, finish), missing_time_steps, time_series, 30)

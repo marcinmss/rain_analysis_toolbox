@@ -6,7 +6,7 @@ from aux_funcs.calculations_for_parsivel_data import (
     matrix_to_rainrate,
     matrix_to_rainrate2,
 )
-from aux_funcs.aux_datetime import standard_to_rounded_tstamp, tstamp_to_readable
+from aux_funcs.aux_datetime import standard_to_tstamp
 
 """
 The dataclass for extracting information from a parsivle file
@@ -97,25 +97,14 @@ class ParsivelTimeSeries:
     def get_overall_matrix(self) -> ndarray | Literal[0]:
         return sum((item.matrix for item in self))
 
-    @property
-    def duration_readable(self) -> Tuple[str, str]:
-        start = tstamp_to_readable(self.duration[0])
-        finish = tstamp_to_readable(self.duration[1])
-        return (start, finish)
-
     """
     Shrink the series
     """
 
-    def change_duration(self, new_start: int, new_finish: int):
-        # Turns the inputs into rounded timestamps
-        ns_tstamp = standard_to_rounded_tstamp(new_start, self.resolution_seconds)
-        nf_tstamp = standard_to_rounded_tstamp(new_finish, self.resolution_seconds)
-
+    def change_duration(self, new_start: int, new_finish: int) -> ParsivelTimeSeries:
         # Check if the given dates are in the range
-        assert (
-            new_start < self.duration[0] or self.duration[1] < new_finish
-        ), "To change duration the old interval needs to contain the new one."
+        ns_tstamp = standard_to_tstamp(new_start, self.resolution_seconds)
+        nf_tstamp = standard_to_tstamp(new_finish, self.resolution_seconds)
 
         # Filter for the points that are in the given range
         new_series = [item for item in self if ns_tstamp < item.timestamp < nf_tstamp]

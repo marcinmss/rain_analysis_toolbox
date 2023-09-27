@@ -13,8 +13,6 @@ Returns a Parser tuple, that contains the:
     - sufix -> Contains the file type
 """
 
-OFFSET = 2 * 3600
-
 
 def get_parser(file_name: str) -> Parser:
     # rest, filetype = file_name.strip("_no_data").split(".")
@@ -122,6 +120,9 @@ def range_between_dates(beg: int, end: int) -> Generator[datetime, Any, Any]:
         dt_beg = dt_beg + thirty_seconds
 
 
-def start_finish_to_timestamp(start_finish: datetime) -> int:
+PARISOFFSET = 2 * 3600
+
+
+def start_finish_to_tstamp(start_finish: datetime) -> int:
     start_finish = start_finish.replace(second=start_finish.second // 30 * 30)
-    return int(start_finish.timestamp()) + OFFSET
+    return int(start_finish.timestamp()) + PARISOFFSET

@@ -10,7 +10,7 @@ from aux_funcs.aux_funcs_read_files import (
     range_between_dates,
     get_parser,
     construct_file_name,
-    start_finish_to_timestamp,
+    start_finish_to_tstamp,
 )
 
 
@@ -93,8 +93,8 @@ def read_from_source(beg: int, end: int, source_folder: str | Path) -> Stereo3DS
     temporary_storage_folder.rmdir()
 
     # Filter for the objects that are in the period requested
-    start = start_finish_to_timestamp(datetime.strptime(str(beg), "%Y%m%d%H%M%S"))
-    finish = start_finish_to_timestamp(datetime.strptime(str(end), "%Y%m%d%H%M%S"))
+    start = start_finish_to_tstamp(datetime.strptime(str(beg), "%Y%m%d%H%M%S"))
+    finish = start_finish_to_tstamp(datetime.strptime(str(end), "%Y%m%d%H%M%S"))
     series = [item for item in series if start < item.timestamp < finish]
 
     return Stereo3DSeries((start, finish), array(series))
