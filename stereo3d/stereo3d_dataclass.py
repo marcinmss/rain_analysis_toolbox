@@ -88,6 +88,7 @@ class Stereo3DSeries:
         return cumsum(self.rain_rate(interval_seconds))
 
     # TODO: get more data other then the matrix
+    # TODO: bigger matrix with includes drops outside the resolution of parsivel
     def convert_to_parsivel(self) -> ParsivelTimeSeries:
         start = datetime.utcfromtimestamp(self.duration[0])
         finish = datetime.utcfromtimestamp(self.duration[1])
@@ -100,6 +101,7 @@ class Stereo3DSeries:
         )
 
         factor = AREAPARSIVEL / AREA3DSTEREO
+        # factor = 1
         for item in self:
             # generate the matrix for the
             idx = int((item.timestamp - self.duration[0]) // 30)

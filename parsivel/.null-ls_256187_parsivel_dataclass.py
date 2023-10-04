@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, Tuple
-from numpy import array, cumsum, empty, nan, ndarray, zeros
+from numpy import array, cumsum, empty, fromiter, nan, ndarray, zeros
 from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
     matrix_to_rainrate2,
 )
 from aux_funcs.aux_datetime import standard_to_rounded_tstamp, tstamp_to_readable
+from itertools import groupby
 
 """
 The dataclass for extracting information from a parsivle file
@@ -104,30 +105,6 @@ class ParsivelTimeSeries:
         return (start, finish)
 
     """
-    Corrects for possible error by deleting any drop with has more than 60% error
-    from the hermite line
-    """
-
-    def apply_resolution_correcti(self):
-        # Zeros the first two diameters bins for the matrix
-        for item in self:
-            for i in range(32):
-                item.matrix[0, i] = 0.0
-                item.matrix[1, i] = 0.0
-
-    """
-    In case the Data commes from the 3D stereo, it aplles the correction so as
-    to not have data from a resolution smaller then the parsivel.
-    """
-
-    def apply_resolution_correction(self):
-        # Zeros the first two diameters bins for the matrix
-        for item in self:
-            for i in range(32):
-                item.matrix[0, i] = 0.0
-                item.matrix[1, i] = 0.0
-
-    """
     Shrink the series
     """
 
@@ -197,23 +174,11 @@ class ParsivelTimeSeries:
         )
 
 
-# def agregate_data(data: List[ParsivelInfo]) -> ParsivelInfo:
-#     n = len(data)
-#     timestamp = data[0].timestamp
-#     temp = sum((item.temperature for item in data)) / n
-#     matrix = sum((item.matrix for item in data))
-#     assert isinstance(matrix, ndarray)
-#     rate = sum((item.rain_rate for item in data)) / n
-#     return ParsivelInfo(timestamp, rate, temp, matrix)
 def agregate_data(data: List[ParsivelInfo]) -> ParsivelInfo:
     n = len(data)
     timestamp = data[0].timestamp
-    temp = 0.0
-    matrix = zeros((32, 32))
-    rate = 0.0
-    for item in data:
-        temp += item.temperature / n
-        matrix += item.matrix
-        rate += item.rain_rate
-
+    temp = sum((item.temperature for item in data)) / n
+    matrix = sum((item.matrix for item in data))
+    assert isinstance(matrix, ndarray)
+    rate = sum((item.rain_rate for item in data)) / n
     return ParsivelInfo(timestamp, rate, temp, matrix)

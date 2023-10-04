@@ -1,5 +1,6 @@
-from numpy import ndarray, sum, pi
+from numpy import ndarray, sum, pi, zeros
 from .bin_data import CLASSES_DIAMETER
+from typing import List
 
 """
 Given the standard 32x32 matrix from the parsivel, calculate the hourly rain
@@ -66,3 +67,22 @@ def matrix_to_rainrate(matrix: ndarray, area: float) -> float:
 
 def matrix_to_rainrate2(matrix: ndarray, area: float) -> float:
     return matrix_to_volume2(matrix) / (area * (30.0 / 3600.0))
+
+
+"""
+Aggregate a list of parsivel data into one item.
+"""
+
+
+# def agregate_data(data: List[ParsivelInfo]) -> ParsivelInfo:
+#     n = len(data)
+#     timestamp = data[0].timestamp
+#     temp = 0.0
+#     matrix = zeros((32, 32))
+#     rate = 0.0
+#     for item in data:
+#         temp += item.temperature / n
+#         matrix += item.matrix
+#         rate += item.rain_rate
+#
+#     return ParsivelInfo(timestamp, rate, temp, matrix)
