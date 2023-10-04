@@ -5,21 +5,29 @@ from aux_funcs.bin_data import CLASSES_DIAMETER, bin_velocity
 import numpy as np
 import seaborn as sns
 from aux_funcs.general import V_D_Lhermitte_1988
+from collections import namedtuple
+
+LineStyle = namedtuple("LineStyle", ["ls", "c", "s"])
 
 """
 Style of lines for bowth devices
 """
+LINESTYLES = {
+    "Parsivel": LineStyle("dashdot", "red", 2.0),
+    "3D Stereo": LineStyle("dotted", "green", 2.0),
+}
 
 """
 The plot for the rain rate
 """
 
 
-def plot_rain_rate(ax: Axes, series: ParsivelTimeSeries, title: str = ""):
+def plot_rain_rate(ax: Axes, series: ParsivelTimeSeries):
+    style = LINESTYLES[series.device]
     duration_s = series.duration[1] - series.duration[0]
     time_step_s = series.resolution_seconds
     # Plot the graphics
-    ax.set_title(title)
+    ax.set_title(series.device)
     # X axis
     ax.set_xlabel("Time(h)")
     time_step_6h = 3600 // time_step_s * 6
@@ -31,7 +39,7 @@ def plot_rain_rate(ax: Axes, series: ParsivelTimeSeries, title: str = ""):
     # Y axis
     ax.set_ylabel("R (mm.h^-1)")
 
-    ax.plot(series.calculated_rate2)
+    ax.plot(series.calculated_rate2, linestyle=style.ls, c=style.c, linewidth=style.s)
 
 
 """
