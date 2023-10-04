@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, Tuple
-from numpy import array, cumsum, empty, nan, ndarray, zeros
+from numpy import array, cumsum, empty, nan, ndarray, zeros, full
 from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
     matrix_to_rainrate2,
 )
 from aux_funcs.aux_datetime import standard_to_rounded_tstamp, tstamp_to_readable
+from aux_funcs.bin_data import CLASSES_DIAMETER, CLASSES_VELOCITY
+from aux_funcs.general import V_D_Lhermitte_1988
 
 """
 The dataclass for extracting information from a parsivle file
@@ -37,6 +39,7 @@ class ParsivelInfo:
 
 @dataclass
 class ParsivelTimeSeries:
+    device: str
     duration: Tuple[int, int]  # beggining and end of the time series
     missing_time_steps: list  # the missing steps represented in timestamp
     series: list
@@ -109,11 +112,16 @@ class ParsivelTimeSeries:
     """
 
     def apply_resolution_correcti(self):
-        # Zeros the first two diameters bins for the matrix
+        # Create a matrix to filter the wrong values that should be out
+        filter = full((32, 32), True)
+        for i, (d, _) in enumerate(CLASSES_DIAMETER):
+            vpred = V_D_Lhermitte_1988(d)
+            for j, (v, _) in enumerate(CLASSES_VELOCITY):
+                filter[i, j] = abs((vpred - v)) < 0.6 * v
+
+        # Apply the filter to every matrix
         for item in self:
-            for i in range(32):
-                item.matrix[0, i] = 0.0
-                item.matrix[1, i] = 0.0
+            item.matrix *= filter
 
     """
     In case the Data commes from the 3D stereo, it aplles the correction so as

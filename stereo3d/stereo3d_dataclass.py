@@ -111,4 +111,4 @@ class Stereo3DSeries:
             if 1 <= class_velocity <= 32 and 0 < class_diameter < 33:
                 series[idx].matrix[class_diameter - 1, class_velocity - 1] += factor
 
-        return ParsivelTimeSeries(self.duration, [], series.tolist(), 30)
+        return ParsivelTimeSeries("3D Stereo", self.duration, [], series.tolist(), 30)

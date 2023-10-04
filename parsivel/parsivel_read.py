@@ -105,4 +105,6 @@ def read_from_source(
     start = start_finish_to_tstamp(datetime.strptime(str(beg), "%Y%m%d%H%M%S"))
     finish = start_finish_to_tstamp(datetime.strptime(str(end), "%Y%m%d%H%M%S"))
 
-    return ParsivelTimeSeries((start, finish), missing_time_steps, time_series, 30)
+    return ParsivelTimeSeries(
+        "Parsivel", (start, finish), missing_time_steps, time_series, 30
+    )

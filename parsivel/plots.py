@@ -4,7 +4,11 @@ from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from aux_funcs.bin_data import CLASSES_DIAMETER, bin_velocity
 import numpy as np
 import seaborn as sns
+from aux_funcs.general import V_D_Lhermitte_1988
 
+"""
+Style of lines for bowth devices
+"""
 
 """
 The plot for the rain rate
@@ -100,11 +104,6 @@ def plot_nd3xd(ax: Axes, series: ParsivelTimeSeries, title: str = ""):
 """
 Plot velocity vs diameter
 """
-
-
-def V_D_Lhermitte_1988(d_mm: float) -> float:
-    d_mm *= 1e-3
-    return 9.25 * (1 - np.exp(-1 * (68000 * (d_mm**2) + 488 * d_mm)))
 
 
 def get_hermitter_line() -> Tuple[np.ndarray, np.ndarray]:
