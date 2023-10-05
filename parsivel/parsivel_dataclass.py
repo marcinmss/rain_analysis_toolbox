@@ -20,7 +20,7 @@ class ParsivelInfo:
     timestamp: int  # %Y%m%d%H%M%S ex: 20220402000030
     rain_rate: float  # mm
     temperature: float  # ºC
-    matrix: ndarray  # 32x32 matrix
+    matrix: ndarray[float, Any]  # 32x32 matrix
 
     def calculated_rate(self):
         return matrix_to_rainrate(self.matrix, AREAPARSIVEL)
@@ -158,6 +158,7 @@ class ParsivelTimeSeries:
         ]
 
         return ParsivelTimeSeries(
+            self.device,
             (ns_tstamp, nf_tstamp),
             new_missing_time_steps,
             new_series,
@@ -201,7 +202,11 @@ class ParsivelTimeSeries:
         ]
 
         return ParsivelTimeSeries(
-            self.duration, new_missing_time_steps, new_series, new_resolution_seconds
+            self.device,
+            self.duration,
+            new_missing_time_steps,
+            new_series,
+            new_resolution_seconds,
         )
 
 
