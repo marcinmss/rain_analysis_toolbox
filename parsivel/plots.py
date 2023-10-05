@@ -7,6 +7,8 @@ import seaborn as sns
 from aux_funcs.general import V_D_Lhermitte_1988
 from collections import namedtuple
 import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 LineStyle = namedtuple("LineStyle", ["ls", "c", "s"])
 
@@ -17,6 +19,16 @@ LINESTYLES = {
     "3D Stereo": LineStyle("dashdot", "magenta", 2.0),
     "Parsivel": LineStyle("solid", "green", 1.5),
 }
+
+"""
+Cmap for a couple of plots
+"""
+# N=32
+# jet =  plt.get_cmap('jet')
+# cNorm  = mcolors.Normalize(vmin=0, vmax=N-1)
+# scalarMap = cm.ScalarMappable(norm=cNorm, cmap=jet)
+# list_colors=[scalarMap.to_rgba(i) for i in range(0, N)]
+# cmap = mcolors.ListedColormap(list_colors)
 
 """
 Function Creates the ticks and Tick labels for a time series
@@ -104,6 +116,10 @@ def plot_vxd(axs: List[Axes], series: List[ParsivelTimeSeries]):
 
     right = max((np.max(serie.get_overall_matrix) for serie in series))
     norm = mcolors.Normalize(0, right)
+    # jet = plt.get_cmap("jet")
+    # scalarMap = cm.ScalarMappable(norm=norm, cmap=jet)
+    # list_colors = [scalarMap.to_rgba(i) for i in range(0, right)]
+    # cmap = mcolors.ListedColormap(list_colors)
 
     lnx, lny = get_hermitter_line()
     for i, (ax, serie) in enumerate(zip(axs, series)):
@@ -112,6 +128,7 @@ def plot_vxd(axs: List[Axes], series: List[ParsivelTimeSeries]):
         # Plot the tendency line
         ax.plot(lnx, lny, linewidth=1.6, linestyle="dotted", c="orangered")
         ax.set_title(serie.device)
+        ticks, labels = [i + 0.5 for i in range(32)], [f"{i}" for i in range(1, 33)]
 
         # Create the heatmap for the classes
         cbar = False if i != len(series) - 1 else True
@@ -123,6 +140,10 @@ def plot_vxd(axs: List[Axes], series: List[ParsivelTimeSeries]):
             cmap="bone_r",
             square=True,
         )
+        ax.set_xticks(ticks)
+        ax.set_xticklabels(labels)
+        ax.set_yticks(ticks)
+        ax.set_yticklabels(labels)
         ax.invert_yaxis()
 
 
