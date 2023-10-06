@@ -3,7 +3,7 @@ from typing import Any, List, Tuple
 from datetime import datetime
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 from aux_funcs.bin_data import bin_diameter, bin_velocity
-from numpy import array, cumsum, divide, fromiter, ndarray, zeros
+from numpy import array, cumsum, divide, fromiter, ndarray, zeros, pi
 from parsivel.parsivel_dataclass import ParsivelInfo, ParsivelTimeSeries, AREAPARSIVEL
 from aux_funcs.aux_funcs_read_files import range_between_times_30s
 
@@ -94,23 +94,33 @@ class Stereo3DSeries:
     each range
     """
 
-    def acumulate_by_distance(self) -> List[ndarray[float, Any]]:
-        N = 1024
-        depth = zeros(shape=(N,), dtype=float)
+    def acumulate_by_distance(self, N: int = 1024) -> List[ndarray[float, Any]]:
         length = (MAXDIST - MINDIST) / N
+        volume = zeros(shape=(N,), dtype=float)
         mean_diameter = zeros(shape=(N,), dtype=float)
+        mean_velocity = zeros(shape=(N,), dtype=float)
         number_drops = zeros(shape=(N,), dtype=float)
+
+        # Calculate the area of each session
+        areas = []
+        lenght = 200.0 / 1024
+        for n in range(N):
+            d0 = 200.0 + n * lenght
+            areas.append(pi * ((d0 + lenght) ** 2 - d0**2) * 0.26525823848649227)
 
         for row in self:
             idx = int((row.distance_to_sensor - MINDIST) // length) - 1
             mean_diameter[idx] += row.diameter
+            mean_velocity[idx] += row.velocity
             number_drops[idx] += 1
 
-            depth[idx] += volume_drop(row.diameter) / AREA3DSTEREO
+            volume[idx] += volume_drop(row.diameter)
 
+        acumulated_depth = divide(volume, areas, where=(areas != 0))
         mean_diameter = divide(mean_diameter, number_drops, where=(number_drops != 0))
+        mean_velocity = divide(mean_velocity, number_drops, where=(number_drops != 0))
 
-        return [depth, number_drops, mean_diameter]
+        return [volume, acumulated_depth, number_drops, mean_diameter, mean_velocity]
 
     """
     Converts the data from the 3D stereo to the parsivel format arranging the 
