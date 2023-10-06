@@ -78,7 +78,7 @@ def plot_rain_rate(ax: Axes, list_series: List[ParsivelTimeSeries]):
     for series in list_series:
         style = LINESTYLES[series.device]
         ax.plot(
-            series.calculated_rate2,
+            series.calculated_rate,
             linestyle=style.ls,
             c=style.c,
             linewidth=style.s,
@@ -149,7 +149,7 @@ def plot_cumulative_depth(ax: Axes, list_series: List[ParsivelTimeSeries]):
     for series in list_series:
         style = LINESTYLES[series.device]
         ax.plot(
-            series.calculated_rain_depth2,
+            series.calculated_rain_depth,
             linestyle=style.ls,
             c=style.c,
             linewidth=style.s,
@@ -215,7 +215,7 @@ def plot_ndrops(ax: Axes, series: ParsivelTimeSeries):
 
     style = LINESTYLES[series.device]
     ax.plot(
-        [np.sum(matrix) for matrix in series.get_sdd_matrix],
+        [np.sum(matrix) for matrix in series.matrices],
         linestyle=style.ls,
         c=style.c,
         linewidth=style.s,

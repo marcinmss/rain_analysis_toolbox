@@ -64,10 +64,6 @@ class ParsivelTimeSeries:
         return array([item.calculated_rate() for item in self])
 
     @property
-    def calculated_rate2(self) -> ndarray[float, Any]:
-        return array([item.calculated_rate2() for item in self])
-
-    @property
     def cumulative_rain_depth(self) -> ndarray[float, Any]:
         return cumsum([item.rain_rate * self.resolution_seconds for item in self])
 
@@ -78,21 +74,15 @@ class ParsivelTimeSeries:
         )
 
     @property
-    def calculated_rain_depth2(self) -> ndarray[float, Any]:
-        return cumsum(
-            [item.calculated_rate2() * self.resolution_seconds for item in self]
-        )
-
-    @property
-    def get_sensor_temperature(self) -> ndarray[ndarray, Any]:
+    def temperature(self) -> ndarray[ndarray, Any]:
         return array([item.temperature for item in self])
 
     @property
-    def get_sdd_matrix(self) -> ndarray[ndarray, Any]:
+    def matrices(self) -> ndarray[ndarray, Any]:
         return array([item.matrix for item in self])
 
     @property
-    def get_time_elapsed_seconds(self) -> List[int]:
+    def time_elapsed_seconds(self) -> List[int]:
         length = len(self.series) + len(self.missing_time_steps)
         return [i * 30 for i in range(length)]
 
