@@ -9,7 +9,28 @@ from aux_funcs.aux_funcs_read_files import (
     range_between_timestamps_30s,
     start_finish_to_tstamp,
 )
-from datetime import datetime
+from aux_funcs.parse_filenames
+from datetime import datetime, timedelta
+
+"""
+Read from a single Parsivel .txt file
+"""
+
+
+def round_to_30s(time: datetime):
+    return time.replace(second=(time.second // 30) * 30)
+
+
+def dtime_to_filename(time: datetime) -> str:
+    pass
+
+
+def range_txtfiles(beg: datetime, end: datetime):
+    beg, end = round_to_30s(beg), round_to_30s(end)
+    thirty_seconds = timedelta(0, 30)
+    while beg < end:
+        yield beg
+        beg = beg + thirty_seconds
 
 
 """
@@ -21,9 +42,6 @@ def read_file(parsivel_file: str | Path) -> ParsivelInfo:
     file_path = Path(parsivel_file)
     # Checks if the file exists
     assert file_path.is_file(), "File does not exists"
-
-    # # Extracts the date and the time from the file
-    # timestamp = int("".join(file_path.name.strip(".txt").split("_")[-2:]))
 
     # Take the lines of the file using the proper linebreak
     with open(file_path, "r") as f:

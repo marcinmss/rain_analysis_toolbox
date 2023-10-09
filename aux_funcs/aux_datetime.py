@@ -1,9 +1,22 @@
 from datetime import datetime
 
+"""
+Function for reading the standard date format string and creating a datetime obj
+"""
+
+
+def standard_to_dtime(standard_date: int) -> datetime:
+    dt_obj = datetime.strptime(str(standard_date), "%Y%m%d%H%M%S")
+    return dt_obj
+
 
 def standard_to_tstamp(standard_date: int) -> int:
     dt_obj = datetime.strptime(str(standard_date), "%Y%m%d%H%M%S")
     return int(dt_obj.timestamp() + PARISOFFSET)
+
+
+def dt_to_tstamp(dtime: datetime) -> int:
+    return int(dtime.timestamp() + PARISOFFSET)
 
 
 """

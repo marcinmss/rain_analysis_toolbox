@@ -1,21 +1,20 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, NamedTuple, Tuple
-from numpy import array, cumsum, empty, nan, ndarray, zeros, full
+from pathlib import Path
+from numpy import array, cumsum, empty, nan, ndarray, zeros
 from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
     matrix_to_rainrate2,
 )
 from aux_funcs.aux_datetime import standard_to_rounded_tstamp, tstamp_to_readable
-from aux_funcs.bin_data import CLASSES_DIAMETER, CLASSES_VELOCITY
-from aux_funcs.general import V_D_Lhermitte_1988
 
 """
 The dataclass for extracting information from a parsivle file
 """
 
 
-class ParsivelInfo(NamedTuple):
+class ParsivelTimeStep(NamedTuple):
     timestamp: int  # %Y%m%d%H%M%S ex: 20220402000030
     rain_rate: float  # mm
     temperature: float  # ºC
@@ -29,34 +28,11 @@ class ParsivelInfo(NamedTuple):
 
     @classmethod
     def empty(cls, timestamp: int):
-        return ParsivelInfo(timestamp, nan, nan, empty((32, 32), dtype=float))
+        return ParsivelTimeStep(timestamp, nan, nan, empty((32, 32), dtype=float))
 
     @classmethod
     def zero_like(cls, timestamp: int):
-        return ParsivelInfo(timestamp, 0.0, 0.0, zeros((32, 32), dtype=float))
-
-
-# @dataclass
-# class ParsivelInfo:
-#     timestamp: int  # %Y%m%d%H%M%S ex: 20220402000030
-#     rain_rate: float  # mm
-#     temperature: float  # ºC
-#     matrix: ndarray[float, Any]  # 32x32 matrix
-#
-#     def calculated_rate(self):
-#         return matrix_to_rainrate(self.matrix, AREAPARSIVEL)
-#
-#     def calculated_rate2(self):
-#         return matrix_to_rainrate2(self.matrix, AREAPARSIVEL)
-#
-#     @classmethod
-#     def empty(cls, timestamp: int):
-#         return ParsivelInfo(timestamp, nan, nan, empty((32, 32), dtype=float))
-#
-#     @classmethod
-#     def zero_like(cls, timestamp: int):
-#         return ParsivelInfo(timestamp, 0.0, 0.0, zeros((32, 32), dtype=float))
-#
+        return ParsivelTimeStep(timestamp, 0.0, 0.0, zeros((32, 32), dtype=float))
 
 
 @dataclass
@@ -70,8 +46,29 @@ class ParsivelTimeSeries:
     def __len__(self) -> int:
         return len(self.series)
 
-    def __getitem__(self, index: int) -> ParsivelInfo:
+    def __getitem__(self, index: int) -> ParsivelTimeStep:
         return self.series[index]
+
+    """
+    Methods for reading and writing the data
+    """
+
+    @classmethod
+    def read_raw(cls, beggining: int, end: int, source_folder: str | Path):
+        from parsivel2.read_write import read_from_source
+
+        return read_from_source(beggining, end, source_folder)
+
+    @classmethod
+    def load_pickle(cls, source_folder: str | Path):
+        from parsivel2.read_write import read_from_pickle
+
+        return read_from_pickle(source_folder)
+
+    def to_pickle(self, file_path: str | Path):
+        from parsivel2.read_write import write_to_picle
+
+        return write_to_picle(file_path, self)
 
     """
     Methods for providing/calculating basic information about the series
@@ -230,7 +227,7 @@ class ParsivelTimeSeries:
 #     assert isinstance(matrix, ndarray)
 #     rate = sum((item.rain_rate for item in data)) / n
 #     return ParsivelInfo(timestamp, rate, temp, matrix)
-def agregate_data(data: List[ParsivelInfo]) -> ParsivelInfo:
+def agregate_data(data: List[ParsivelTimeStep]) -> ParsivelTimeStep:
     n = len(data)
     timestamp = data[0].timestamp
     temp = 0.0
@@ -241,4 +238,4 @@ def agregate_data(data: List[ParsivelInfo]) -> ParsivelInfo:
         matrix += item.matrix
         rate += item.rain_rate
 
-    return ParsivelInfo(timestamp, rate, temp, matrix)
+    return ParsivelTimeStep(timestamp, rate, temp, matrix)
