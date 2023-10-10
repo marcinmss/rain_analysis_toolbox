@@ -55,9 +55,9 @@ class ParsivelTimeSeries:
 
     @classmethod
     def read_raw(cls, beggining: int, end: int, source_folder: str | Path):
-        from parsivel.read_write import pars_read_from_zips
+        from parsivel2.read_write import read_from_source
 
-        return pars_read_from_zips(beggining, end, source_folder)
+        return read_from_source(beggining, end, source_folder)
 
     """
     Method for reading/writing the data in the pickle format
@@ -65,12 +65,12 @@ class ParsivelTimeSeries:
 
     @classmethod
     def load_pickle(cls, source_folder: str | Path):
-        from parsivel.read_write import pars_read_from_pickle
+        from parsivel2.read_write import read_from_pickle
 
-        return pars_read_from_pickle(source_folder)
+        return read_from_pickle(source_folder)
 
     def to_pickle(self, file_path: str | Path):
-        from parsivel.read_write import write_to_picle
+        from parsivel2.read_write import write_to_picle
 
         return write_to_picle(file_path, self)
 
@@ -126,6 +126,6 @@ class ParsivelTimeSeries:
     def exstract_events(
         self, minimal_time_lenght_min: int, buffer_min: int, threshold: float
     ):
-        from parsivel.extract_events import extract_events
+        from parsivel2.extract_events import extract_events
 
         return extract_events(self, minimal_time_lenght_min, buffer_min, threshold)

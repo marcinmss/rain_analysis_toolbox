@@ -1,8 +1,7 @@
 from typing import List
-from parsivel2.parsivel_dataclass2 import ParsivelTimeSeries, ParsivelTimeStep
+from parsivel.parsivel_dataclass import ParsivelTimeSeries, ParsivelTimeStep
 
 
-# TODO: Deal with the missing timesteps
 def extract_events(
     series: ParsivelTimeSeries,
     minimal_length_minutes: int,
@@ -23,11 +22,17 @@ def extract_events(
             event.append(tstep)
         elif is_rainin is False and previous is True:
             # Add the event to the output
+            start, finish = event[0].timestamp, event[-1].timestamp
+            missing_timesteps = [
+                tstamp
+                for tstamp in series.missing_time_steps
+                if start <= tstamp <= finish
+            ]
             events.append(
                 ParsivelTimeSeries(
                     series.device,
-                    (event[0].timestamp, event[-1].timestamp),
-                    [],
+                    (start, finish),
+                    missing_timesteps,
                     event,
                     series.resolution_seconds,
                 )

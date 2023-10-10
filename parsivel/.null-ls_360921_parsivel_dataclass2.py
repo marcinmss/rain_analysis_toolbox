@@ -1,22 +1,20 @@
 from dataclasses import dataclass
-from typing import Any, List, Literal, Tuple
-from numpy import array, cumsum, empty, nan, ndarray, zeros, full
+from typing import Any, List, Literal, NamedTuple, Tuple
+from pathlib import Path
+from numpy import array, cumsum, empty, nan, ndarray, zeros
 from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
     matrix_to_rainrate2,
 )
 from aux_funcs.aux_datetime import standard_to_rounded_tstamp, tstamp_to_readable
-from aux_funcs.bin_data import CLASSES_DIAMETER, CLASSES_VELOCITY
-from aux_funcs.general import V_D_Lhermitte_1988
 
 """
 The dataclass for extracting information from a parsivle file
 """
 
 
-@dataclass
-class ParsivelInfo:
+class ParsivelTimeStep(NamedTuple):
     timestamp: int  # %Y%m%d%H%M%S ex: 20220402000030
     rain_rate: float  # mm
     temperature: float  # ºC
@@ -30,11 +28,11 @@ class ParsivelInfo:
 
     @classmethod
     def empty(cls, timestamp: int):
-        return ParsivelInfo(timestamp, nan, nan, empty((32, 32), dtype=float))
+        return ParsivelTimeStep(timestamp, nan, nan, empty((32, 32), dtype=float))
 
     @classmethod
     def zero_like(cls, timestamp: int):
-        return ParsivelInfo(timestamp, 0.0, 0.0, zeros((32, 32), dtype=float))
+        return ParsivelTimeStep(timestamp, 0.0, 0.0, zeros((32, 32), dtype=float))
 
 
 @dataclass
@@ -48,8 +46,29 @@ class ParsivelTimeSeries:
     def __len__(self) -> int:
         return len(self.series)
 
-    def __getitem__(self, index: int) -> ParsivelInfo:
+    def __getitem__(self, index: int) -> ParsivelTimeStep:
         return self.series[index]
+
+    """
+    Methods for reading and writing the data
+    """
+
+    @classmethod
+    def read_raw(cls, beggining: int, end: int, source_folder: str | Path):
+        from parsivel2.read_write import read_from_source
+
+        return read_from_source(beggining, end, source_folder)
+
+    @classmethod
+    def load_pickle(cls, source_folder: str | Path):
+        from parsivel2.read_write import read_from_pickle
+
+        return read_from_pickle(source_folder)
+
+    def to_pickle(self, file_path: str | Path):
+        from parsivel2.read_write import write_to_picle
+
+        return write_to_picle(file_path, self)
 
     """
     Methods for providing/calculating basic information about the series
@@ -101,17 +120,17 @@ class ParsivelTimeSeries:
     from the hermite line
     """
 
-    def apply_resolution_correcti(self):
-        # Create a matrix to filter the wrong values that should be out
-        filter = full((32, 32), True)
-        for i, (d, _) in enumerate(CLASSES_DIAMETER):
-            vpred = V_D_Lhermitte_1988(d)
-            for j, (v, _) in enumerate(CLASSES_VELOCITY):
-                filter[i, j] = abs((vpred - v)) < 0.6 * v
-
-        # Apply the filter to every matrix
-        for item in self:
-            item.matrix *= filter
+    # def apply_resolution_correcti(self):
+    #     # Create a matrix to filter the wrong values that should be out
+    #     filter = full((32, 32), True)
+    #     for i, (d, _) in enumerate(CLASSES_DIAMETER):
+    #         vpred = V_D_Lhermitte_1988(d)
+    #         for j, (v, _) in enumerate(CLASSES_VELOCITY):
+    #             filter[i, j] = abs((vpred - v)) < 0.6 * v
+    #
+    #     # Apply the filter to every matrix
+    #     for item in self:
+    #         item.matrix *= filter
 
     """
     In case the Data commes from the 3D stereo, it aplles the correction so as
@@ -159,11 +178,11 @@ class ParsivelTimeSeries:
     Extract events of the series
     """
 
-    # def exstract_events(self, threshold: float, buffer: int):
-    #     # TODO: checks if the buffer is a multiple of the resolution
-    #     n = buffer // self.resolution_seconds
-    #     is_rainning = self.rain_rate >= threshold
-    #     is_event = [any(is_rainning[i - n : i + n] for i in range(len(is_rainning)))]
+    def exstract_events(self, threshold: float, buffer: int):
+        # TODO: checks if the buffer is a multiple of the resolution
+        n = buffer // self.resolution_seconds
+        is_rainning = self.rain_rate >= threshold
+        is_event = [any(is_rainning[i - n : i + n] for i in range(len(is_rainning)))]
 
     """
     Change the resolution of the series
@@ -208,7 +227,7 @@ class ParsivelTimeSeries:
 #     assert isinstance(matrix, ndarray)
 #     rate = sum((item.rain_rate for item in data)) / n
 #     return ParsivelInfo(timestamp, rate, temp, matrix)
-def agregate_data(data: List[ParsivelInfo]) -> ParsivelInfo:
+def agregate_data(data: List[ParsivelTimeStep]) -> ParsivelTimeStep:
     n = len(data)
     timestamp = data[0].timestamp
     temp = 0.0
@@ -219,4 +238,4 @@ def agregate_data(data: List[ParsivelInfo]) -> ParsivelInfo:
         matrix += item.matrix
         rate += item.rain_rate
 
-    return ParsivelInfo(timestamp, rate, temp, matrix)
+    return ParsivelTimeStep(timestamp, rate, temp, matrix)

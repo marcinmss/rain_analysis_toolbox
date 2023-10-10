@@ -1,41 +1,21 @@
-from typing import Any, Generator, Tuple
-from parsivel2.parsivel_dataclass2 import ParsivelTimeSeries, ParsivelTimeStep
+from typing import Tuple
+from parsivel.parsivel_dataclass import ParsivelTimeSeries, ParsivelTimeStep
 from pathlib import Path
 from zipfile import ZipFile
 from numpy import array, ndarray
-from aux_funcs.aux_datetime import standard_to_dtime, dt_to_tstamp
-from aux_funcs.parse_filenames import construct_file_name, Parser, get_parser
-from datetime import datetime, timedelta
+from aux_funcs.aux_datetime import (
+    standard_to_dtime,
+    dt_to_tstamp,
+    range_dtime_1d,
+    range_dtime_30s,
+)
+
+from aux_funcs.parse_filenames import construct_file_name, get_parser
 import pickle
 
 """
 Read from a single Parsivel .txt file
 """
-
-
-def range_dtime_30s(beg: datetime, end: datetime):
-    beg = beg.replace(second=(beg.second // 30) * 30)
-    end = end.replace(second=(beg.second // 30) * 30)
-    thirty_seconds = timedelta(0, 30)
-    while beg < end:
-        yield beg
-        beg = beg + thirty_seconds
-
-
-def range_dtime_1d(beg: datetime, end: datetime):
-    beg = beg.replace(second=0, hour=0, minute=0)
-    end = end.replace(second=0, hour=0, minute=0)
-    one_day = timedelta(1, 0)
-    while beg < end:
-        yield beg
-        beg = beg + one_day
-
-
-def get_filenames_range1d(
-    beg: datetime, end: datetime, parser: Parser
-) -> Generator[str, Any, Any]:
-    for date in range_dtime_1d(beg, end):
-        yield construct_file_name(date, parser)
 
 
 ###############################################################################
@@ -74,7 +54,7 @@ Read from a folder of ziped files for each day with the standard format.
 """
 
 
-def read_from_source(
+def pars_read_from_zips(
     beg: int, end: int, source_folder: str | Path
 ) -> ParsivelTimeSeries:
     # Checks if the source folder is there
@@ -97,7 +77,8 @@ def read_from_source(
     t0, tf = standard_to_dtime(beg), standard_to_dtime(end)
 
     # Unzip the files and dump them all in a temporary storage file
-    for file_name in get_filenames_range1d(t0, tf, parser):
+    for dtime in range_dtime_1d(t0, tf):
+        file_name = construct_file_name(dtime, parser)
         # Checks if the given day exists in the source folder
         curr_day_file = source_folder / file_name
 
@@ -148,6 +129,8 @@ def read_from_source(
 ###############################################################################
 ################# FOR READING AND WRITING INTO THE PICLE FORMAT ###############
 ###############################################################################
+
+
 def write_to_picle(file_path: str | Path, series: ParsivelTimeSeries):
     file_path = Path(file_path)
     assert file_path.parent.exists(), "The file path is invalid!"
@@ -155,7 +138,7 @@ def write_to_picle(file_path: str | Path, series: ParsivelTimeSeries):
         pickle.dump(series, fh)
 
 
-def read_from_pickle(file_path: str | Path) -> ParsivelTimeSeries:
+def pars_read_from_pickle(file_path: str | Path) -> ParsivelTimeSeries:
     file_path = Path(file_path)
     assert file_path.exists(), "File doesn't exists!!!"
     with open(file_path, "rb") as fh:
