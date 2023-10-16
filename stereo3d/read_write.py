@@ -1,14 +1,18 @@
-from typing import Tuple
-from parsivel.parsivel_dataclass import ParsivelTimeSeries, ParsivelTimeStep
 from pathlib import Path
+from typing import Any, Generator, List
+
+from numpy import array
+from stereo3d.stereo3d_dataclass import Stereo3DSeries, Stereo3DRow
+from csv import reader
 from zipfile import ZipFile
-from numpy import array, ndarray
+
 from aux_funcs.aux_datetime import (
+    round_startfinish_to_30s,
     standard_to_dtime,
     dt_to_tstamp,
     range_dtime_1d,
-    range_dtime_30s,
 )
+
 
 from aux_funcs.parse_filenames import construct_file_name, get_parser
 import pickle
@@ -16,42 +20,44 @@ import pickle
 ###############################################################################
 ################# FOR READING THE PLAIN RAW FILES #############################
 ###############################################################################
-"""
-Read from a single Parsivel .txt file
-"""
-
-
-def read_file(parsivel_file: str | Path) -> Tuple[float, float, ndarray]:
-    file_path = Path(parsivel_file)
-
-    # Take the lines of the file using the proper linebreak
-    with open(file_path, "r") as f:
-        lines = f.read().split(sep="\\r\\n")
-
-    # Line 2 contains the precipitation rate
-    precipitation_rate = float(lines[1][3:])
-
-    # Line 3 contains the temperature
-    temperature = float(lines[12][3:])
-
-    # Line 42 or 41 contains the drop distribution matrix
-    str_items = lines[40][3:-1].split(";")
-    if len(str_items) != 32 * 32:
-        str_items = lines[41][3:-1].split(";")
-
-    distribution_matrix = array([int(i) for i in str_items]).reshape((32, 32))
-
-    return (precipitation_rate, temperature, distribution_matrix)
-
 
 """
-Read from a folder of ziped files for each day with the standard format.
+Function for reading from a single file
 """
 
 
-def pars_read_from_zips(
+def read_file(file_path: str | Path) -> Generator[Stereo3DRow, Any, Any]:
+    # Checks if the file exists
+    file_path = Path(file_path)
+    assert file_path.exists(), "The file selected does not exists"
+
+    # Read the rows from the file
+    with open(file_path, "r") as fh:
+        csv_reader = reader(fh, delimiter=";")
+
+        for row in csv_reader:
+            time_stamp = int(float(row[1]) // 1000)
+            timestamp_ms = float(row[1]) / 1000
+            diameter = float(row[4])
+            velocity = float(row[5])
+            distance = float(row[6])
+            shape = float(row[7])
+            yield Stereo3DRow(
+                time_stamp, timestamp_ms, diameter, velocity, distance, shape
+            )
+
+
+"""
+Function for reading the file between two periods from a source folder
+"""
+
+
+def stereo3d_read_from_zips(
     beg: int, end: int, source_folder: str | Path
-) -> ParsivelTimeSeries:
+) -> Stereo3DSeries:
+    start, finish = standard_to_dtime(beg), standard_to_dtime(end)
+    start, finish = round_startfinish_to_30s(start, finish)
+
     # Checks if the source folder is there
     source_folder = Path(source_folder)
     assert source_folder.is_dir(), "Source folder not found."
@@ -68,58 +74,40 @@ def pars_read_from_zips(
     # Get the parser for the Unziped file
     parser = get_parser(next(source_folder.glob("*.zip")).name)
 
-    # Parse the beggingig and end dates provided
-    t0, tf = standard_to_dtime(beg), standard_to_dtime(end)
-
     # Unzip the files and dump them all in a temporary storage file
-    for dtime in range_dtime_1d(t0, tf):
+    for dtime in range_dtime_1d(start, finish):
         file_name = construct_file_name(dtime, parser)
         # Checks if the given day exists in the source folder
         curr_day_file = source_folder / file_name
+        assert curr_day_file.exists(), f"Day {file_name} not found in folder."
 
         if curr_day_file.exists():
             # Unzips the day and puts all the files in the storage folder
             ZipFile(curr_day_file).extractall(temporary_storage_folder)
 
     # Read all the files and put them into the object
-    missing_time_steps = []
-    time_series = []
-    parser = get_parser(next(temporary_storage_folder.iterdir()).name)
-    for dtime in range_dtime_30s(t0, tf):
+    first_file_name = next(temporary_storage_folder.iterdir()).name
+    parser = get_parser(first_file_name)
+    series: List[Stereo3DRow] = []
+    for dtime in range_dtime_1d(start, finish):
         file_name = construct_file_name(dtime, parser)
         curr_file_path = temporary_storage_folder / file_name
 
-        # If the current step does not exist, add it to the missing time steps
         if not curr_file_path.exists():
-            missing_time_steps.append(dt_to_tstamp(dtime))
-            time_series.append(ParsivelTimeStep.empty(dt_to_tstamp(dtime)))
             continue
 
-        # Exstract information from file
-        precipitation_rate, temperature, distribution_matrix = read_file(curr_file_path)
-
-        # Append it to the time series
-        time_series.append(
-            ParsivelTimeStep(
-                dt_to_tstamp(dtime),
-                precipitation_rate,
-                temperature,
-                distribution_matrix,
-            )
-        )
+        series.extend(read_file(curr_file_path))
 
     # Clears the temporary folder and deletes its
     for f in temporary_storage_folder.iterdir():
         f.unlink()
     temporary_storage_folder.rmdir()
 
-    return ParsivelTimeSeries(
-        "Parsivel",
-        (dt_to_tstamp(t0), dt_to_tstamp(tf)),
-        missing_time_steps,
-        time_series,
-        30,
-    )
+    # Filter for the objects that are in the period requested
+    tstamp0, tstampf = dt_to_tstamp(start), dt_to_tstamp(finish)
+    series = [item for item in series if tstamp0 < item.timestamp < tstampf]
+
+    return Stereo3DSeries((tstamp0, tstampf), array(series))
 
 
 ###############################################################################
@@ -127,14 +115,14 @@ def pars_read_from_zips(
 ###############################################################################
 
 
-def write_to_picle(file_path: str | Path, series: ParsivelTimeSeries):
+def write_to_picle(file_path: str | Path, series: Stereo3DSeries):
     file_path = Path(file_path)
     assert file_path.parent.exists(), "The file path is invalid!"
     with open(file_path, "wb") as fh:
         pickle.dump(series, fh)
 
 
-def pars_read_from_pickle(file_path: str | Path) -> ParsivelTimeSeries:
+def stereo_read_from_pickle(file_path: str | Path) -> Stereo3DSeries:
     file_path = Path(file_path)
     assert file_path.exists(), "File doesn't exists!!!"
     with open(file_path, "rb") as fh:
