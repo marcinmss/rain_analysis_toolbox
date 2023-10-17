@@ -1,5 +1,5 @@
 from parsivel import ParsivelTimeSeries, ParsivelTimeStep, AREAPARSIVEL
-from stereo3d import Stereo3DSeries, AREA3DSTEREO
+from stereo3d import Stereo3DSeries, BASEAREASTEREO3D
 from aux_funcs.aux_datetime import tstamp_to_dt, range_dtime_30s, dt_to_tstamp
 from aux_funcs.bin_data import bin_diameter, bin_velocity
 
@@ -20,7 +20,7 @@ def convert_to_parsivel(series: Stereo3DSeries) -> ParsivelTimeSeries:
     print(new_series)
     t0 = (new_series[0]).timestamp
 
-    factor = AREAPARSIVEL / AREA3DSTEREO
+    factor = AREAPARSIVEL / BASEAREASTEREO3D
     # factor = 1
     for item in series:
         # generate the matrix for the

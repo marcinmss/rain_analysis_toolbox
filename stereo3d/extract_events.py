@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from stereo3d.stereo3d_dataclass import Stereo3DSeries, AREA3DSTEREO
+from stereo3d.stereo3d_dataclass import Stereo3DSeries, BASEAREASTEREO3D
 from numpy import array, zeros
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 
@@ -24,7 +24,7 @@ def extract_events(
     for item in series:
         idx = (item.timestamp - start) // interval_seconds
         rain_rate[idx] += (
-            volume_drop(item.diameter) / AREA3DSTEREO / (interval_seconds / 3600)
+            volume_drop(item.diameter) / BASEAREASTEREO3D / (interval_seconds / 3600)
         )
 
     is_it_raining = [rate > threshold for rate in rain_rate]
@@ -62,6 +62,7 @@ def extract_events(
             new_series = Stereo3DSeries(
                 (beg, end),
                 array([item for item in series if beg <= item.timestamp < end]),
+                series.area_of_study,
             )
             if minimal_depth_per_event < new_series.depth_for_event():
                 output.append(new_series)

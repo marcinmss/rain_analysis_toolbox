@@ -43,6 +43,7 @@ class Stereo3DRow:
 class Stereo3DSeries:
     duration: Tuple[int, int]
     series: ndarray[Stereo3DRow, Any]
+    area_of_study: float
 
     def __getitem__(self, idx: int) -> Stereo3DRow:
         return self.series[idx]
@@ -113,7 +114,7 @@ class Stereo3DSeries:
             idx = (item.timestamp - start) // interval_seconds
             rain_rate[idx] += (
                 volume_drop(item.diameter)
-                / BASEAREASTEREO3D
+                / self.area_of_study
                 / (interval_seconds / 3600)
             )
 
@@ -123,7 +124,7 @@ class Stereo3DSeries:
         return sum(volume_drop(item.diameter) / BASEAREASTEREO3D for item in self)
 
     def cumulative_rain_depht(self, interval_seconds: int) -> ndarray[float, Any]:
-        return cumsum(self.rain_rate(interval_seconds))
+        return cumsum(self.rain_rate(interval_seconds) * interval_seconds)
 
     """
     Divides the distance from the sensor into ranges and counts the rain detph for 
@@ -172,13 +173,20 @@ class Stereo3DSeries:
     New additions
     """
 
-    # def filter_by_distance_to_sensor(self, new_limits: Tuple[float, float]):
-    #     assert (
-    #         new_limits[0] < new_limits[1]
-    #     ), " The left bound has to be bigger than the right!"
-    #     assert 200.0 <= new_limits[0], "The left bound can't be smaller than 200"
-    #     assert new_limits[1] <= 400.0, "The right bound can't be bigger than 400"
-    #
-    #     return Stereo3DSeries(
-    #         self.duration, array([item for item in self if filter(item)])
-    #     )
+    def filter_by_distance_to_sensor(self, new_limits: Tuple[float, float]):
+        left, right = new_limits
+        assert (
+            new_limits[0] < new_limits[1]
+        ), " The left bound has to be bigger than the right!"
+        assert 200.0 <= new_limits[0], "The left bound can't be smaller than 200"
+        assert new_limits[1] <= 400.0, "The right bound can't be bigger than 400"
+
+        new_area = (
+            BASEAREASTEREO3D * (right**2 - left**2) / (MAXDIST**2 - MINDIST**2)
+        )
+
+        return Stereo3DSeries(
+            self.duration,
+            array([item for item in self if left <= item.distance_to_sensor <= right]),
+            new_area,
+        )

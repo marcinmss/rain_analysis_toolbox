@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Generator, List
 
 from numpy import array
-from stereo3d.stereo3d_dataclass import Stereo3DSeries, Stereo3DRow
+from stereo3d.stereo3d_dataclass import BASEAREASTEREO3D, Stereo3DSeries, Stereo3DRow
 from csv import reader
 from zipfile import ZipFile
 
@@ -16,6 +16,15 @@ from aux_funcs.aux_datetime import (
 
 from aux_funcs.parse_filenames import construct_file_name, get_parser
 import pickle
+
+"""
+There is an ofset of two hours between the parsivel data and the stereo3d data.
+Assuming that the parsivel is correct, i am going to adjust the timestamps in 
+the stereo3d by the diference (2 hours).
+I bellive that this exists because the parsivel is in Paris time and the stereo3d
+is in utc.
+"""
+OFFSETSECONDS = 3600 * 2
 
 ###############################################################################
 ################# FOR READING THE PLAIN RAW FILES #############################
@@ -36,8 +45,8 @@ def read_file(file_path: str | Path) -> Generator[Stereo3DRow, Any, Any]:
         csv_reader = reader(fh, delimiter=";")
 
         for row in csv_reader:
-            time_stamp = int(float(row[1]) // 1000)
-            timestamp_ms = float(row[1]) / 1000
+            time_stamp = int(float(row[1]) // 1000) - OFFSETSECONDS
+            timestamp_ms = float(row[1]) / 1000 - OFFSETSECONDS
             diameter = float(row[4])
             velocity = float(row[5])
             distance = float(row[6])
@@ -107,7 +116,7 @@ def stereo3d_read_from_zips(
     tstamp0, tstampf = dt_to_tstamp(start), dt_to_tstamp(finish)
     series = [item for item in series if tstamp0 < item.timestamp < tstampf]
 
-    return Stereo3DSeries((tstamp0, tstampf), array(series))
+    return Stereo3DSeries((tstamp0, tstampf), array(series), BASEAREASTEREO3D)
 
 
 ###############################################################################
