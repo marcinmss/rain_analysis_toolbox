@@ -46,12 +46,12 @@ using the equivalent diameter
 
 
 def matrix_to_volume(matrix: ndarray) -> float:
-    n_per_diameter = sum(matrix, axis=1)
+    n_per_diameter = sum(matrix, axis=0)
     return sum([n * v for (n, v) in zip(n_per_diameter, VOLUME_PER_CLASS_ED)])
 
 
 def matrix_to_volume2(matrix: ndarray) -> float:
-    n_per_diameter = sum(matrix, axis=1)
+    n_per_diameter = sum(matrix, axis=0)
     return sum([n * v for (n, v) in zip(n_per_diameter, VOLUME_PER_CLASS_MD)])
 
 
