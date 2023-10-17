@@ -9,7 +9,7 @@ from aux_funcs.aux_datetime import (
     range_dtime_1d,
     range_dtime_30s,
 )
-
+from parsivel.parsivel_dataclass import AREAPARSIVEL
 from aux_funcs.parse_filenames import construct_file_name, get_parser
 import pickle
 
@@ -119,6 +119,7 @@ def pars_read_from_zips(
         missing_time_steps,
         time_series,
         30,
+        AREAPARSIVEL,
     )
 
 

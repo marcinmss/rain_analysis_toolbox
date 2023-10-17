@@ -20,8 +20,8 @@ class ParsivelTimeStep(NamedTuple):
     temperature: float  # ºC
     matrix: ndarray[float, Any]  # 32x32 matrix
 
-    def calculated_rate(self):
-        return matrix_to_rainrate(self.matrix, AREAPARSIVEL)
+    def calculated_rate(self, area_of_study: float):
+        return matrix_to_rainrate(self.matrix, area_of_study)
 
     def calculated_rate2(self):
         return matrix_to_rainrate2(self.matrix, AREAPARSIVEL)
@@ -42,6 +42,7 @@ class ParsivelTimeSeries:
     missing_time_steps: list  # the missing steps represented in timestamp
     series: list
     resolution_seconds: int
+    area_of_study: float
 
     def __len__(self) -> int:
         return len(self.series)
@@ -84,7 +85,7 @@ class ParsivelTimeSeries:
 
     @property
     def calculated_rate(self) -> ndarray[float, Any]:
-        return array([item.calculated_rate() for item in self])
+        return array([item.calculated_rate(self.area_of_study) for item in self])
 
     @property
     def cumulative_rain_depth(self) -> ndarray[float, Any]:
@@ -93,7 +94,10 @@ class ParsivelTimeSeries:
     @property
     def calculated_rain_depth(self) -> ndarray[float, Any]:
         return cumsum(
-            [item.calculated_rate() * self.resolution_seconds for item in self]
+            [
+                item.calculated_rate(self.area_of_study) * self.resolution_seconds
+                for item in self
+            ]
         )
 
     @property

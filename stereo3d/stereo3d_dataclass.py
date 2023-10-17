@@ -1,16 +1,10 @@
 from dataclasses import dataclass
-from typing import Any, Callable, List, Tuple
+from typing import Any, List, Tuple
 from datetime import datetime
 from aux_funcs.calculations_for_parsivel_data import volume_drop
-from aux_funcs.bin_data import bin_diameter, bin_velocity
 from numpy import array, cumsum, divide, fromiter, ndarray, zeros, pi
-from parsivel.parsivel_dataclass import (
-    ParsivelTimeStep,
-    ParsivelTimeSeries,
-    AREAPARSIVEL,
-)
+from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from pathlib import Path
-from aux_funcs.aux_funcs_read_files import range_between_times_30s
 
 """
 DataClass for the 3dstereo device
