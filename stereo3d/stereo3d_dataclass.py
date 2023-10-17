@@ -190,3 +190,14 @@ class Stereo3DSeries:
             array([item for item in self if left <= item.distance_to_sensor <= right]),
             new_area,
         )
+
+    def shrink_series(self, new_limits_tstamp: Tuple[int, int]):
+        new_beg, new_end = new_limits_tstamp
+        old_beg, old_end = self.duration
+        assert old_beg <= new_beg <= new_end <= old_end, "The limits are incorect!"
+
+        return Stereo3DSeries(
+            (new_beg, new_end),
+            array([item for item in self if new_beg <= item.timestamp <= new_end]),
+            self.area_of_study,
+        )
