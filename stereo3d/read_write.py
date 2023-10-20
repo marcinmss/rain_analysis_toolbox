@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Generator, List
 
 from numpy import array
-from stereo3d.stereo3d_dataclass import BASEAREASTEREO3D, Stereo3DSeries, Stereo3DRow
+from stereo3d.stereo3d_dataclass import MAXDIST, MINDIST, Stereo3DSeries, Stereo3DRow
 from csv import reader
 from zipfile import ZipFile
 
@@ -116,7 +116,7 @@ def stereo3d_read_from_zips(
     tstamp0, tstampf = dt_to_tstamp(start), dt_to_tstamp(finish)
     series = [item for item in series if tstamp0 < item.timestamp < tstampf]
 
-    return Stereo3DSeries((tstamp0, tstampf), array(series), BASEAREASTEREO3D)
+    return Stereo3DSeries((tstamp0, tstampf), array(series), (MINDIST, MAXDIST))
 
 
 ###############################################################################

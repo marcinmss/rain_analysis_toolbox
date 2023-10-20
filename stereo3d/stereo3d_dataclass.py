@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, List, Tuple
-from datetime import datetime
 from aux_funcs.calculations_for_parsivel_data import volume_drop
-from numpy import array, cumsum, divide, fromiter, ndarray, zeros, pi
+from numpy import array, cumsum, fromiter, ndarray, zeros
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from pathlib import Path
 
@@ -37,7 +36,7 @@ class Stereo3DRow:
 class Stereo3DSeries:
     duration: Tuple[int, int]
     series: ndarray[Stereo3DRow, Any]
-    area_of_study: float
+    limits_area_of_study: Tuple[float, float]
 
     def __getitem__(self, idx: int) -> Stereo3DRow:
         return self.series[idx]
@@ -45,15 +44,11 @@ class Stereo3DSeries:
     def __len__(self) -> int:
         return self.series.shape[0]
 
-    def limits(self) -> Tuple[int, int]:
-        if len(self) > 1:
-            return (self[0].timestamp, self[-1].timestamp)
-        else:
-            return (0, 0)
+    @property
+    def area_of_study(self):
+        from stereo3d.distance_analisys import area_of_session
 
-    def limits_readable(self):
-        start, finish = self.limits()
-        return (datetime.utcfromtimestamp(start), datetime.utcfromtimestamp(finish))
+        return area_of_session(self.limits_area_of_study)
 
     """
     Return the itens from each category in a numpy array
@@ -126,32 +121,9 @@ class Stereo3DSeries:
     """
 
     def acumulate_by_distance(self, N: int = 1024) -> List[ndarray[float, Any]]:
-        length = (MAXDIST - MINDIST) / N
-        volume = zeros(shape=(N,), dtype=float)
-        mean_diameter = zeros(shape=(N,), dtype=float)
-        mean_velocity = zeros(shape=(N,), dtype=float)
-        number_drops = zeros(shape=(N,), dtype=float)
+        from stereo3d.distance_analisys import acumulate_by_distance
 
-        # Calculate the area of each session
-        areas = []
-        lenght = 200.0 / 1024
-        for n in range(N):
-            d0 = 200.0 + n * lenght
-            areas.append(pi * ((d0 + lenght) ** 2 - d0**2) * 0.26525823848649227)
-
-        for row in self:
-            idx = int((row.distance_to_sensor - MINDIST) // length) - 1
-            mean_diameter[idx] += row.diameter
-            mean_velocity[idx] += row.velocity
-            number_drops[idx] += 1
-
-            volume[idx] += volume_drop(row.diameter)
-
-        acumulated_depth = divide(volume, areas, where=(areas != 0))
-        mean_diameter = divide(mean_diameter, number_drops, where=(number_drops != 0))
-        mean_velocity = divide(mean_velocity, number_drops, where=(number_drops != 0))
-
-        return [volume, acumulated_depth, number_drops, mean_diameter, mean_velocity]
+        return acumulate_by_distance(self, N)
 
     """
     Converts the data from the 3D stereo to the parsivel format arranging the 
@@ -164,26 +136,17 @@ class Stereo3DSeries:
         return convert_to_parsivel(self)
 
     """
-    New additions
+    Creates a new series with only with the drops within a certein distance
     """
 
     def filter_by_distance_to_sensor(self, new_limits: Tuple[float, float]):
-        left, right = new_limits
-        assert (
-            new_limits[0] < new_limits[1]
-        ), " The left bound has to be bigger than the right!"
-        assert 200.0 <= new_limits[0], "The left bound can't be smaller than 200"
-        assert new_limits[1] <= 400.0, "The right bound can't be bigger than 400"
+        from stereo3d.distance_analisys import filter_by_distance_to_sensor
 
-        new_area = (
-            BASEAREASTEREO3D * (right**2 - left**2) / (MAXDIST**2 - MINDIST**2)
-        )
+        return filter_by_distance_to_sensor(self, new_limits)
 
-        return Stereo3DSeries(
-            self.duration,
-            array([item for item in self if left <= item.distance_to_sensor <= right]),
-            new_area,
-        )
+    """
+    New additions
+    """
 
     def shrink_series(self, new_limits_tstamp: Tuple[int, int]):
         new_beg, new_end = new_limits_tstamp
@@ -193,5 +156,5 @@ class Stereo3DSeries:
         return Stereo3DSeries(
             (new_beg, new_end),
             array([item for item in self if new_beg <= item.timestamp <= new_end]),
-            self.area_of_study,
+            self.limits_area_of_study,
         )
