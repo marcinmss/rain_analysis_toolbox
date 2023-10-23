@@ -1,6 +1,31 @@
-from typing import Tuple
+from typing import Tuple, Any
 from numpy import array, linspace, ndarray, zeros
 from stereo3d.stereo3d_dataclass import Stereo3DSeries
+from aux_funcs.calculations_for_parsivel_data import volume_drop
+
+"""
+Compute the rain rate in a time series
+"""
+
+
+def rain_rate(series: Stereo3DSeries, interval_seconds: int) -> ndarray[float, Any]:
+    # Define the ends of the time series
+    start, stop = series.duration
+
+    # Create an empty object with the slots to fit the data
+    rain_rate = zeros(shape=((stop - start) // interval_seconds + 1,), dtype=float)
+
+    # Loop thought every row of data and add the rate until you have a value
+    for item in series:
+        idx = (item.timestamp - start) // interval_seconds
+        rain_rate[idx] += (
+            volume_drop(item.diameter)
+            / series.area_of_study
+            / (interval_seconds / 3600)
+        )
+
+    return rain_rate
+
 
 """
 Function for calculating the drop_size distribution graph

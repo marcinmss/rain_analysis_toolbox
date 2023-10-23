@@ -5,8 +5,13 @@ from numpy import arange, cos, pi, zeros, divide, array, ndarray
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 
 EPISILON = 10e-9
-CONEANGLE = BASEAREASTEREO3D / ((MAXDIST**2 - MINDIST**2) * 2)
+CONEANGLE = BASEAREASTEREO3D / (MAXDIST**2 - MINDIST**2) * 2
 SOLIDANGLE = 2 * pi * (1 - cos(CONEANGLE / 2))
+
+"""
+Function for calculating the area of study of the series. 
+Used for calculating matrics such as rain rate
+"""
 
 
 def area_of_session(session_limits: Tuple[float, float]) -> float:
@@ -27,6 +32,11 @@ def volume_of_session(session_limits: Tuple[float, float]) -> float:
     return (right**3 - left**3) / 3 * SOLIDANGLE
 
 
+"""
+Function for getting only the drops withing a certain range of the sensor
+"""
+
+
 def filter_by_distance_to_sensor(
     series: Stereo3DSeries, new_limits: Tuple[float, float]
 ) -> Stereo3DSeries:
@@ -37,6 +47,11 @@ def filter_by_distance_to_sensor(
         array([item for item in series if left <= item.distance_to_sensor <= right]),
         (new_limits),
     )
+
+
+"""
+Getting certains metrics based on the distance to the sensor
+"""
 
 
 def acumulate_by_distance(

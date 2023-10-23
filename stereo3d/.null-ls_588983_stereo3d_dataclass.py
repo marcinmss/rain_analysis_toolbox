@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, List, Tuple
 from aux_funcs.calculations_for_parsivel_data import volume_drop
-from numpy import array, cumsum, fromiter, ndarray
+from numpy import array, cumsum, fromiter, ndarray, zeros
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from pathlib import Path
 
@@ -94,7 +94,7 @@ class Stereo3DSeries:
     def rain_rate(self, interval_seconds: int) -> ndarray[float, Any]:
         from stereo3d.calculate import rain_rate
 
-        return rain_rate(self, interval_seconds)
+        return rain_rate
 
     def depth_for_event(self) -> float:
         return sum(volume_drop(item.diameter) / self.area_of_study for item in self)
