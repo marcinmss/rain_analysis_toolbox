@@ -116,7 +116,9 @@ def stereo3d_read_from_zips(
     tstamp0, tstampf = dt_to_tstamp(start), dt_to_tstamp(finish)
     series = [item for item in series if tstamp0 < item.timestamp < tstampf]
 
-    return Stereo3DSeries((tstamp0, tstampf), array(series), (MINDIST, MAXDIST))
+    return Stereo3DSeries(
+        "stereo3d", (tstamp0, tstampf), array(series), (MINDIST, MAXDIST)
+    )
 
 
 ###############################################################################

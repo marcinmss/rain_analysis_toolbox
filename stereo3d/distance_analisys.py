@@ -1,7 +1,8 @@
+from itertools import pairwise
 from stereo3d import Stereo3DSeries
 from typing import Tuple, List, Any
 from stereo3d.stereo3d_dataclass import MINDIST, MAXDIST, BASEAREASTEREO3D
-from numpy import arange, cos, pi, zeros, divide, array, ndarray
+from numpy import arange, cos, linspace, pi, zeros, divide, array, ndarray
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 
 EPISILON = 10e-9
@@ -43,10 +44,28 @@ def filter_by_distance_to_sensor(
     left, right = new_limits
 
     return Stereo3DSeries(
+        f"stereo3d({left:.1f}:{right:.1f})",
         series.duration,
         array([item for item in series if left <= item.distance_to_sensor <= right]),
         (new_limits),
     )
+
+
+"""
+Split the Stereo3DSeries into multiple series based on the distance to the sensor
+"""
+
+
+def split_by_distance_to_sensor(
+    series: Stereo3DSeries, number_of_sessions: int = 8
+) -> List[Stereo3DSeries]:
+    left_lim, right_lim = series.limits_area_of_study
+    assert number_of_sessions > 0, "The number of sessions needs to be bigger than zero"
+    output = [
+        filter_by_distance_to_sensor(series, new_lim)
+        for new_lim in pairwise(linspace(left_lim, right_lim, number_of_sessions + 1))
+    ]
+    return output
 
 
 """

@@ -28,6 +28,27 @@ def rain_rate(series: Stereo3DSeries, interval_seconds: int) -> ndarray[float, A
 
 
 """
+Compute the number of drops per area in a time series
+"""
+
+
+def get_npa(series: Stereo3DSeries, interval_seconds: int) -> ndarray[float, Any]:
+    # Define the ends of the time series
+    start, stop = series.duration
+
+    # Create an empty object with the slots to fit the data
+    npa = zeros(shape=((stop - start) // interval_seconds + 1,), dtype=float)
+
+    # Loop thought every row of data and add the rate until you have a value
+    inv_aream2 = 1 / (series.area_of_study * 1e-6)
+    for item in series:
+        idx = (item.timestamp - start) // interval_seconds
+        npa[idx] += inv_aream2
+
+    return npa
+
+
+"""
 Function for calculating the drop_size distribution graph
 """
 

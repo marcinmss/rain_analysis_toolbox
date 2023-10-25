@@ -5,14 +5,11 @@ from stereo3d.stereo3d_dataclass import MINDIST, MAXDIST, Stereo3DRow, Stereo3DS
 from numpy import (
     argmax,
     array,
-    divide,
     exp,
     linspace,
     log,
     ndarray,
     zeros,
-    max,
-    multiply,
 )
 from itertools import pairwise
 

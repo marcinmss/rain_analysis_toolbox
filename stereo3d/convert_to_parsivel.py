@@ -31,5 +31,5 @@ def convert_to_parsivel(series: Stereo3DSeries) -> ParsivelTimeSeries:
             new_series[idx].matrix[class_diameter - 1, class_velocity - 1] += 1
 
     return ParsivelTimeSeries(
-        "3D Stereo", series.duration, [], new_series, 30, BASEAREASTEREO3D
+        "stereo3d", series.duration, [], new_series, 30, BASEAREASTEREO3D
     )

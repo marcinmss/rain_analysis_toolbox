@@ -35,6 +35,7 @@ def extract_events(
                     missing_timesteps,
                     event,
                     series.resolution_seconds,
+                    series.area_of_study,
                 )
             )
             event: List[ParsivelTimeStep] = []
@@ -49,6 +50,7 @@ def extract_events(
                 [],
                 event,
                 series.resolution_seconds,
+                series.area_of_study,
             )
         )
 

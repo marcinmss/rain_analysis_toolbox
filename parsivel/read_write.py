@@ -114,7 +114,7 @@ def pars_read_from_zips(
     temporary_storage_folder.rmdir()
 
     return ParsivelTimeSeries(
-        "Parsivel",
+        "parsivel",
         (dt_to_tstamp(t0), dt_to_tstamp(tf)),
         missing_time_steps,
         time_series,

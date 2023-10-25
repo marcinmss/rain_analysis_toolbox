@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, NamedTuple, Tuple
 from pathlib import Path
-from numpy import array, cumsum, empty, nan, ndarray, zeros
+from numpy import array, cumsum, empty, nan, ndarray, zeros, sum as npsum
 from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
@@ -25,6 +25,10 @@ class ParsivelTimeStep(NamedTuple):
 
     def calculated_rate2(self):
         return matrix_to_rainrate2(self.matrix, AREAPARSIVEL)
+
+    @property
+    def ndrops(self) -> float:
+        return npsum(self.matrix)
 
     @classmethod
     def empty(cls, timestamp: int):
@@ -82,6 +86,11 @@ class ParsivelTimeSeries:
     @property
     def rain_rate(self) -> ndarray[float, Any]:
         return array([item.rain_rate for item in self])
+
+    @property
+    def npa(self) -> ndarray[float, Any]:
+        area_m2 = self.area_of_study * 1e-6
+        return array([item.ndrops / area_m2 for item in self])
 
     @property
     def calculated_rate(self) -> ndarray[float, Any]:

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, List, Tuple
 from aux_funcs.calculations_for_parsivel_data import volume_drop
-from numpy import array, cumsum, fromiter, ndarray, zeros
+from numpy import array, cumsum, fromiter, ndarray
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from pathlib import Path
 
@@ -34,6 +34,7 @@ class Stereo3DRow:
 
 @dataclass(slots=True)
 class Stereo3DSeries:
+    device: str
     duration: Tuple[int, int]
     series: ndarray[Stereo3DRow, Any]
     limits_area_of_study: Tuple[float, float]
@@ -92,9 +93,14 @@ class Stereo3DSeries:
     """
 
     def rain_rate(self, interval_seconds: int) -> ndarray[float, Any]:
-        from stereo3d.calculate import rain_rate
+        from stereo3d.indicators import rain_rate
 
-        return rain_rate
+        return rain_rate(self, interval_seconds)
+
+    def npa(self, interval_seconds: int) -> ndarray[float, Any]:
+        from stereo3d.indicators import get_npa
+
+        return get_npa(self, interval_seconds)
 
     def depth_for_event(self) -> float:
         return sum(volume_drop(item.diameter) / self.area_of_study for item in self)
@@ -111,6 +117,11 @@ class Stereo3DSeries:
         from stereo3d.distance_analisys import acumulate_by_distance
 
         return acumulate_by_distance(self, N)
+
+    def split_by_distance_to_sensor(self, number_of_splits: int):
+        from stereo3d.indicators import split_by_distance_to_sensor
+
+        return split_by_distance_to_sensor(self, number_of_splits)
 
     """
     Converts the data from the 3D stereo to the parsivel format arranging the 
@@ -135,12 +146,18 @@ class Stereo3DSeries:
     New additions
     """
 
+    def extract_events(self, events_duration: List[Tuple[int, int]]):
+        from stereo3d.events import extract_events
+
+        return extract_events(self, events_duration)
+
     def shrink_series(self, new_limits_tstamp: Tuple[int, int]):
         new_beg, new_end = new_limits_tstamp
         old_beg, old_end = self.duration
         assert old_beg <= new_beg <= new_end <= old_end, "The limits are incorect!"
 
         return Stereo3DSeries(
+            self.device,
             (new_beg, new_end),
             array([item for item in self if new_beg <= item.timestamp <= new_end]),
             self.limits_area_of_study,

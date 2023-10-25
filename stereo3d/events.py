@@ -3,8 +3,33 @@ from stereo3d.stereo3d_dataclass import Stereo3DSeries, BASEAREASTEREO3D
 from numpy import array, zeros
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 
+"""
+Use the function to extract events given the intervals of beggining and end.
+"""
+
 
 def extract_events(
+    series: Stereo3DSeries, events_duration: List[Tuple[int, int]]
+) -> List[Stereo3DSeries]:
+    output = []
+    for beg, end in events_duration:
+        output.append(
+            Stereo3DSeries(
+                series.device,
+                (beg, end),
+                array([item for item in series if beg <= item.timestamp < end]),
+                series.limits_area_of_study,
+            )
+        )
+    return output
+
+
+"""
+Use this function to detect events utilizing the variables given bellow
+"""
+
+
+def find_events(
     series: Stereo3DSeries,
     minimal_length_minutes: int,
     buffer_minutes: int,
@@ -60,11 +85,12 @@ def extract_events(
     for beg, end in duration_events:
         if (end - beg) >= (minimal_length_minutes + 2 * buffer_minutes) * 60:
             new_series = Stereo3DSeries(
+                series.device,
                 (beg, end),
                 array([item for item in series if beg <= item.timestamp < end]),
-                series.area_of_study,
+                series.limits_area_of_study,
             )
-            if minimal_depth_per_event < new_series.depth_for_event():
-                output.append(new_series)
+            if minimal_depth_per_event < new_series.total_rain_depth():
+                output.append(new_series.duration)
 
     return output
