@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+from numpy import cumsum
+
 """
 This modules has the classes for putting continuous data in each class for the
 Parcivel device.
@@ -12,7 +16,6 @@ standard classifications.
 It provides us with 32 bins (1 to 32) if the diameter its outside to the right
 it will be classified with 33 and if its outside to the left 0.
 """
-
 CLASSES_DIAMETER = [
     [0.062, 0.125],
     [0.187, 0.125],
@@ -47,6 +50,33 @@ CLASSES_DIAMETER = [
     [21.5, 3.0],
     [24.5, 3.0],
 ]
+
+CLASSES_DIAMETER_BINS = []
+CLASSES_DIAMETER_MIDDLE = []
+CLASSES_DIAMETER_MAP = []
+left = 0
+right = 0
+for i, bin_diam in enumerate((item[1] for item in CLASSES_DIAMETER)):
+    right += bin_diam
+    CLASSES_DIAMETER_BINS.append((left, right))
+    CLASSES_DIAMETER_MIDDLE.append((left + right) / 2)
+    left = right
+    for _ in range(int(bin_diam // 0.125)):
+        CLASSES_DIAMETER_MAP.append(i)
+
+
+def find_diameter_class(diameter: float) -> int:
+    assert diameter > 0, f"Impossible value: {diameter}"
+    idx = int(diameter // 0.125)
+    if idx > 31:
+        return 32
+    else:
+        return CLASSES_DIAMETER_MAP[idx] + 1
+
+
+def find_class_midle_point(class_number: int) -> int:
+    assert 1 < class_number < 32
+    return CLASSES_DIAMETER_MIDDLE[class_number - 1]
 
 
 def bin_diameter(diameter: float) -> int:
@@ -92,6 +122,33 @@ CLASSES_VELOCITY = [
     [17.6, 3.2],
     [20.8, 3.2],
 ]
+
+CLASSES_VELOCITY_BINS = []
+CLASSES_VELOCITY_MIDDLE = []
+CLASSES_VELOCITY_MAP = []
+left = 0
+right = 0
+for i, bin_diam in enumerate((item[1] for item in CLASSES_VELOCITY)):
+    right += bin_diam
+    CLASSES_VELOCITY_BINS.append((left, right))
+    CLASSES_VELOCITY_MIDDLE.append((left + right) / 2)
+    left = right
+    for _ in range(int(bin_diam // 0.1)):
+        CLASSES_VELOCITY_MAP.append(i)
+
+
+def find_velocity_class(diameter: float) -> int:
+    assert diameter > 0, f"Impossible value: {diameter}"
+    idx = int(diameter // 0.1)
+    if idx > 31:
+        return 32
+    else:
+        return CLASSES_VELOCITY_MAP[idx] + 1
+
+
+def find_velocity_mp(class_number: int) -> int:
+    assert 1 < class_number < 32
+    return CLASSES_VELOCITY_MIDDLE[class_number - 1]
 
 
 def bin_velocity(velocity: float) -> int:

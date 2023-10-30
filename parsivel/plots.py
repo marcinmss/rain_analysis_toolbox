@@ -99,12 +99,12 @@ def plot_vxd(axs: List[Axes], series: List[ParsivelTimeSeries]):
     # Checks if the number of series is the same of axis
     assert len(axs) == len(series), "The number of axis has to be the same as series"
 
-    right = max((np.max(serie.get_overall_matrix) for serie in series))
+    right = max((np.max(serie.matrix_for_event) for serie in series))
     norm = mcolors.Normalize(0, right)
 
     lnx, lny = get_hermitter_line()
     for i, (ax, serie) in enumerate(zip(axs, series)):
-        total_matrix = serie.get_overall_matrix
+        total_matrix = serie.matrix_for_event
         assert isinstance(total_matrix, np.ndarray)
         # Plot the tendency line
         ax.plot(lnx, lny, linewidth=1.6, linestyle="dotted", c="orangered")
@@ -174,7 +174,7 @@ def plot_dsd(ax: Axes, list_series: List[ParsivelTimeSeries]):
     # Plot all the series in the Axis
     for series in list_series:
         # First get the overall matrix for that period
-        overall_matrix = series.get_overall_matrix
+        overall_matrix = series.matrix_for_event
 
         # Get the diameters for each class
         mean_diameters = np.array([d[0] for d in CLASSES_DIAMETER])

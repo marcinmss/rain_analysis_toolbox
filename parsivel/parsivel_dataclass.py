@@ -6,6 +6,7 @@ from aux_funcs.calculations_for_parsivel_data import (
     AREAPARSIVEL,
     matrix_to_rainrate,
     matrix_to_rainrate2,
+    matrix_to_volume,
 )
 from aux_funcs.aux_datetime import tstamp_to_readable
 
@@ -32,11 +33,11 @@ class ParsivelTimeStep(NamedTuple):
 
     @classmethod
     def empty(cls, timestamp: int):
-        return ParsivelTimeStep(timestamp, nan, nan, empty((32, 32), dtype=float))
+        return ParsivelTimeStep(timestamp, nan, nan, empty((32, 32), dtype=int))
 
     @classmethod
     def zero_like(cls, timestamp: int):
-        return ParsivelTimeStep(timestamp, 0.0, 0.0, zeros((32, 32), dtype=float))
+        return ParsivelTimeStep(timestamp, 0.0, 0.0, zeros((32, 32), dtype=int))
 
 
 @dataclass
@@ -90,15 +91,49 @@ class ParsivelTimeSeries:
     @property
     def npa(self) -> ndarray[float, Any]:
         area_m2 = self.area_of_study * 1e-6
-        return array([item.ndrops / area_m2 for item in self])
+        return array([item.ndrops for item in self]) / area_m2
+
+    @property
+    def npa_event(self) -> float:
+        area_m2 = self.area_of_study * 1e-6
+        return npsum(self.matrix_for_event) / area_m2
+
+    @property
+    def mean_diameter(self) -> float:
+        from parsivel.indicators import get_mean_diameter
+
+        return get_mean_diameter(self)
+
+    @property
+    def mean_velocity(self) -> float:
+        from parsivel.indicators import get_mean_velocity
+
+        return get_mean_velocity(self)
 
     @property
     def calculated_rate(self) -> ndarray[float, Any]:
-        return array([item.calculated_rate(self.area_of_study) for item in self])
+        return array(
+            [
+                matrix_to_volume(matrix) * 120 / self.area_of_study
+                for matrix in self.matrices
+            ]
+        )
+
+    @property
+    def total_depth(self) -> float:
+        return (
+            sum(matrix_to_volume(tstep.matrix) for tstep in self) / self.area_of_study
+        )
 
     @property
     def cumulative_rain_depth(self) -> ndarray[float, Any]:
         return cumsum([item.rain_rate * self.resolution_seconds for item in self])
+
+    @property
+    def kinetic_energy_flow(self) -> float:
+        from parsivel.indicators import get_kinetic_energy
+
+        return get_kinetic_energy(self) / (self.area_of_study * 1e-6)
 
     @property
     def calculated_rain_depth(self) -> ndarray[float, Any]:
@@ -117,13 +152,17 @@ class ParsivelTimeSeries:
     def matrices(self) -> ndarray[ndarray, Any]:
         return array([item.matrix for item in self])
 
+    """
+    Methods for providing/calculating basic information about the series
+    """
+
     @property
     def time_elapsed_seconds(self) -> List[int]:
         length = len(self.series) + len(self.missing_time_steps)
         return [i * 30 for i in range(length)]
 
     @property
-    def get_overall_matrix(self) -> ndarray | Literal[0]:
+    def matrix_for_event(self) -> ndarray | Literal[0]:
         return sum((item.matrix for item in self))
 
     @property

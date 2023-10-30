@@ -37,7 +37,7 @@ def get_npa(series: Stereo3DSeries, interval_seconds: int) -> ndarray[float, Any
     start, stop = series.duration
 
     # Create an empty object with the slots to fit the data
-    npa = zeros(shape=((stop - start) // interval_seconds + 1,), dtype=float)
+    npa = zeros(shape=((stop - start) // interval_seconds,), dtype=float)
 
     # Loop thought every row of data and add the rate until you have a value
     inv_aream2 = 1 / (series.area_of_study * 1e-6)
@@ -46,6 +46,18 @@ def get_npa(series: Stereo3DSeries, interval_seconds: int) -> ndarray[float, Any
         npa[idx] += inv_aream2
 
     return npa
+
+
+"""
+Function for calculating the drop_size distribution graph
+"""
+
+
+def get_kinetic_energy(series: Stereo3DSeries) -> float:
+    output = 0
+    for drop in series:
+        output += (volume_drop(drop.diameter) * 1e-9) * (drop.velocity**2) / 2
+    return output
 
 
 """
