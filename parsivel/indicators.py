@@ -1,7 +1,7 @@
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from numpy import ndarray, sum as npsum
-from aux_funcs.bin_data import CLASSES_DIAMETER_MIDDLE, CLASSES_VELOCITY_MIDDLE
+from parsivel.matrix_classes import CLASSES_DIAMETER_MIDDLE, CLASSES_VELOCITY_MIDDLE
 
 """
 Calculate the mean diameter and velocity

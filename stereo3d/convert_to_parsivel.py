@@ -1,10 +1,31 @@
 from parsivel import ParsivelTimeSeries, ParsivelTimeStep
 from stereo3d import Stereo3DSeries
 from aux_funcs.aux_datetime import tstamp_to_dt, range_dtime_30s, dt_to_tstamp
-from aux_funcs.bin_data import (
-    bin_diameter,
-    bin_velocity,
-)
+from parsivel.matrix_classes import CLASSES_DIAMETER_BINS, CLASSES_VELOCITY_BINS
+
+"""
+Auxiliary functions for classifiing the diameter and the speed into the Parsivel
+standard classifications.
+It provides us with 32 bins (1 to 32) if the diameter its outside to the right
+it will be classified with 33 and if its outside to the left 0.
+"""
+
+
+def find_diameter_class(diameter: float) -> int:
+    assert diameter > 0, f"Impossible value: {diameter}"
+    for i, (left, right) in enumerate(CLASSES_DIAMETER_BINS):
+        if left <= diameter < right:
+            return i + 1
+    return 32
+
+
+def find_velocity_class(velocity: float) -> int:
+    assert velocity > 0, f"Impossible value: {velocity}"
+    for i, (beg, end) in enumerate(CLASSES_VELOCITY_BINS):
+        if beg <= velocity < end:
+            return i + 1
+    return 32
+
 
 """
 Converts the data from the 3D stereo to the parsivel format arranging the 
@@ -20,17 +41,15 @@ def convert_to_parsivel(series: Stereo3DSeries) -> ParsivelTimeSeries:
         for dtime in range_dtime_30s(dtime0, dtimef)
     ]
 
-    t0 = (new_series[0]).timestamp
+    t0 = series.duration[0]
 
-    # factor = 1
     for item in series:
-        # generate the matrix for the
         idx = int((item.timestamp - t0) // 30)
-        class_velocity = bin_velocity(item.velocity)
-        class_diameter = bin_diameter(item.diameter)
+        class_velocity = find_velocity_class(item.velocity)
+        class_diameter = find_diameter_class(item.diameter)
 
         if 1 <= class_velocity <= 32 and 0 < class_diameter < 33:
-            new_series[idx].matrix[class_diameter - 1, class_velocity - 1] += 1
+            new_series[idx].matrix[class_velocity - 1, class_diameter - 1] += 1
 
     return ParsivelTimeSeries(
         "stereo3d", series.duration, [], new_series, 30, series.area_of_study

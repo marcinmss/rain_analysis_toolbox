@@ -2,17 +2,12 @@ from dataclasses import dataclass
 from typing import Any, List, Literal, NamedTuple, Tuple
 from pathlib import Path
 from numpy import array, cumsum, empty, nan, ndarray, zeros, sum as npsum
-from aux_funcs.calculations_for_parsivel_data import (
-    AREAPARSIVEL,
-    matrix_to_rainrate,
-    matrix_to_rainrate2,
-    matrix_to_volume,
-)
 from aux_funcs.aux_datetime import tstamp_to_readable
 
 """
 The dataclass for extracting information from a parsivle file
 """
+PARSIVELBASEAREA = 5400
 
 
 class ParsivelTimeStep(NamedTuple):
@@ -20,12 +15,6 @@ class ParsivelTimeStep(NamedTuple):
     rain_rate: float  # mm
     temperature: float  # ºC
     matrix: ndarray[float, Any]  # 32x32 matrix
-
-    def calculated_rate(self, area_of_study: float):
-        return matrix_to_rainrate(self.matrix, area_of_study)
-
-    def calculated_rate2(self):
-        return matrix_to_rainrate2(self.matrix, AREAPARSIVEL)
 
     @property
     def ndrops(self) -> float:
@@ -112,6 +101,8 @@ class ParsivelTimeSeries:
 
     @property
     def calculated_rate(self) -> ndarray[float, Any]:
+        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+
         return array(
             [
                 matrix_to_volume(matrix) * 120 / self.area_of_study
@@ -121,9 +112,9 @@ class ParsivelTimeSeries:
 
     @property
     def total_depth(self) -> float:
-        return (
-            sum(matrix_to_volume(tstep.matrix) for tstep in self) / self.area_of_study
-        )
+        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+
+        return matrix_to_volume(self.matrix_for_event) / self.area_of_study
 
     @property
     def cumulative_rain_depth(self) -> ndarray[float, Any]:
@@ -137,12 +128,7 @@ class ParsivelTimeSeries:
 
     @property
     def calculated_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum(
-            [
-                item.calculated_rate(self.area_of_study) * self.resolution_seconds
-                for item in self
-            ]
-        )
+        return cumsum(self.calculated_rate)
 
     @property
     def temperature(self) -> ndarray[ndarray, Any]:
