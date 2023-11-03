@@ -1,6 +1,3 @@
-# Ignore all notebooks
-*.ipynb
-
 # Ignoring all hiden folders
 .*
 !/.gitignore
