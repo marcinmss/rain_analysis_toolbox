@@ -128,6 +128,12 @@ class Stereo3DSeries:
     def cumulative_rain_depht(self, interval_seconds: int = 30) -> ndarray[float, Any]:
         return cumsum(self.rain_rate(interval_seconds) * interval_seconds)
 
+    @property
+    def ndrops_in_each_diameter_class(self):
+        from stereo3d.indicators import get_ndrops_in_diameter_classes
+
+        return get_ndrops_in_diameter_classes(self)
+
     """
     Divides the distance from the sensor into ranges and counts the rain detph for 
     each range

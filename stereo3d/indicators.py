@@ -140,4 +140,4 @@ def get_ndrops_in_diameter_classes(series: Stereo3DSeries, parsivel_class: bool 
     for row in series:
         idx = find_diameter_class(row.diameter) - 1
         ndrops[idx] += 1
-    return (ndrops, middle_points)
+    return (middle_points, ndrops / series.area_of_study)

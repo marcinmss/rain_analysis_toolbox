@@ -61,4 +61,4 @@ Get the drop size distribution for a parsivel series
 
 def get_ndrops_in_each_diameter(series: ParsivelTimeSeries):
     ndrops = npsum(series.matrix_for_event, axis=0)
-    return (CLASSES_DIAMETER_BINS, ndrops)
+    return (CLASSES_DIAMETER_MIDDLE, ndrops / series.area_of_study)

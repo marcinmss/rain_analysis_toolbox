@@ -128,7 +128,7 @@ class ParsivelTimeSeries:
 
     @property
     def calculated_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum(self.calculated_rate)
+        return cumsum(self.calculated_rate * self.resolution_seconds)
 
     @property
     def temperature(self) -> ndarray[ndarray, Any]:
