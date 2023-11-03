@@ -1,5 +1,4 @@
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
-from copy import deepcopy
 
 
 """
@@ -7,14 +6,11 @@ Filter a parsivel Series to not include drops outside the parsivel minimal resol
 """
 
 
-def resolution_filter(series: ParsivelTimeSeries) -> ParsivelTimeSeries:
-    new_series = deepcopy(series)
-    for tstep in new_series:
+def resolution_filter(series: ParsivelTimeSeries) -> None:
+    for tstep in series:
         for class_diameter in (1, 2):
             for class_velocity in range(1, 33):
                 tstep.matrix[class_velocity - 1, class_diameter - 1] = 0
-
-    return new_series
 
 
 """

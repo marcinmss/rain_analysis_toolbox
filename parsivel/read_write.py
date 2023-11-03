@@ -96,17 +96,24 @@ def pars_read_from_zips(
             continue
 
         # Exstract information from file
-        precipitation_rate, temperature, distribution_matrix = read_file(curr_file_path)
-
-        # Append it to the time series
-        time_series.append(
-            ParsivelTimeStep(
-                dt_to_tstamp(dtime),
-                precipitation_rate,
-                temperature,
-                distribution_matrix,
+        try:
+            precipitation_rate, temperature, distribution_matrix = read_file(
+                curr_file_path
             )
-        )
+
+            # Append it to the time series
+            time_series.append(
+                ParsivelTimeStep(
+                    dt_to_tstamp(dtime),
+                    precipitation_rate,
+                    temperature,
+                    distribution_matrix,
+                )
+            )
+        except Exception:
+            missing_time_steps.append(dt_to_tstamp(dtime))
+            time_series.append(ParsivelTimeStep.empty(dt_to_tstamp(dtime)))
+            continue
 
     # Clears the temporary folder and deletes its
     for f in temporary_storage_folder.iterdir():

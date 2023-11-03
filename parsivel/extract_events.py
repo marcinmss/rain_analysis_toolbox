@@ -6,11 +6,11 @@ def extract_events(
     series: ParsivelTimeSeries,
     minimal_length_minutes: int,
     buffer_minutes: int,
-    threshold: float,
+    minimal_depth_mm: float,
 ) -> List[ParsivelTimeSeries]:
     factor = (buffer_minutes * 60) // series.resolution_seconds
 
-    is_it_raining = [tstep.rain_rate > threshold for tstep in series]
+    is_it_raining = [tstep.rain_rate > 0.001 for tstep in series]
 
     is_event = [any(is_it_raining[i - factor : i + factor]) for i in range(len(series))]
 
@@ -58,5 +58,9 @@ def extract_events(
     min_factor = (
         (2 * buffer_minutes + minimal_length_minutes) * 60 // series.resolution_seconds
     )
-    events = [item for item in events if len(item) > min_factor]
+    events = [
+        item
+        for item in events
+        if (len(item) > min_factor and item.total_depth > minimal_depth_mm)
+    ]
     return events

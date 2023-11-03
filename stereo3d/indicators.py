@@ -1,7 +1,9 @@
 from typing import Tuple, Any
 from numpy import array, linspace, ndarray, zeros
+from parsivel.matrix_classes import CLASSES_DIAMETER_BINS, CLASSES_DIAMETER_MIDDLE
 from stereo3d.stereo3d_dataclass import Stereo3DSeries
 from aux_funcs.calculations_for_parsivel_data import volume_drop
+from stereo3d.convert_to_parsivel import find_diameter_class
 
 """
 Compute the rain rate in a time series
@@ -123,3 +125,19 @@ def get_dsd(
         idx = int((row.diameter - min_diam) // length)
         nd3[idx] += row.diameter**3
     return (middle_points, nd3)
+
+
+"""
+Function for counting the number of drops in each diameter class
+"""
+
+
+def get_ndrops_in_diameter_classes(series: Stereo3DSeries, parsivel_class: bool = True):
+    if not parsivel_class:
+        assert False, "Need to include other classes"
+    middle_points = CLASSES_DIAMETER_MIDDLE
+    ndrops = zeros(32)
+    for row in series:
+        idx = find_diameter_class(row.diameter) - 1
+        ndrops[idx] += 1
+    return (ndrops, middle_points)

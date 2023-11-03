@@ -88,7 +88,7 @@ def stereo3d_read_from_zips(
         file_name = construct_file_name(dtime, parser)
         # Checks if the given day exists in the source folder
         curr_day_file = source_folder / file_name
-        assert curr_day_file.exists(), f"Day {file_name} not found in folder."
+        # assert curr_day_file.exists(), f"Day {file_name} not found in folder."
 
         if curr_day_file.exists():
             # Unzips the day and puts all the files in the storage folder

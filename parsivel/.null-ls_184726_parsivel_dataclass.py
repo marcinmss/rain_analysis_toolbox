@@ -138,12 +138,6 @@ class ParsivelTimeSeries:
     def matrices(self) -> ndarray[ndarray, Any]:
         return array([item.matrix for item in self])
 
-    @property
-    def ndrops_in_each_class(self):
-        from parsivel.indicators import get_ndrops_in_each_diameter
-
-        return get_ndrops_in_each_diameter(self)
-
     """
     Methods for providing/calculating basic information about the series
     """

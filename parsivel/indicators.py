@@ -1,7 +1,11 @@
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from numpy import ndarray, sum as npsum
-from parsivel.matrix_classes import CLASSES_DIAMETER_MIDDLE, CLASSES_VELOCITY_MIDDLE
+from parsivel.matrix_classes import (
+    CLASSES_DIAMETER_MIDDLE,
+    CLASSES_VELOCITY_MIDDLE,
+    CLASSES_DIAMETER_BINS,
+)
 
 """
 Calculate the mean diameter and velocity
@@ -48,3 +52,13 @@ def get_kinetic_energy(series: ParsivelTimeSeries) -> float:
             )
 
     return total_kinetic_energy
+
+
+"""
+Get the drop size distribution for a parsivel series
+"""
+
+
+def get_ndrops_in_each_diameter(series: ParsivelTimeSeries):
+    ndrops = npsum(series.matrix_for_event, axis=0)
+    return (CLASSES_DIAMETER_BINS, ndrops)
