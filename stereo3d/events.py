@@ -90,7 +90,7 @@ def find_events(
                 array([item for item in series if beg <= item.timestamp < end]),
                 series.limits_area_of_study,
             )
-            if minimal_depth_per_event < new_series.total_rain_depth():
+            if minimal_depth_per_event < new_series.total_depth_for_event():
                 output.append(new_series.duration)
 
     return output

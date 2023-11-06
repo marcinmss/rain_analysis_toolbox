@@ -122,7 +122,7 @@ class Stereo3DSeries:
         return get_kinetic_energy(self) / (self.area_of_study * 1e-6)
 
     @property
-    def total_rain_depth(self) -> float:
+    def total_depth_for_event(self) -> float:
         return sum(volume_drop(item.diameter) / self.area_of_study for item in self)
 
     def cumulative_rain_depht(self, interval_seconds: int = 30) -> ndarray[float, Any]:
