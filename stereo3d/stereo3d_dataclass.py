@@ -126,7 +126,7 @@ class Stereo3DSeries:
         return sum(volume_drop(item.diameter) / self.area_of_study for item in self)
 
     def cumulative_rain_depht(self, interval_seconds: int = 30) -> ndarray[float, Any]:
-        return cumsum(self.rain_rate(interval_seconds) * interval_seconds)
+        return cumsum(self.rain_rate(interval_seconds) * interval_seconds / 3600)
 
     @property
     def ndrops_in_each_diameter_class(self):

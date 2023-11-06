@@ -118,17 +118,23 @@ class ParsivelTimeSeries:
 
     @property
     def cumulative_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum([item.rain_rate * self.resolution_seconds for item in self])
+        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+
+        return cumsum(
+            array(
+                [matrix_to_volume(tstep.matrix) / self.area_of_study for tstep in self]
+            )
+        )
 
     @property
-    def kinetic_energy_flow(self) -> float:
+    def kinetic_energy_flow_for_event(self) -> float:
         from parsivel.indicators import get_kinetic_energy
 
         return get_kinetic_energy(self) / (self.area_of_study * 1e-6)
 
     @property
     def calculated_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum(self.calculated_rate * self.resolution_seconds)
+        return cumsum(array(self.calculated_rate * self.resolution_seconds / 3600))
 
     @property
     def temperature(self) -> ndarray[ndarray, Any]:
