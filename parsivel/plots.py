@@ -78,7 +78,7 @@ def plot_rain_rate(ax: Axes, list_series: List[ParsivelTimeSeries]):
     for series in list_series:
         style = LINESTYLES[series.device]
         ax.plot(
-            series.calculated_rate,
+            series.rain_rate,
             linestyle=style.ls,
             c=style.c,
             linewidth=style.s,

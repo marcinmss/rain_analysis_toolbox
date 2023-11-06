@@ -44,6 +44,13 @@ class ParsivelTimeSeries:
     def __getitem__(self, index: int) -> ParsivelTimeStep:
         return self.series[index]
 
+    def __str__(self) -> str:
+        return (
+            "Parsivel Time series:\n"
+            f"  span: {self.duration_readable}, \n"
+            f"  # missing_time_steps: {len(self.missing_time_steps)}, \n"
+        )
+
     """
     Method for reading the data in its standard raw format
     """
@@ -75,7 +82,16 @@ class ParsivelTimeSeries:
 
     @property
     def rain_rate(self) -> ndarray[float, Any]:
-        return array([item.rain_rate for item in self])
+        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+
+        volume_series = array([matrix_to_volume(matrix) for matrix in self.matrices])
+        return volume_series / self.area_of_study / self.resolution_seconds * 3600
+
+    @property
+    def total_depth_for_event(self) -> float:
+        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+
+        return matrix_to_volume(self.matrix_for_event) / self.area_of_study
 
     @property
     def npa(self) -> ndarray[float, Any]:
@@ -83,48 +99,32 @@ class ParsivelTimeSeries:
         return array([item.ndrops for item in self]) / area_m2
 
     @property
-    def npa_event(self) -> float:
+    def npa_for_event(self) -> float:
         area_m2 = self.area_of_study * 1e-6
         return npsum(self.matrix_for_event) / area_m2
 
     @property
-    def mean_diameter(self) -> float:
+    def files_rain_rate(self) -> ndarray[float, Any]:
+        return array([item.rain_rate for item in self])
+
+    @property
+    def mean_diameter_for_event(self) -> float:
         from parsivel.indicators import get_mean_diameter
 
         return get_mean_diameter(self)
 
     @property
-    def mean_velocity(self) -> float:
+    def mean_velocity_for_event(self) -> float:
         from parsivel.indicators import get_mean_velocity
 
         return get_mean_velocity(self)
 
     @property
-    def calculated_rate(self) -> ndarray[float, Any]:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
-
-        return array(
-            [
-                matrix_to_volume(matrix) * 120 / self.area_of_study
-                for matrix in self.matrices
-            ]
-        )
-
-    @property
-    def total_depth(self) -> float:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
-
-        return matrix_to_volume(self.matrix_for_event) / self.area_of_study
-
-    @property
     def cumulative_rain_depth(self) -> ndarray[float, Any]:
         from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
 
-        return cumsum(
-            array(
-                [matrix_to_volume(tstep.matrix) / self.area_of_study for tstep in self]
-            )
-        )
+        volume_series = array([matrix_to_volume(matrix) for matrix in self.matrices])
+        return cumsum(volume_series / self.area_of_study)
 
     @property
     def kinetic_energy_flow_for_event(self) -> float:
@@ -134,7 +134,7 @@ class ParsivelTimeSeries:
 
     @property
     def calculated_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum(array(self.calculated_rate * self.resolution_seconds / 3600))
+        return cumsum(array(self.rain_rate * self.resolution_seconds / 3600))
 
     @property
     def temperature(self) -> ndarray[ndarray, Any]:
@@ -164,10 +164,10 @@ class ParsivelTimeSeries:
         return sum((item.matrix for item in self))
 
     @property
-    def duration_readable(self) -> Tuple[str, str]:
+    def duration_readable(self) -> str:
         start = tstamp_to_readable(self.duration[0])
         finish = tstamp_to_readable(self.duration[1])
-        return (start, finish)
+        return f"{start} to {finish}"
 
     """
     Extract events of the series
