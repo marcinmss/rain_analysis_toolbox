@@ -1,4 +1,4 @@
-from numpy import empty, ndarray, ones
+from numpy import empty, log2, ndarray, ones
 from numpy.random import choice
 
 """
@@ -18,6 +18,8 @@ def alpha_sym(n: int, c: float, gamma_bost: float) -> ndarray:
     deacrease_prob = 1 - boost_prob
     boost_factor = lamb1**gamma_bost
     deacrease_factor = (1 - boost_factor * boost_prob) / deacrease_prob
+    print(f"Decrease_factor = {deacrease_factor}")
+    print(f"Gamma_decrease = {log2(deacrease_factor)}")
 
     # Generate the initial array
     old_array = ones(1)
