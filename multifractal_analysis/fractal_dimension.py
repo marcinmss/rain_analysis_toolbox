@@ -1,5 +1,5 @@
 from typing import Any, Generator, Tuple
-from numpy import empty, log, log2, ndarray
+from numpy import empty, log2, ndarray
 from multifractal_analysis.regression_solution import RegressionSolution
 
 """

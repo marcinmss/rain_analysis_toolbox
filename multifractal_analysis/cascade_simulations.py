@@ -1,6 +1,14 @@
-from numpy import empty, log2, ndarray, ones
+from numpy import empty, exp, log2, ndarray, ones
 from numpy.random import choice
 
+# """
+#
+# """
+# def um_mult_factor():
+#     exp()
+# def discreat_um_sym(alpha:float, c1:float) -> ndarray:
+#     assert 0 < alpha < 2, "The value of alpha should be bettenw 0 and 2"
+#
 """
 Creates generates an array with the Alpha model
 """
