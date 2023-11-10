@@ -1,14 +1,62 @@
-from numpy import empty, exp, log2, ndarray, ones
+from numpy import cos, empty, log2, ndarray, ones, log, exp, sign, sin, pi
 from numpy.random import choice
+from scipy.stats import uniform, expon
 
-# """
-#
-# """
-# def um_mult_factor():
-#     exp()
-# def discreat_um_sym(alpha:float, c1:float) -> ndarray:
-#     assert 0 < alpha < 2, "The value of alpha should be bettenw 0 and 2"
-#
+
+"""
+Creates generates an 1D array Based on the UM model
+"""
+
+
+def um_mult_factor(c1: float, alpha: float, rand_value: float):
+    if alpha == 1:
+        return 0
+    else:
+        return exp(((c1 * log(2)) / abs(alpha - 1)) ** (1 / alpha) * rand_value) / (
+            2 ** (c1 / (alpha - 1))
+        )
+
+
+def levy(alpha: float) -> float:
+    phi = uniform.rvs(loc=-pi / 2, scale=pi)
+    W = expon.rvs()
+
+    assert alpha != 1, "Alpha can't be equal to one."
+    phi0 = (pi / 2) * (1 - abs(1 - alpha)) / alpha
+    L = (
+        sign(1 - alpha)
+        * (sin(alpha * (phi - phi0)))
+        * (((cos(phi - alpha * (phi - phi0))) / W) ** ((1 - alpha) / alpha))
+        / ((cos(phi)) ** (1 / alpha))
+    )
+    return L
+
+
+def discreat_um_sym(n: int, alpha: float, c1: float) -> ndarray:
+    assert 0 < alpha < 2, "The value of alpha should be bettenw 0 and 2"
+
+    lamb1 = 2
+    # Generate the initial array
+    old_array = ones(1)
+    new_array = empty(1, dtype=float)
+
+    # Start the iteration
+    n_items = 1
+    for i in range(n):
+        # Update the number of items and create a new array
+        n_items *= lamb1
+        new_array = empty(n_items, dtype=float)
+
+        # Fill the new array with the
+        for i in range(n_items):
+            idx = i // lamb1
+            mult_factor = um_mult_factor(c1, alpha, levy(alpha))
+            new_array[i] = old_array[idx] * mult_factor
+        old_array = new_array
+
+    return new_array
+
+
 """
 Creates generates an array with the Alpha model
 """
