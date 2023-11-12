@@ -8,7 +8,7 @@ Creates generates an 1D array Based on the UM model
 """
 
 
-def um_mult_factor(c1: float, alpha: float, rand_value: float):
+def __um_mult_factor(c1: float, alpha: float, rand_value: float):
     if alpha == 1:
         return 0
     else:
@@ -17,7 +17,7 @@ def um_mult_factor(c1: float, alpha: float, rand_value: float):
         )
 
 
-def levy(alpha: float) -> float:
+def __levy(alpha: float) -> float:
     phi = uniform.rvs(loc=-pi / 2, scale=pi)
     W = expon.rvs()
 
@@ -50,7 +50,7 @@ def discreat_um_sym(n: int, alpha: float, c1: float) -> ndarray:
         # Fill the new array with the
         for i in range(n_items):
             idx = i // lamb1
-            mult_factor = um_mult_factor(c1, alpha, levy(alpha))
+            mult_factor = __um_mult_factor(c1, alpha, __levy(alpha))
             new_array[i] = old_array[idx] * mult_factor
         old_array = new_array
 

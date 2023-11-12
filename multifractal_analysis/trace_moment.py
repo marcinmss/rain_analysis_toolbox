@@ -1,21 +1,9 @@
 from math import log2
 from typing import Tuple
 from numpy import empty, ndarray
-from multifractal_analysis.fractal_dimension import walk_scalles
+from multifractal_analysis.general import upscale
 from multifractal_analysis.regression_solution import RegressionSolution
-
-
-"""
-Function for calculating the moment of a field
-"""
-
-
-def moment(field_1d: ndarray, q: float) -> float:
-    lamb = field_1d.flatten().shape[0]
-    if lamb > 0:
-        return sum(field_1d**q) / lamb
-    else:
-        return 0
+from multifractal_analysis.general import moment
 
 
 """
@@ -28,7 +16,7 @@ def get_trace_moment_points(
 ) -> Tuple[ndarray, ndarray]:
     outer_scale = int(log2(field_1d.shape[0]))
     x, y = empty(outer_scale, dtype=float), empty(outer_scale, dtype=float)
-    for i, (lamb, scalled_array) in enumerate(walk_scalles(field_1d)):
+    for i, (lamb, scalled_array) in enumerate(upscale(field_1d)):
         x[i], y[i] = log2(lamb), log2(moment(scalled_array, q))
 
     return (x, y)
