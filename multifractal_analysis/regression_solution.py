@@ -9,9 +9,9 @@ from numpy import ndarray
 class RegressionSolution:
     angular_coef: float
     linear_coef: float
+    r_square: float
     xpoints: ndarray
     ypoints: ndarray
-    r_square: float
 
     def __init__(self, x: ndarray, y: ndarray) -> None:
         x_true = x.reshape((-1, 1))

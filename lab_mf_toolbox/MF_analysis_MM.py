@@ -1,4 +1,5 @@
 from parsivel.read_write import pars_read_from_pickle
+from multifractal_analysis.cascade_simulations import discreat_um_sym
 
 
 import math
@@ -16,7 +17,7 @@ from lab_mf_toolbox.Multifractal_tools_box_Python_HMCo_ENPC_v_0_93 import *
 from lab_mf_toolbox.Tools_data_base_use_v3 import *
 
 pars_event = pars_read_from_pickle(
-    "/home/marcio/stage_project/data/saved_events/pasivel01.obj"
+    "/home/debian-mmss/stage_project/data/saved_events/pasivel01.obj"
 )
 
 
@@ -32,8 +33,12 @@ def floor_log(num, base):
 ##loading data (change as you require)
 # R_data_all=exporting_R(start_evt,end_evt,disdro_name,path_outputs,path_daily_data_python) # The R series is also given as output of the function
 
-R_data_all = pars_event.files_rain_rate
-R_data_all = fluctuations(R_data_all, 1)
+n = 13
+alpha = 1.08
+c1 = 0.18
+R_data_all = discreat_um_sym(n, alpha, c1)
+# R_data_all = pars_event.files_rain_rate
+# R_data_all = fluctuations(R_data_all, 1)
 
 
 N_org = len(R_data_all)
