@@ -33,11 +33,11 @@ def floor_log(num, base):
 ##loading data (change as you require)
 # R_data_all=exporting_R(start_evt,end_evt,disdro_name,path_outputs,path_daily_data_python) # The R series is also given as output of the function
 
-n = 13
-alpha = 1.08
-c1 = 0.18
-R_data_all = discreat_um_sym(n, alpha, c1)
-# R_data_all = pars_event.files_rain_rate
+# n = 13
+# alpha = 1.08
+# c1 = 0.18
+# R_data_all = discreat_um_sym(n, alpha, c1)
+R_data_all = pars_event.files_rain_rate
 # R_data_all = fluctuations(R_data_all, 1)
 
 
