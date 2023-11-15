@@ -1408,7 +1408,7 @@ def spectral_analysis (data,data_file_name,k_range,dim,plot_index) :
             l_max=data.shape[0]
             if len(data.shape)==1:
                 nb_s=1
-            else :    
+            else:    
                 nb_s=data.shape[1]
         else:
             nb_s=len(data_file_name)

@@ -51,7 +51,7 @@ Function for calculating C1 or alpha using DTM analysis
 """
 
 
-def get_alpha_c1_from_dtm(field: ndarray, q: float) -> Tuple[float, float]:
+def get_um_params_dtm(field: ndarray, q: float) -> Tuple[float, float]:
     x, y = get_eta_vs_kqeta_points(field, q)
     search_area = array([i for i in range(15, x.size - 4)])
     assert len(search_area) > 5
