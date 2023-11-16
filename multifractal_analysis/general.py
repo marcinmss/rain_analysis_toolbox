@@ -1,5 +1,33 @@
-from numpy import ndarray, power, sum as npsum, mean, where, zeros
+from numpy import ndarray, power, sum as npsum, mean, log, zeros
 from typing import Any, Generator, Tuple
+
+"""
+Function for getting the fluctuations of an field
+"""
+
+
+def fluctuations(field_1d: ndarray) -> ndarray:
+    field_fluct = zeros(field_1d.shape, dtype=float)
+    field_fluct[:-1] = [
+        abs(field_1d[i + 1] - field_1d[i]) for i in range(field_1d.size - 1)
+    ]
+    field_fluct[-1] = field_fluct[-2]
+
+    return field_fluct
+
+
+"""
+Function for the theoretical value for k acording to the UM model
+"""
+
+
+def kq_theoretical(q: float, alpha: float, c1: float, h: float) -> float:
+    # The output is the values of the scaling moment function
+    if alpha == 1:
+        return c1 * q * log(q) + h * q
+    else:
+        return c1 * (q**alpha - q) / (alpha - 1) + h * q
+
 
 """
 Function to check if an array is a power of 2

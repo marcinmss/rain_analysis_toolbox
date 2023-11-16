@@ -1,8 +1,9 @@
 from typing import Tuple
 from numpy import log, ndarray, absolute, arange
 from numpy.fft import fft
-from multifractal_analysis.general import is_power_of_2
+from multifractal_analysis.general import is_power_of_2, kq_theoretical
 from multifractal_analysis.regression_solution import RegressionSolution
+from multifractal_analysis.double_trace_moment import get_um_params_dtm
 
 
 """
@@ -30,5 +31,7 @@ def get_beta_and_h(field_1d: ndarray) -> Tuple[float, float]:
     x, y = get_spectral_analysis_points(field_1d)
     regression_line = RegressionSolution(x, y)
     beta = -regression_line.angular_coef
-    # TODO: get the formula for the h coeficient
-    return (beta, beta)
+    alpha, c1 = get_um_params_dtm(field_1d, 1.5)
+    k_2 = kq_theoretical(2, alpha, c1, 0)
+    h = 0.5 * (beta - 1 + k_2)
+    return (beta, h)
