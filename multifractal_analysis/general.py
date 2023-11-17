@@ -10,12 +10,12 @@ def split_field(field_1d: ndarray, power_of_2: int, threshold: float) -> List[nd
     field_1d = pad_to_power_of_2(field_1d)
     stack = [field_1d]
     output = []
-    final_lenght = 2**power_of_2
+    final_size = 2**power_of_2
     while len(stack) > 0:
         curr_field = stack.pop()
-        if curr_field.size == final_lenght:
+        if curr_field.size == final_size:
             output.append(curr_field)
-        else:
+        elif curr_field.size > final_size:
             stack.extend(analyse(curr_field, threshold))
     return output
 
@@ -67,10 +67,18 @@ Function to check if an array is a power of 2
 """
 
 
-def slice_power_of_2(field: ndarray) -> ndarray:
+def slice_to_power_of_2(field: ndarray) -> ndarray:
     n = closest_power_of_2(field.size)
     possible_arrays = [field[i : i + n] for i in range(field.size - n)]
     return max(possible_arrays, key=npsum)
+
+
+def get_best_slice(field: ndarray, size: int) -> ndarray | None:
+    if size > field.size:
+        return None
+    else:
+        possible_arrays = [field[i : i + size] for i in range(field.size - size)]
+        return max(possible_arrays, key=npsum)
 
 
 def pad_to_power_of_2(field: ndarray) -> ndarray:

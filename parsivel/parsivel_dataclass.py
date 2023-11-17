@@ -180,6 +180,21 @@ class ParsivelTimeSeries:
 
         return extract_events(self, minimal_time_lenght_min, buffer_min, threshold)
 
+    def find_events(
+        self,
+        dry_period_min: int = 15,
+        threshold: float = 0.7,
+        tinterval_sec: float = 30,
+    ):
+        from aux_funcs.extract_events import is_event
+
+        return is_event(self.rain_rate, dry_period_min, threshold, tinterval_sec)
+
+    def colect_events(self, event_series: ndarray):
+        from parsivel.extract_events import grab_events
+
+        return grab_events(self, event_series)
+
     """
     Implementing filters to the series
     """

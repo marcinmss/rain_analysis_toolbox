@@ -17,7 +17,7 @@ def get_spectral_analysis_points(field_1d: ndarray) -> Tuple[ndarray, ndarray]:
     n = field_1d.size // 2
     buf = absolute(fft(field_1d))[0:n]
     E = buf * buf
-    k = arange(1, E.size + 1, 1)
+    k = arange(1.0001, E.size + 1.0001, 1)
     return (log(k), log(E))
 
 
