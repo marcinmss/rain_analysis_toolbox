@@ -1,5 +1,38 @@
 from numpy import ndarray, power, sum as npsum, mean, log, zeros
-from typing import Any, Generator, Tuple
+from typing import Any, Generator, Tuple, List
+
+"""
+Function for spliting a field into multiple smaller field power of 2
+"""
+
+
+def split_field(field_1d: ndarray, power_of_2: int, threshold: float) -> List[ndarray]:
+    field_1d = pad_to_power_of_2(field_1d)
+    stack = [field_1d]
+    output = []
+    final_lenght = 2**power_of_2
+    while len(stack) > 0:
+        curr_field = stack.pop()
+        if curr_field.size == final_lenght:
+            output.append(curr_field)
+        else:
+            stack.extend(analyse(curr_field, threshold))
+    return output
+
+
+def analyse(field_1d: ndarray, threshold: float) -> List[ndarray]:
+    n_2 = field_1d.size // 2
+    first_half = field_1d[:n_2]
+    second_half = field_1d[n_2:]
+    if npsum(first_half) > threshold and npsum(second_half) > threshold:
+        return [first_half, second_half]
+    else:
+        best_half = max((field_1d[i : i + n_2] for i in range(n_2)), key=npsum)
+        if npsum(best_half) > threshold:
+            return [best_half]
+        else:
+            return []
+
 
 """
 Function for getting the fluctuations of an field
@@ -40,11 +73,14 @@ def slice_power_of_2(field: ndarray) -> ndarray:
     return max(possible_arrays, key=npsum)
 
 
-def pad_power_of_2(field: ndarray) -> ndarray:
-    n = closest_power_of_2(field.size * 2)
-    output = zeros(n, dtype=float)
-    possible_arrays = [field[i : i + n] for i in range(field.size - n)]
-    return max(possible_arrays, key=npsum)
+def pad_to_power_of_2(field: ndarray) -> ndarray:
+    n = field.size
+    n2 = closest_power_of_2(field.size * 2)
+    if n == n2:
+        return field
+    output = zeros(n2, dtype=float)
+    output[n2 // 2 - n // 2 : n2 // 2 + (n - n // 2)] = field[:]
+    return output
 
 
 """
