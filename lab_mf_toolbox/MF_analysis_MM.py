@@ -17,7 +17,7 @@ from lab_mf_toolbox.Multifractal_tools_box_Python_HMCo_ENPC_v_0_93 import *
 from lab_mf_toolbox.Tools_data_base_use_v3 import *
 
 pars_event = pars_read_from_pickle(
-    "/home/debian-mmss/stage_project/data/saved_events/pasivel01.obj"
+    "/home/marcio/stage_project/data/saved_events/pasivel01.obj"
 )
 
 
