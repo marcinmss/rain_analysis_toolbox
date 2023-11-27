@@ -1,9 +1,17 @@
 from math import log2
 from typing import Tuple
-from numpy import empty, ndarray
+from numpy import empty, ndarray, mean, power
 from multifractal_analysis.general import upscale
 from multifractal_analysis.regression_solution import RegressionSolution
-from multifractal_analysis.general import moment
+
+"""
+Function for calculating the moment of a field
+"""
+
+
+def moment_tm(field: ndarray, q: float) -> float:
+    output = mean(power(field, q), dtype=float)
+    return output
 
 
 """
@@ -11,13 +19,11 @@ Function for getting the TM points
 """
 
 
-def get_trace_moment_points(
-    field_1d: ndarray, q: float = 1.0
-) -> Tuple[ndarray, ndarray]:
-    outer_scale = int(log2(field_1d.size)) + 1
+def get_trace_moment_points(field: ndarray, q: float = 1.0) -> Tuple[ndarray, ndarray]:
+    outer_scale = int(log2(field.size)) + 1
     x, y = empty(outer_scale, dtype=float), empty(outer_scale, dtype=float)
-    for i, (lamb, scalled_array) in enumerate(upscale(field_1d)):
-        x[i], y[i] = log2(lamb), log2(moment(scalled_array, q))
+    for i, (lamb, scalled_array) in enumerate(upscale(field)):
+        x[i], y[i] = log2(lamb), log2(moment_tm(scalled_array, q))
 
     return (x, y)
 

@@ -1,4 +1,4 @@
-from numpy import ndarray, power, sum as npsum, mean, log, zeros
+from numpy import empty, ndarray, sum as npsum, log, zeros
 from typing import Any, Generator, Tuple, List
 
 """
@@ -6,29 +6,41 @@ Function for spliting a field into multiple smaller field power of 2
 """
 
 
-def split_field(field_1d: ndarray, power_of_2: int, threshold: float) -> List[ndarray]:
-    field_1d = pad_to_power_of_2(field_1d)
+def split_field(
+    field_1d: ndarray, power_of_2: int, threshold: float = 0.7
+) -> ndarray | None:
+    field_1d = pad_to_power_of_2(field_1d.flatten())
     stack = [field_1d]
-    output = []
+    sections = []
     final_size = 2**power_of_2
+    if field_1d.size <= final_size:
+        return None
     while len(stack) > 0:
         curr_field = stack.pop()
         if curr_field.size == final_size:
-            output.append(curr_field)
+            sections.append(curr_field)
         elif curr_field.size > final_size:
-            stack.extend(analyse(curr_field, threshold))
+            stack.extend(_analyse(curr_field, threshold))
+
+    output = empty((final_size, len(sections)), dtype=float)
+    for idx, section in enumerate(sections):
+        output[:, idx] = section[:]
     return output
 
 
-def analyse(field_1d: ndarray, threshold: float) -> List[ndarray]:
+def _analyse(field_1d: ndarray, threshold: float) -> List[ndarray]:
     n_2 = field_1d.size // 2
     first_half = field_1d[:n_2]
     second_half = field_1d[n_2:]
-    if npsum(first_half) > threshold and npsum(second_half) > threshold:
+    upper_limit = 1e18
+    if (
+        upper_limit > npsum(first_half) > threshold
+        and upper_limit > npsum(second_half) > threshold
+    ):
         return [first_half, second_half]
     else:
         best_half = max((field_1d[i : i + n_2] for i in range(n_2)), key=npsum)
-        if npsum(best_half) > threshold:
+        if upper_limit > npsum(best_half) > threshold:
             return [best_half]
         else:
             return []
@@ -68,7 +80,7 @@ Function to check if an array is a power of 2
 
 
 def slice_to_power_of_2(field: ndarray) -> ndarray:
-    n = closest_power_of_2(field.size)
+    n = closest_smaller_power_of_2(field.size)
     possible_arrays = [field[i : i + n] for i in range(field.size - n)]
     return max(possible_arrays, key=npsum)
 
@@ -81,14 +93,35 @@ def get_best_slice(field: ndarray, size: int) -> ndarray | None:
         return max(possible_arrays, key=npsum)
 
 
-def pad_to_power_of_2(field: ndarray) -> ndarray:
-    n = field.size
-    n2 = closest_power_of_2(field.size * 2)
-    if n == n2:
-        return field
-    output = zeros(n2, dtype=float)
-    output[n2 // 2 - n // 2 : n2 // 2 + (n - n // 2)] = field[:]
+def pad_to_power_of_2(field_1d: ndarray) -> ndarray:
+    n = field_1d.size
+    if is_power_of_2(n):
+        return field_1d
+    n2 = closest_smaller_power_of_2(field_1d.size * 2)
+    output = zeros((n2,), dtype=float)
+    output[n2 // 2 - n // 2 : n2 // 2 + (n - n // 2)] = field_1d[:]
     return output
+
+
+"""
+Function to find the closset smaller power of two
+"""
+
+
+def closest_smaller_power_of_2(length_array: int) -> int:
+    n = 1
+    while 2 * n < length_array:
+        n = 2 * n
+    return n
+
+
+"""
+Function that checks if the field is 2 dimensional
+"""
+
+
+def is_2dimensional(field: ndarray) -> bool:
+    return len(field.shape) == 2
 
 
 """
@@ -106,39 +139,16 @@ def is_power_of_2(length_array: int) -> bool:
 
 
 """
-Function to find the closset smaller power of two
-"""
-
-
-def closest_power_of_2(length_array: int) -> int:
-    n = 1
-    while 2 * n < length_array:
-        n = 2 * n
-    return n
-
-
-"""
 Function to generate from a single array, others arrays at diferent scalles
 """
 
 
-def upscale(field_1d: ndarray) -> Generator[Tuple[int, ndarray], Any, Any]:
-    lamb = field_1d.shape[0]
+def upscale(field: ndarray) -> Generator[Tuple[int, ndarray], Any, Any]:
+    lamb = field.shape[0]
     assert is_power_of_2(lamb), "Array needs to be a power of 2"
 
-    averaged_field = field_1d
+    averaged_field = field
     while lamb > 0:
         yield (lamb, averaged_field)
-        averaged_field = (averaged_field[::2] + averaged_field[1::2]) / 2
+        averaged_field = (averaged_field[::2, :] + averaged_field[1::2, :]) / 2
         lamb //= 2
-
-
-"""
-Function for calculating the moment of a field
-"""
-
-
-def moment(field_1d: ndarray, q: float) -> float:
-    output = mean(power(field_1d, q))
-    assert isinstance(output, float)
-    return output

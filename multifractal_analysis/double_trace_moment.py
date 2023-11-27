@@ -1,7 +1,17 @@
 from typing import Tuple
 from numpy import array, linspace, mean, ndarray, log2, log10, empty, argmax, power
-from multifractal_analysis.general import moment, upscale
+from multifractal_analysis.general import upscale
 from multifractal_analysis.regression_solution import RegressionSolution
+
+"""
+Function for calculating the moment of a field
+"""
+
+
+def moment_dtm1(field_1d: ndarray, q: float) -> float:
+    output = mean(power(field_1d, q), dtype=float)
+    return output
+
 
 """
 Function for the moment used in DTM
@@ -9,7 +19,7 @@ Function for the moment used in DTM
 
 
 def moment_dtm2(field: ndarray, q: float) -> float:
-    return moment(field / mean(field), q)
+    return moment_dtm1(field / mean(field), q)
 
 
 """
@@ -21,7 +31,7 @@ def get_kqeta_points(field: ndarray, q: float, eta: float) -> Tuple[ndarray, nda
     outer_scale = int(log2(field.shape[0])) + 1
     x, y = empty(outer_scale, dtype=float), empty(outer_scale, dtype=float)
     for i, (lamb, scalled_array) in enumerate(upscale(power(field, eta))):
-        x[i], y[i] = log2(lamb), log2(moment(scalled_array, q))
+        x[i], y[i] = log2(lamb), log2(moment_dtm1(scalled_array, q))
 
     return (x, y)
 
