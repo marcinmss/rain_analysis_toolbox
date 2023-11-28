@@ -2,7 +2,7 @@ from typing import Tuple
 from parsivel.parsivel_dataclass import ParsivelTimeSeries, ParsivelTimeStep
 from pathlib import Path
 from zipfile import ZipFile
-from numpy import array, ndarray
+from numpy import array, ndarray, sum as npsum, all as npall
 from aux_funcs.aux_datetime import (
     standard_to_dtime,
     dt_to_tstamp,
@@ -101,19 +101,23 @@ def pars_read_from_zips(
                 curr_file_path
             )
 
-            # Append it to the time series
-            time_series.append(
-                ParsivelTimeStep(
-                    dt_to_tstamp(dtime),
-                    precipitation_rate,
-                    temperature,
-                    distribution_matrix,
-                )
+            # Filter for corrupted files
+            assert not (distribution_matrix < 0).any()
+            new_tstep = ParsivelTimeStep(
+                dt_to_tstamp(dtime),
+                precipitation_rate,
+                temperature,
+                distribution_matrix,
             )
+            if (new_tstep.matrix >= 0).all() and new_tstep.volume_mm3 < 4500:
+                time_series.append(new_tstep)
+            else:
+                missing_time_steps.append(dt_to_tstamp(dtime))
+                time_series.append(ParsivelTimeStep.empty(dt_to_tstamp(dtime)))
+
         except Exception:
             missing_time_steps.append(dt_to_tstamp(dtime))
             time_series.append(ParsivelTimeStep.empty(dt_to_tstamp(dtime)))
-            continue
 
     # Clears the temporary folder and deletes its
     for f in temporary_storage_folder.iterdir():

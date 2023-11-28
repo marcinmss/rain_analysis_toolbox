@@ -13,7 +13,7 @@ def split_field(
     stack = [field_1d]
     sections = []
     final_size = 2**power_of_2
-    if field_1d.size <= final_size:
+    if field_1d.shape[0] <= final_size:
         return None
     while len(stack) > 0:
         curr_field = stack.pop()

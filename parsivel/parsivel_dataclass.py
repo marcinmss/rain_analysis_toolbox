@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, NamedTuple, Tuple
 from pathlib import Path
-from numpy import array, cumsum, empty, nan, ndarray, zeros, sum as npsum
+from numpy import array, cumsum, empty, nan, ndarray, zeros, sum as npsum, abs as npabs
 from aux_funcs.aux_datetime import tstamp_to_readable
 
 """
@@ -18,11 +18,17 @@ class ParsivelTimeStep(NamedTuple):
 
     @property
     def ndrops(self) -> float:
-        return npsum(self.matrix)
+        return npsum(npabs(self.matrix), dtype=float)
+
+    @property
+    def volume_mm3(self) -> float:
+        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+
+        return matrix_to_volume(self.matrix)
 
     @classmethod
     def empty(cls, timestamp: int):
-        return ParsivelTimeStep(timestamp, nan, nan, empty((32, 32), dtype=int))
+        return ParsivelTimeStep(timestamp, nan, nan, zeros((32, 32), dtype=int))
 
     @classmethod
     def zero_like(cls, timestamp: int):

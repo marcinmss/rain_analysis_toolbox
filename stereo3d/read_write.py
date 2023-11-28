@@ -51,9 +51,10 @@ def read_file(file_path: str | Path) -> Generator[Stereo3DRow, Any, Any]:
             velocity = float(row[5])
             distance = float(row[6])
             shape = float(row[7])
-            yield Stereo3DRow(
-                time_stamp, timestamp_ms, diameter, velocity, distance, shape
-            )
+            if diameter < 25:
+                yield Stereo3DRow(
+                    time_stamp, timestamp_ms, diameter, velocity, distance, shape
+                )
 
 
 """
