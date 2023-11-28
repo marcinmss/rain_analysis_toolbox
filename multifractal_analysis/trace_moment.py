@@ -7,7 +7,7 @@ from multifractal_analysis.general import is_power_of_2, upscale
 from multifractal_analysis.regression_solution import RegressionSolution
 from collections import namedtuple
 
-CMAP = colormaps["Set3"]
+CMAP = colormaps["Set1"]
 
 """
 Function for calculating the moment of a field
@@ -53,11 +53,12 @@ def get_um_params_tm(field_1d: ndarray):
 
 
 """
+Function for running the whole TM analysis including plotting the graph
 """
 TMAnalysis = namedtuple("TMAnalysis", ["alpha", "c1"])
 
 
-def tm_analysis(field: ndarray, ax: Axes | None) -> TMAnalysis:
+def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
     assert is_power_of_2(field.shape[0]), "The field needs to be a power of 2"
 
     if ax is not None:
@@ -73,10 +74,10 @@ def tm_analysis(field: ndarray, ax: Axes | None) -> TMAnalysis:
 
             # Plot the points of each analysis
             legend = ", ".join(
-                (r"$q=$%.1f" % (q,), r"$r^2=$%.1f" % (regression_solution.r_square,))
+                (r"$q=$%.2f" % (q,), r"$r^2=$%.2f" % (regression_solution.r_square,))
             )
             color = CMAP(q / 2.5)
-            ax.scatter(x, y, color=color, label=legend)
+            ax.scatter(x, y, color=color, label=legend, edgecolors="k")
             ax.legend(prop={"size": 6}, framealpha=0.0)
 
             # Plot the tendency line for each analysis

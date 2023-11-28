@@ -72,7 +72,7 @@ def spectral_analysis(field: ndarray, ax: Axes | None = None) -> SpectralAnalysi
 
         # Plot the text with the results
         textstr = ", ".join(
-            (r"$\beta=$%.1f" % (beta,), r"$h=$%.1f" % (h,), r"$r^2=%.2f$" % (rsquare,))
+            (r"$\beta=$%.2f" % (beta,), r"$h=$%.2f" % (h,), r"$r^2=%.2f$" % (rsquare,))
         )
 
         props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
