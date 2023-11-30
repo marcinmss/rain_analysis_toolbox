@@ -75,10 +75,10 @@ def spectral_analysis(field: ndarray, ax: Axes | None = None) -> SpectralAnalysi
             (r"$\beta=$%.2f" % (beta,), r"$h=$%.2f" % (h,), r"$r^2=%.2f$" % (rsquare,))
         )
 
-        props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
+        props = dict(boxstyle="round", facecolor="wheat", alpha=0.0)
 
         ax.text(
-            0.60,
+            0.55,
             0.95,
             textstr,
             transform=ax.transAxes,

@@ -12,7 +12,7 @@ Function to do the box counting
 
 
 def count_boxes(data: ndarray) -> int:
-    return sum(1 for item in data if item)
+    return sum(1 for item in data.flatten() if item)
 
 
 """
@@ -27,9 +27,9 @@ def get_fractal_dimension_points(
     x, y = empty(outer_scale, dtype=float), empty(outer_scale, dtype=float)
 
     for i, (lamb, scalled_array) in enumerate(upscale(field_1d)):
-        threshold = lamb**gamma
+        threshold = 0
         boxcount = count_boxes(scalled_array > threshold)
-        x[i], y[i] = log2(lamb), log2(boxcount)
+        x[i], y[i] = log2(lamb), log2(boxcount) if boxcount > 0 else 0
 
     return (x, y)
 
@@ -51,7 +51,7 @@ def fractal_dimension_analysis(field: ndarray, ax: Axes | None = None):
     assert is_power_of_2(field.shape[0]), "The field needs to be a power of 2"
 
     # Get the points for the analysis
-    x, y = get_fractal_dimension_points(field, 0.0001)
+    x, y = get_fractal_dimension_points(field, 0.0)
     regression_line = RegressionSolution(x, y)
     df = regression_line.angular_coef
 

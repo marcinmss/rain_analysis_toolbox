@@ -1,5 +1,5 @@
 from typing import Tuple
-from numpy import array, linspace, mean, ndarray, log2, log10, empty, argmax, power
+from numpy import array, linspace, log2, mean, ndarray, log, log10, empty, argmax, power
 from multifractal_analysis.general import is_power_of_2, upscale
 from multifractal_analysis.regression_solution import RegressionSolution
 from matplotlib.axes import Axes
@@ -36,7 +36,7 @@ def get_kqeta_points(field: ndarray, q: float, eta: float) -> Tuple[ndarray, nda
     outer_scale = int(log2(field.shape[0])) + 1
     x, y = empty(outer_scale, dtype=float), empty(outer_scale, dtype=float)
     for i, (lamb, scalled_array) in enumerate(upscale(power(field, eta))):
-        x[i], y[i] = log2(lamb), log2(moment_dtm1(scalled_array, q))
+        x[i], y[i] = log(lamb), log(moment_dtm1(scalled_array, q))
 
     return (x, y)
 
@@ -136,8 +136,8 @@ def dtm_analysis(
     if ax2 is not None:
         # Set the axis apperence
         ax2.set_title("DTM Analysis ($q = 1.5$)")
-        ax2.set_ylabel(r"$\log _{2} (DTM_\lambda)$")
-        ax2.set_xlabel(r"$\log _{2} (\lambda)$")
+        ax2.set_ylabel(r"$\log (DTM_\lambda)$")
+        ax2.set_xlabel(r"$\log (\lambda)$")
 
         for eta in (0.81, 1.23, 1.81, 2.84):
             # Get the point for each eta and get the tendency line
@@ -150,7 +150,9 @@ def dtm_analysis(
             ax2.plot((xmin, xmax), (a * xmin + b, a * xmax + b), c="black")
 
             # Plot the points of each analysis
-            text = ", ".join((r"$\eta=$%.2f" % (eta,), r"$r^2=$%.2f" % (alpha,)))
+            text = ", ".join(
+                (r"$\eta=$%.2f" % (eta,), r"$r^2=$%.2f" % (regression_line.r_square,))
+            )
             color = CMAP(eta / 2.8)
             ax2.scatter(x, y, color=color, label=text, edgecolors="black")
             ax2.legend(prop={"size": 6}, framealpha=0.0)

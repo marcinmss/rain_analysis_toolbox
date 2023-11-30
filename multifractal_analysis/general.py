@@ -2,6 +2,16 @@ from numpy import empty, ndarray, sum as npsum, log, zeros
 from typing import Any, Generator, Tuple, List
 
 """
+Function for generating an ensemble matrix from 1d data
+"""
+
+
+def make_ensemble(field_1d: ndarray, power_of_2: int) -> ndarray:
+    field_1d = slice_to_clossest_smaller_power_of_2(field_1d)
+    pass
+
+
+"""
 Function for spliting a field into multiple smaller field power of 2
 """
 
@@ -51,7 +61,17 @@ Function for getting the fluctuations of an field
 """
 
 
-def fluctuations(field_1d: ndarray) -> ndarray:
+def fluctuations(field: ndarray) -> ndarray:
+    if len(field.shape) == 1:
+        return fluctuations_1d(field)
+    else:
+        output = zeros(field.shape, dtype=float)
+        for i in range(output.shape[1]):
+            output[:, i] = fluctuations_1d(field[:, i])
+        return output
+
+
+def fluctuations_1d(field_1d: ndarray) -> ndarray:
     field_fluct = zeros(field_1d.shape, dtype=float)
     field_fluct[:-1] = [
         abs(field_1d[i + 1] - field_1d[i]) for i in range(field_1d.size - 1)
@@ -79,13 +99,13 @@ Function to check if an array is a power of 2
 """
 
 
-def slice_to_power_of_2(field: ndarray) -> ndarray:
-    n = closest_smaller_power_of_2(field.size)
-    possible_arrays = [field[i : i + n] for i in range(field.size - n)]
+def slice_to_clossest_smaller_power_of_2(field_1d: ndarray) -> ndarray:
+    n = closest_smaller_power_of_2(field_1d.size)
+    possible_arrays = [field_1d[i : i + n] for i in range(field_1d.size - n)]
     return max(possible_arrays, key=npsum)
 
 
-def get_best_slice(field: ndarray, size: int) -> ndarray | None:
+def slice_to_power_of_2(field: ndarray, size: int) -> ndarray | None:
     if size > field.size:
         return None
     else:

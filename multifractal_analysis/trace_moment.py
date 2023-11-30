@@ -1,4 +1,4 @@
-from math import log2
+from math import log, log2
 from matplotlib import colormaps
 from typing import Tuple
 from numpy import empty, ndarray, mean, power
@@ -15,8 +15,8 @@ Function for calculating the moment of a field
 
 
 def moment_tm(field: ndarray, q: float) -> float:
-    output = mean(power(field, q), dtype=float)
-    return output
+    output = mean(power(field, q), dtype=float, axis=0)
+    return mean(output)
 
 
 """
@@ -28,7 +28,7 @@ def get_trace_moment_points(field: ndarray, q: float = 1.0) -> Tuple[ndarray, nd
     outer_scale = int(log2(field.size)) + 1
     x, y = empty(outer_scale, dtype=float), empty(outer_scale, dtype=float)
     for i, (lamb, scalled_array) in enumerate(upscale(field)):
-        x[i], y[i] = log2(lamb), log2(moment_tm(scalled_array, q))
+        x[i], y[i] = log(lamb), log(moment_tm(scalled_array, q))
 
     return (x, y)
 
@@ -63,27 +63,36 @@ def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
 
     if ax is not None:
         for q in reversed((0.1, 0.5, 0.8, 1.01, 1.5, 2.0, 2.5)):
-            # Get the points and do the regression on them
-            x, y = get_trace_moment_points(field, q=q)
-            regression_solution = RegressionSolution(x, y)
+            try:
+                # Get the points and do the regression on them
+                x, y = get_trace_moment_points(field, q=q)
+                regression_solution = RegressionSolution(x, y)
 
-            # Set the axis apperence
-            ax.set_title("TM Analysis")
-            ax.set_ylabel(r"$\log _2 (TM_\lambda)$")
-            ax.set_xlabel(r"$\log _2 (\lambda)$")
+                # Set the axis apperence
+                ax.set_title("TM Analysis")
+                ax.set_ylabel(r"$\log (TM_\lambda)$")
+                ax.set_xlabel(r"$\log (\lambda)$")
+                color = CMAP(q / 2.5)
 
-            # Plot the points of each analysis
-            legend = ", ".join(
-                (r"$q=$%.2f" % (q,), r"$r^2=$%.2f" % (regression_solution.r_square,))
-            )
-            color = CMAP(q / 2.5)
-            ax.scatter(x, y, color=color, label=legend, edgecolors="k")
-            ax.legend(prop={"size": 6}, framealpha=0.0)
+                # Plot the tendency line for each analysis
+                a, b = regression_solution.angular_coef, regression_solution.linear_coef
+                leftx, rightx = min(x), max(x)
+                ax.plot((leftx, rightx), (a * leftx + b, a * rightx + b), c=color)
 
-            # Plot the tendency line for each analysis
-            a, b = regression_solution.angular_coef, regression_solution.linear_coef
-            leftx, rightx = min(x), max(x)
-            ax.plot((leftx, rightx), (a * leftx + b, a * rightx + b), c=color)
+                # Plot the points of each analysis
+                legend = ", ".join(
+                    (
+                        r"$q=%.2f$" % (q,),
+                        r"$r^2=%.2f$" % (regression_solution.r_square,),
+                    )
+                )
+                ax.scatter(x, y, color=color, label=legend, edgecolors="k")
+                ax.legend(prop={"size": 6}, framealpha=0.0, loc="upper left")
+                yb1, yb2 = ax.get_ybound()
+                ax.set_ybound(yb1, (yb2 - yb1) * 1.4 + yb1)
+
+            except:
+                print(f"{q:.1f} failled")
 
     alpha, c1 = get_um_params_tm(field)
     return TMAnalysis(alpha, c1)
