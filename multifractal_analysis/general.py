@@ -6,9 +6,9 @@ Function for generating an ensemble matrix from 1d data
 """
 
 
-def make_ensemble(field_1d: ndarray, power_of_2: int) -> ndarray:
-    field_1d = slice_to_clossest_smaller_power_of_2(field_1d)
-    pass
+# def make_ensemble(field_1d: ndarray, power_of_2: int) -> ndarray:
+#     field_1d = slice_to_clossest_smaller_power_of_2(field_1d)
+#     pass
 
 
 """

@@ -14,8 +14,8 @@ class RegressionSolution:
     ypoints: ndarray
 
     def __init__(self, x: ndarray, y: ndarray) -> None:
-        x_true = x.reshape((-1, 1))
-        y_true = y.reshape((-1, 1))
+        x_true = x.copy().reshape((-1, 1))
+        y_true = y.copy().reshape((-1, 1))
         model = LinearRegression()
         model.fit(x_true, y_true)
         self.angular_coef = model.coef_.flatten()[0]
