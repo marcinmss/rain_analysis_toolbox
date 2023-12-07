@@ -15,8 +15,7 @@ Function for calculating the moment of a field
 
 
 def moment_tm(field: ndarray, q: float) -> float:
-    output = mean(power(field, q), dtype=float)
-    return output
+    return mean(power(field, q), dtype=float)
 
 
 """
@@ -63,10 +62,8 @@ def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
 
     if ax is not None:
         for q in reversed((0.1, 0.5, 0.8, 1.01, 1.5, 2.0, 2.5)):
-            field_copy = copy(field)
             # Get the points and do the regression on them
-            x, y = get_trace_moment_points(field_copy, q=q)
-            x, y = x.flatten(), y.flatten()
+            x, y = get_trace_moment_points(field, q=q)
 
             # Set the axis apperence
             ax.set_title("TM Analysis")

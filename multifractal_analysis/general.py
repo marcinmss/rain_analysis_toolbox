@@ -1,4 +1,4 @@
-from numpy import empty, ndarray, sum as npsum, log, zeros
+from numpy import empty, nan_to_num, nanmean, ndarray, sum as npsum, log, zeros
 from typing import Any, Generator, Tuple, List
 
 """
@@ -95,6 +95,41 @@ def kq_theoretical(q: float, alpha: float, c1: float, h: float) -> float:
 
 
 """
+
+"""
+
+
+def prep_data(field_1d: ndarray, size: int | None = None) -> ndarray:
+    output = nan_to_num(field_1d.flatten())
+    if size is None:
+        output = slice_to_clossest_smaller_power_of_2(output)
+    else:
+        output = slice_to_power_of_2(field_1d, size)
+
+    return output.reshape((-1, 1)) / nanmean(output)
+
+
+def prep_data_ensemble(field_1d: ndarray, size: int) -> ndarray:
+    reshaped_field = slice_to_clossest_smaller_power_of_2(field_1d).reshape((size, -1))
+    reshaped_field = nan_to_num(reshaped_field)
+    output = reshaped_field / nanmean(reshaped_field)
+    return output
+
+
+"""
+Function to pack an array that is power of 2 in an ensemble format
+"""
+
+
+def pack_ensemble(field_1d: ndarray, size: int | None) -> ndarray:
+    assert is_power_of_2(field_1d.size), "Field's size needs to be power of 2."
+    if size is None:
+        return field_1d.reshape((-1, 1))
+    else:
+        return field_1d.reshape((size, -1))
+
+
+"""
 Function to check if an array is a power of 2
 """
 
@@ -105,12 +140,13 @@ def slice_to_clossest_smaller_power_of_2(field_1d: ndarray) -> ndarray:
     return max(possible_arrays, key=npsum)
 
 
-def slice_to_power_of_2(field: ndarray, size: int) -> ndarray | None:
-    if size > field.size:
-        return None
-    else:
-        possible_arrays = [field[i : i + size] for i in range(field.size - size)]
-        return max(possible_arrays, key=npsum)
+def slice_to_power_of_2(field: ndarray, size: int) -> ndarray:
+    assert (
+        size > field.size
+    ), "Size need to be smaller than the one of the original array"
+
+    possible_arrays = [field[i : i + size] for i in range(field.size - size)]
+    return max(possible_arrays, key=npsum)
 
 
 def pad_to_power_of_2(field_1d: ndarray) -> ndarray:
@@ -167,7 +203,7 @@ def upscale(field: ndarray) -> Generator[Tuple[int, ndarray], Any, Any]:
     lamb = field.shape[0]
     assert is_power_of_2(lamb), "Array needs to be a power of 2"
 
-    averaged_field = field
+    averaged_field = field.copy()
     while lamb > 0:
         yield (lamb, averaged_field)
         averaged_field = (averaged_field[::2, :] + averaged_field[1::2, :]) / 2
