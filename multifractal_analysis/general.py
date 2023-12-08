@@ -9,7 +9,7 @@ Function to find the closet smaller power of two
 
 def closest_smaller_power_of_2(number: int) -> int:
     n = 1
-    while 2 * n < number:
+    while 2 * n <= number:
         n = 2 * n
     return n
 
@@ -20,7 +20,10 @@ Function to check if an array is a power of 2
 
 
 def is_power_of_2(number: int) -> bool:
-    return closest_smaller_power_of_2(number) == number
+    if number == 0:
+        return True
+    else:
+        return closest_smaller_power_of_2(number) == number
 
 
 """

@@ -54,7 +54,7 @@ def get_um_params_tm(field_1d: ndarray):
 """
 Function for running the whole TM analysis including plotting the graph
 """
-TMAnalysis = namedtuple("TMAnalysis", ["alpha", "c1"])
+TMAnalysis = namedtuple("TMAnalysis", ["alpha", "c1", "r_square"])
 
 
 def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
@@ -89,5 +89,8 @@ def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
             yb1, yb2 = ax.get_ybound()
             ax.set_ybound(yb1, (yb2 - yb1) * 1.4 + yb1)
 
+    x, y = get_trace_moment_points(field, q=1.5)
+    r_square = RegressionSolution(x, y).r_square
+
     alpha, c1 = get_um_params_tm(field)
-    return TMAnalysis(alpha, c1)
+    return TMAnalysis(alpha, c1, r_square)
