@@ -1,7 +1,7 @@
 from math import log, log2
 from matplotlib import colormaps
 from typing import Tuple
-from numpy import ndarray, mean, power, zeros, copy
+from numpy import fromiter, linspace, ndarray, mean, power, zeros, copy
 from matplotlib.axes import Axes
 from multifractal_analysis.general import is_power_of_2, upscale
 from multifractal_analysis.regression_solution import RegressionSolution
@@ -94,3 +94,19 @@ def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
 
     alpha, c1 = get_um_params_tm(field)
     return TMAnalysis(alpha, c1, r_square)
+
+
+"""
+Function for plotting the empirical k_of_q
+"""
+
+
+def empirical_k_of_q(field: ndarray, ax: Axes | None = None):
+    if ax is not None:
+        # Set the axis apperence
+        ax.set_title("Empirical $K(q)$")
+        ax.set_ylabel(r"$K(q)$")
+        ax.set_xlabel(r"$q$")
+        x = linspace(0.1, 3.0, 15)
+        y = fromiter((k_of_q(field, q) for q in x), dtype=float)
+        ax.plot(x, y, "k")
