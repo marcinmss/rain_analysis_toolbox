@@ -1,8 +1,20 @@
 from dataclasses import dataclass
 from typing import Any, List, Literal, NamedTuple, Tuple
 from pathlib import Path
-from numpy import array, cumsum, empty, nan, ndarray, zeros, sum as npsum, abs as npabs
+from numpy import (
+    array,
+    cumsum,
+    fromiter,
+    nan,
+    ndarray,
+    zeros,
+    sum as npsum,
+    abs as npabs,
+)
 from aux_funcs.aux_datetime import tstamp_to_readable
+from matplotlib.axes import Axes
+
+from plots.styles import BASEPARSIVELSTYLE
 
 """
 The dataclass for extracting information from a parsivle file
@@ -209,3 +221,12 @@ class ParsivelTimeSeries:
         from parsivel.filters import resolution_filter
 
         return resolution_filter(self)
+
+    """
+    Methods for plotting the parsivel data
+    """
+
+    def plot_rain_rate(self, ax: Axes, style: dict = BASEPARSIVELSTYLE):
+        from parsivel.plots import plot_rain_rate
+
+        plot_rain_rate(self, ax, style)
