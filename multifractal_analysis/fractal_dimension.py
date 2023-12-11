@@ -42,12 +42,12 @@ def get_fractal_dimension(field_1d: ndarray, gamma: float) -> RegressionSolution
 """
 Function for doing the fractal dimension analysis
 """
-FractalDimensionAnalysis = namedtuple(
-    "FractalDimensionAnalysis", ["df", "rsquare", "points"]
-)
+FractalDimensionAnalysis = namedtuple("FractalDimensionAnalysis", ["df"])
 
 
-def fractal_dimension_analysis(field: ndarray, ax: Axes | None = None):
+def fractal_dimension_analysis(
+    field: ndarray, ax: Axes | None = None
+) -> FractalDimensionAnalysis:
     assert is_power_of_2(field.shape[0]), "The field needs to be a power of 2"
 
     # Get the points for the analysis
@@ -73,3 +73,5 @@ def fractal_dimension_analysis(field: ndarray, ax: Axes | None = None):
 
         # Plot the points of each analysis
         ax.scatter(x, y, marker="x")
+
+    return FractalDimensionAnalysis(df)

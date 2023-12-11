@@ -4,7 +4,7 @@ from pathlib import Path
 from numpy import (
     array,
     cumsum,
-    fromiter,
+    mean,
     nan,
     ndarray,
     zeros,
@@ -104,6 +104,15 @@ class ParsivelTimeSeries:
 
         volume_series = array([matrix_to_volume(matrix) for matrix in self.matrices])
         return volume_series / self.area_of_study / self.resolution_seconds * 3600
+
+    @property
+    def avg_rain_rate(self) -> float:
+        return mean(self.rain_rate, dtype=float)
+
+    @property
+    def percentage_zeros(self) -> float:
+        n_zeros = sum(1 for is_rain in self.rain_rate if is_rain == 0)
+        return n_zeros / len(self)
 
     @property
     def total_depth_for_event(self) -> float:

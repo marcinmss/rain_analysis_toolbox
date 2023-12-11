@@ -1,9 +1,7 @@
 from math import ceil
 from matplotlib.axes import Axes
-from numpy import floor, fromiter
+from numpy import concatenate, floor, fromiter, linspace
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
-from collections import namedtuple
-from aux_funcs.aux_datetime import dt_to_tstamp, tstamp_to_dt
 
 from plots.styles import BASEPARSIVELSTYLE
 
@@ -11,10 +9,24 @@ from plots.styles import BASEPARSIVELSTYLE
 def plot_rain_rate(
     series: ParsivelTimeSeries, ax: Axes, style: dict = BASEPARSIVELSTYLE
 ):
-    x = series.rain_rate
-    y = fromiter((tstep.timestamp for tstep in series), dtype=float)
-    ax.plot(y, x, **style)
-    set_ticks_and_labels_xaxis(ax, series.resolution_seconds)
+    # Set the axis apperence
+    ax.set_title("Rain Rate")
+    ax.set_ylabel(r"$mm.h^{-1}$")
+    ax.set_xlabel(r"$min$")
+
+    # Plot the data
+    y = series.rain_rate
+    x = fromiter((tstep.timestamp for tstep in series), dtype=float)
+    ax.plot(x, y, **style)
+
+    # Set the ticks for the x axis
+    n_ticks = 7
+    ticks = linspace(series.duration[0], series.duration[1], n_ticks).tolist()
+    ax.set_xticks(ticks)
+    ticks_labels = [
+        f"{int((t - series.duration[0]) * 2//series.resolution_seconds)}" for t in ticks
+    ]
+    ax.set_xticklabels(ticks_labels)
 
 
 def set_ticks_and_labels_xaxis(ax: Axes, dx_seconds: float = 30):

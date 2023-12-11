@@ -1,7 +1,7 @@
 from math import log, log2
 from matplotlib import colormaps
 from typing import Tuple
-from numpy import fromiter, linspace, ndarray, mean, power, zeros, copy
+from numpy import fromiter, linspace, ndarray, mean, power, zeros
 from matplotlib.axes import Axes
 from multifractal_analysis.general import is_power_of_2, upscale
 from multifractal_analysis.regression_solution import RegressionSolution
