@@ -1,9 +1,13 @@
 from dataclasses import dataclass
 from typing import Any, List, Tuple
+
+from matplotlib.axes import Axes
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 from numpy import array, cumsum, fromiter, mean, ndarray
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from pathlib import Path
+
+from plots.styles import BASESTEREOSTYLE
 
 """
 DataClass for the 3dstereo device
@@ -64,33 +68,13 @@ class Stereo3DSeries:
         return fromiter((item.velocity for item in self), float)
 
     """
-    Method for reading the data in its standard raw format
-    """
-
-    @classmethod
-    def read_raw(cls, beggining: int, end: int, source_folder: str | Path):
-        from stereo3d.read_write import stereo3d_read_from_zips
-
-        return stereo3d_read_from_zips(beggining, end, source_folder)
-
-    """
     Method for reading/writing the data in the pickle format
     """
-
-    @classmethod
-    def load_pickle(cls, source_folder: str | Path):
-        from stereo3d.read_write import stereo_read_from_pickle
-
-        return stereo_read_from_pickle(source_folder)
 
     def to_pickle(self, file_path: str | Path):
         from stereo3d.read_write import write_to_picle
 
         return write_to_picle(file_path, self)
-
-    """
-    Compute the rain rate in a time series
-    """
 
     def rain_rate(self, interval_seconds: int = 30) -> ndarray[float, Any]:
         from stereo3d.indicators import rain_rate
@@ -108,11 +92,11 @@ class Stereo3DSeries:
         return len(self) / (self.area_of_study * 1e-6)
 
     @property
-    def mean_diameter(self):
+    def mean_diameter_for_event(self):
         return mean(self.diameters)
 
     @property
-    def mean_velocity(self):
+    def mean_velocity_for_event(self):
         return mean(self.velocity)
 
     @property
@@ -133,6 +117,24 @@ class Stereo3DSeries:
         from stereo3d.indicators import get_ndrops_in_diameter_classes
 
         return get_ndrops_in_diameter_classes(self)
+
+    @property
+    def avg_rain_rate(self) -> float:
+        return mean(self.rain_rate(), dtype=float)
+
+    @property
+    def percentage_zeros(self) -> float:
+        n_zeros = sum(1 for is_rain in self.rain_rate() if is_rain == 0)
+        return n_zeros / len(self)
+
+    """
+    Plot basic plot for indicators
+    """
+
+    def plot_rain_rate(self, ax: Axes, style: dict = BASESTEREOSTYLE):
+        from stereo3d.plots import plot_rain_rate
+
+        plot_rain_rate(self, ax, style)
 
     """
     Divides the distance from the sensor into ranges and counts the rain detph for 

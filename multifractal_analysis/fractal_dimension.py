@@ -20,9 +20,7 @@ Get the fractal dimension
 """
 
 
-def get_fractal_dimension_points(
-    field_1d: ndarray, gamma: float
-) -> Tuple[ndarray, ndarray]:
+def get_fractal_dimension_points(field_1d: ndarray) -> Tuple[ndarray, ndarray]:
     outer_scale = int(log2(field_1d.shape[0])) + 1
     x, y = empty(outer_scale, dtype=float), empty(outer_scale, dtype=float)
 
@@ -34,8 +32,8 @@ def get_fractal_dimension_points(
     return (x, y)
 
 
-def get_fractal_dimension(field_1d: ndarray, gamma: float) -> RegressionSolution:
-    x, y = get_fractal_dimension_points(field_1d, gamma)
+def get_fractal_dimension(field_1d: ndarray) -> RegressionSolution:
+    x, y = get_fractal_dimension_points(field_1d)
     return RegressionSolution(x, y)
 
 
@@ -51,7 +49,7 @@ def fractal_dimension_analysis(
     assert is_power_of_2(field.shape[0]), "The field needs to be a power of 2"
 
     # Get the points for the analysis
-    x, y = get_fractal_dimension_points(field, 0.0)
+    x, y = get_fractal_dimension_points(field)
     regression_line = RegressionSolution(x, y)
     df = regression_line.angular_coef
 
