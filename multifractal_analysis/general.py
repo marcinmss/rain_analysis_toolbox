@@ -1,5 +1,25 @@
-from numpy import ndarray, log
+from numpy import ndarray, log, log2, floor
 from typing import Any, Generator, Tuple
+
+"""
+Is power of 2
+"""
+POWERS_RECORDED = set([1])
+MAXIMUM_NUMBER_CHECKED = 1
+
+
+def is_power_of_2(number: int) -> bool:
+    global MAXIMUM_NUMBER_CHECKED, POWERS_RECORDED
+
+    # If is in POWERS_RECORDED return true
+    if number in POWERS_RECORDED:
+        return True
+    elif number < MAXIMUM_NUMBER_CHECKED:
+        return False
+    else:
+        MAXIMUM_NUMBER_CHECKED *= 2
+        POWERS_RECORDED.add(MAXIMUM_NUMBER_CHECKED)
+        return is_power_of_2(number)
 
 
 """
@@ -8,22 +28,7 @@ Function to find the closet smaller power of two
 
 
 def closest_smaller_power_of_2(number: int) -> int:
-    n = 1
-    while 2 * n <= number:
-        n = 2 * n
-    return n
-
-
-"""
-Function to check if an array is a power of 2
-"""
-
-
-def is_power_of_2(number: int) -> bool:
-    if number == 0:
-        return True
-    else:
-        return closest_smaller_power_of_2(number) == number
+    return 2 ** int(floor(log2(number)))
 
 
 """

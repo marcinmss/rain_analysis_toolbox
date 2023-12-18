@@ -9,8 +9,13 @@ Function to check if an array is a power of 2
 
 def slice_to_clossest_smaller_power_of_2(field_1d: ndarray) -> ndarray:
     n = closest_smaller_power_of_2(field_1d.size)
-    possible_arrays = [field_1d[i : i + n] for i in range(field_1d.size - n)]
-    return max(possible_arrays, key=npsum)
+    return field_1d[0:n]
+
+
+# def slice_to_clossest_smaller_power_of_2(field_1d: ndarray) -> ndarray:
+#     n = closest_smaller_power_of_2(field_1d.size)
+#     possible_arrays = [field_1d[i : i + n] for i in range(field_1d.size - n)]
+#     return max(possible_arrays, key=npsum)
 
 
 def slice_to_power_of_2(field: ndarray, size: int) -> ndarray:
