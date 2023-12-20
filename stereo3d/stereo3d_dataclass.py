@@ -76,7 +76,7 @@ class Stereo3DSeries:
 
         return write_to_picle(file_path, self)
 
-    def rain_rate(self, interval_seconds: int = 30) -> ndarray[float, Any]:
+    def rain_rate(self, interval_seconds: float = 30) -> ndarray[float, Any]:
         from stereo3d.indicators import rain_rate
 
         return rain_rate(self, interval_seconds)

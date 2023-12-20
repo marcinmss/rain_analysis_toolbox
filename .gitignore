@@ -5,3 +5,7 @@
 # Ignore plots and saved data
 *.png
 *.npy
+*.csv
+*.npy
+*.obj
+*.ipynb
