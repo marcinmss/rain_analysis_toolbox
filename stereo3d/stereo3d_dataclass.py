@@ -81,6 +81,11 @@ class Stereo3DSeries:
 
         return rain_rate(self, interval_seconds)
 
+    def time_series(self, interval_seconds: float = 30) -> ndarray[float, Any]:
+        from stereo3d.indicators import time_series
+
+        return time_series(self, interval_seconds)
+
     @property
     def npa(self, interval_seconds: int = 30) -> ndarray[float, Any]:
         from stereo3d.indicators import get_npa

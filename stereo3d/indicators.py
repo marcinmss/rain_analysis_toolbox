@@ -1,5 +1,5 @@
 from typing import Tuple, Any
-from numpy import array, linspace, ndarray, zeros, ceil, floor
+from numpy import arange, array, linspace, ndarray, zeros, ceil, floor
 from parsivel.matrix_classes import CLASSES_DIAMETER_BINS, CLASSES_DIAMETER_MIDDLE
 from stereo3d.stereo3d_dataclass import Stereo3DSeries
 from aux_funcs.calculations_for_parsivel_data import volume_drop
@@ -25,14 +25,21 @@ def rain_rate(
 
     # Loop thought every row of data and add the rate until you have a value
     for item in series:
-        idx = int((item.timestamp - start) // interval_seconds)
-        rain_rate[idx] += (
-            volume_drop(item.diameter)
-            / series.area_of_study
-            / (interval_seconds / 3600)
-        )
+        idx = int((item.timestamp_ms - start) / interval_seconds)
+        rain_rate[idx] += volume_drop(item.diameter)
 
-    return rain_rate
+    return rain_rate / series.area_of_study / (interval_seconds / 3600)
+
+
+def time_series(
+    series: Stereo3DSeries, interval_seconds: int | float
+) -> ndarray[float, Any]:
+    # Define the ends of the time series
+    start, stop = series.duration
+    start = int(floor(start / interval_seconds) * interval_seconds)
+    stop = int(ceil(stop / interval_seconds) * interval_seconds)
+
+    return arange(start, stop, interval_seconds)
 
 
 """

@@ -96,6 +96,9 @@ def stereo3d_read_from_zips(
             ZipFile(curr_day_file).extractall(temporary_storage_folder)
 
     # Read all the files and put them into the object
+    assert (
+        sum(1 for _ in temporary_storage_folder.iterdir()) > 0
+    ), "No file was found in this time period"
     first_file_name = next(temporary_storage_folder.iterdir()).name
     parser = get_parser(first_file_name)
     series: List[Stereo3DRow] = []
