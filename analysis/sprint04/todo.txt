@@ -1,1 +1,0 @@
-- 1. Check if its the code for computing the rain rate bellow 1s its correct.

@@ -1,6 +1,6 @@
 from typing import Tuple, Any
 from numpy import arange, array, linspace, ndarray, zeros, ceil, floor
-from parsivel.matrix_classes import CLASSES_DIAMETER_BINS, CLASSES_DIAMETER_MIDDLE
+from parsivel.matrix_classes import CLASSES_DIAMETER_MIDDLE
 from stereo3d.stereo3d_dataclass import Stereo3DSeries
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 from stereo3d.convert_to_parsivel import find_diameter_class
@@ -15,17 +15,16 @@ def rain_rate(
 ) -> ndarray[float, Any]:
     # Define the ends of the time series
     start, stop = series.duration
-    start = int(floor(start / interval_seconds) * interval_seconds)
-    stop = int(ceil(stop / interval_seconds) * interval_seconds)
+    start = floor(start / interval_seconds) * interval_seconds
+    stop = ceil(stop / interval_seconds + 1) * interval_seconds
 
     # Create an empty object with the slots to fit the data
-    rain_rate = zeros(
-        shape=(int(ceil((stop - start) / interval_seconds)),), dtype=float
-    )
+    size_array = int((stop - start) // interval_seconds)
+    rain_rate = zeros(shape=(size_array,), dtype=float)
 
     # Loop thought every row of data and add the rate until you have a value
     for item in series:
-        idx = int((item.timestamp_ms - start) / interval_seconds)
+        idx = int((item.timestamp_ms - start) // interval_seconds)
         rain_rate[idx] += volume_drop(item.diameter)
 
     return rain_rate / series.area_of_study / (interval_seconds / 3600)
@@ -36,10 +35,12 @@ def time_series(
 ) -> ndarray[float, Any]:
     # Define the ends of the time series
     start, stop = series.duration
-    start = int(floor(start / interval_seconds) * interval_seconds)
-    stop = int(ceil(stop / interval_seconds) * interval_seconds)
+    start = floor(start / interval_seconds) * interval_seconds
+    stop = ceil(stop / interval_seconds) * interval_seconds
 
-    return arange(start, stop, interval_seconds)
+    return linspace(
+        start, stop, int(ceil((stop - start) // interval_seconds)), endpoint=False
+    )
 
 
 """
