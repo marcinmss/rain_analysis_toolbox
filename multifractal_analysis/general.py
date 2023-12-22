@@ -23,6 +23,39 @@ def is_power_of_2(number: int) -> bool:
 
 
 """
+Function for calculating d
+"""
+
+
+def assess_d(field: ndarray):
+    full_lambda, n_samples = field.shape
+    ds = log(n_samples) / log(full_lambda)
+    return 1 + ds
+
+
+"""
+Function for calculating gammas
+"""
+
+
+def assess_qs(alpha: float, C1: float):
+    qs = (1 / C1) ** (1 / alpha)
+    return qs
+
+
+"""
+Function for calculating gammas
+"""
+
+
+def assess_gammas(alpha: float, C1: float, d: float):
+    gammas = (
+        C1 * (alpha / (alpha - 1)) * ((d / C1) ** ((alpha - 1) / alpha) - 1 / alpha)
+    )
+    return gammas
+
+
+"""
 Function to find the closet smaller power of two
 """
 

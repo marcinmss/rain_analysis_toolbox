@@ -3,9 +3,11 @@ from matplotlib import colormaps
 from typing import Tuple
 from numpy import fromiter, linspace, ndarray, mean, power, zeros
 from matplotlib.axes import Axes
-from multifractal_analysis.general import is_power_of_2, upscale
+from multifractal_analysis.general import is_power_of_2, kq_theoretical, upscale
 from multifractal_analysis.regression_solution import RegressionSolution
 from collections import namedtuple
+
+from multifractal_analysis.spectral import get_beta_and_h
 
 CMAP = colormaps["Set1"]
 
@@ -103,10 +105,21 @@ Function for plotting the empirical k_of_q
 
 def empirical_k_of_q(field: ndarray, ax: Axes | None = None):
     if ax is not None:
+        tm = tm_analysis(field)
         # Set the axis apperence
         ax.set_title("Empirical $K(q)$")
         ax.set_ylabel(r"$K(q)$")
         ax.set_xlabel(r"$q$")
+
+        # Plot the empirical k_of_q
         x = linspace(0.1, 3.0, 15)
         y = fromiter((k_of_q(field, q) for q in x), dtype=float)
-        ax.plot(x, y, "k")
+        ax.plot(x, y, "k", label="Empirical")
+
+        # Plot the theoretical k_of_q for q = 1.5
+        y_theoretical = fromiter(
+            (kq_theoretical(q, tm.alpha, tm.c1, 0) for q in x),
+            dtype=float,
+        )
+        ax.plot(x, y_theoretical, "--", label="Theoretical UM par, via TM")
+        ax.legend()
