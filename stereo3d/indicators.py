@@ -16,7 +16,7 @@ def rain_rate(
     # Define the ends of the time series
     start, stop = series.duration
     start = floor(start / interval_seconds) * interval_seconds
-    stop = ceil(stop / interval_seconds + 1) * interval_seconds
+    stop = ceil(stop / interval_seconds) * interval_seconds
 
     # Create an empty object with the slots to fit the data
     size_array = int((stop - start) // interval_seconds)
