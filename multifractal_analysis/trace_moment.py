@@ -7,7 +7,6 @@ from multifractal_analysis.general import is_power_of_2, kq_theoretical, upscale
 from multifractal_analysis.regression_solution import RegressionSolution
 from collections import namedtuple
 
-from multifractal_analysis.spectral import get_beta_and_h
 
 CMAP = colormaps["Set1"]
 
