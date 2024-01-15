@@ -54,7 +54,7 @@ def main():
     )
 
     # Filter the events by the mimimum legth we want
-    minimum_length = 2**6
+    minimum_length = 2**7
     stereo_events = [
         event
         for event, pars_event in zip(stereo_events, parsivel_events)
@@ -64,7 +64,7 @@ def main():
         event for event in parsivel_events if len(event) >= minimum_length
     ]
     print(
-        f"OF THOSE, {len(parsivel_events)} HAVE THE MINIMAL LENGTH.({minimum_length})"
+        f"OF THOSE, {len(parsivel_events)} HAVE THE MINIMAL LENGTH.({minimum_length//2} min)"
     )
 
     # Clear the folders from previous use
