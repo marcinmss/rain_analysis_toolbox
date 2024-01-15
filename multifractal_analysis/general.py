@@ -73,7 +73,7 @@ def upscale(field: ndarray) -> Generator[Tuple[int, ndarray], Any, Any]:
     lamb = field.shape[0]
     assert is_power_of_2(lamb), "Array needs to be a power of 2"
 
-    averaged_field = field.copy()
+    averaged_field = field
     while lamb > 0:
         yield (lamb, averaged_field)
         averaged_field = (averaged_field[::2, :] + averaged_field[1::2, :]) / 2

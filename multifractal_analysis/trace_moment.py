@@ -10,31 +10,23 @@ from collections import namedtuple
 
 CMAP = colormaps["Set1"]
 
-"""
-Function for calculating the moment of a field
-"""
-
-
-def moment_tm(field: ndarray, q: float) -> float:
-    return mean(power(field, q), dtype=float)
-
 
 """
 Function for getting the TM points
 """
 
 
-def get_trace_moment_points(field: ndarray, q: float = 1.0) -> Tuple[ndarray, ndarray]:
+def get_TM_vs_lambda_points(field: ndarray, q: float = 1.0) -> Tuple[ndarray, ndarray]:
     outer_scale = int(log2(field.shape[0])) + 1
     x, y = zeros(outer_scale, dtype=float), zeros(outer_scale, dtype=float)
     for i, (lamb, scalled_array) in enumerate(upscale(field)):
-        x[i], y[i] = log(lamb), log(moment_tm(scalled_array, q))
+        x[i], y[i] = log(lamb), log(mean(power(scalled_array, q), dtype=float))
 
     return (x, y)
 
 
 def k_of_q(field_1d: ndarray, q: float = 1.5):
-    x, y = get_trace_moment_points(field_1d, q)
+    x, y = get_TM_vs_lambda_points(field_1d, q)
     return RegressionSolution(x, y).angular_coef
 
 
@@ -43,7 +35,7 @@ Calculate C1 and alpha
 """
 
 
-def get_um_params_tm(field_1d: ndarray):
+def get_UM_params_per_TM(field_1d: ndarray):
     h = 0.1
     kf = k_of_q(field_1d, 1.0 + h)
     k0 = k_of_q(field_1d, 1.0 - h)
@@ -64,7 +56,7 @@ def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
     if ax is not None:
         for q in reversed((0.1, 0.5, 0.8, 1.01, 1.5, 2.0, 2.5)):
             # Get the points and do the regression on them
-            x, y = get_trace_moment_points(field, q=q)
+            x, y = get_TM_vs_lambda_points(field, q=q)
 
             # Set the axis apperence
             ax.set_title("TM Analysis")
@@ -90,10 +82,10 @@ def tm_analysis(field: ndarray, ax: Axes | None = None) -> TMAnalysis:
             yb1, yb2 = ax.get_ybound()
             ax.set_ybound(yb1, (yb2 - yb1) * 1.4 + yb1)
 
-    x, y = get_trace_moment_points(field, q=1.5)
+    x, y = get_TM_vs_lambda_points(field, q=1.5)
     r_square = RegressionSolution(x, y).r_square
 
-    alpha, c1 = get_um_params_tm(field)
+    alpha, c1 = get_UM_params_per_TM(field)
     return TMAnalysis(alpha, c1, r_square)
 
 

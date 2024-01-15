@@ -15,7 +15,7 @@ from numpy import concatenate
 from parsivel import ParsivelTimeSeries
 
 
-output_folder = Path("/home/marcio/stage_project/individual_analysis/sprint05/output/")
+output_folder = Path(__file__).parent / "output/"
 parsivel_events_folder = Path(
     "/home/marcio/stage_project/data/saved_events/sprint05/parsivel/"
 )
