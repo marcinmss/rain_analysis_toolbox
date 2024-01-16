@@ -25,8 +25,8 @@ path_data_direct_field = Path(
 path_data_fluctuations = Path(
     "/home/marcio/stage_project/data/saved_events/Set01/stereo_ensemble_fluctuations_1ms_30min.npy"
 )
-OUTPUTDIRECTFIELD = Path(__file__) / "direct_field/"
-OUTPUTFLUCTUATIONS = Path(__file__) / "fluctuations/"
+OUTPUTDIRECTFIELD = Path(__file__).parent / "direct_field/"
+OUTPUTFLUCTUATIONS = Path(__file__).parent / "fluctuations/"
 
 
 # Read the data for each events
@@ -53,7 +53,7 @@ def main(data: ndarray, output_folder: Path | str):
 
     data_file_name = ""
     dim = 1
-    l_range = [(1, 2**8), (2**8, 2**13), (2**13, N)]
+    l_range = [(1, 2**7), (2**7, 2**13), (2**13, N)]
     file_index = 0
     file_name = "DF_test_truc.npy"
     plot_index = 1
@@ -214,7 +214,7 @@ def main(data: ndarray, output_folder: Path | str):
 
     plot_index = 15
     plt.figure(250)
-    k_range = [(1, 2**8), (2**8, 2**13), (2**13, np.intp(N / 2) - 1)]
+    k_range = [(1, 2**7), (2**7, 2**13), (2**13, np.intp(N / 2) - 1)]
     bet1, bet2, bet3, x_spec, y_spec = spectral_analysis(
         data, data_file_name, k_range, dim, plot_index
     )
