@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-output_folder = Path("/home/marcio/stage_project/individual_analysis/sprint05/output/")
+OUTPUTFOlDER = Path(__file__).parent / "output"
 
 
 def overall_comparison(parsivel_csv_path: Path, stereo_csv_path: Path):
@@ -33,7 +33,8 @@ def overall_comparison(parsivel_csv_path: Path, stereo_csv_path: Path):
     n_rows = 2
 
     figure = plt.figure()
-    figure.set_size_inches((n_cols * 6, n_rows * 4))
+    figure.set_dpi(200)
+    figure.set_size_inches((n_cols * 5, n_rows * 4))
 
     x = np.arange(0, n_events) + 1
     for idx, column in enumerate(fields, 1):
@@ -80,14 +81,10 @@ def overall_comparison(parsivel_csv_path: Path, stereo_csv_path: Path):
         if idx == 1:
             ax.legend(frameon=False, loc=(5.0, -0.75))
 
-    figure.savefig(output_folder / "overall_comparison.png")
+    figure.savefig(OUTPUTFOlDER / "overall_comparison.png", bbox_inches="tight")
 
 
 if __name__ == "__main__":
-    parsivel_csv_path = Path(
-        "/home/marcio/stage_project/individual_analysis/sprint05/output/parsivel_mfanalysis.csv"
-    )
-    stereo_csv_path = Path(
-        "/home/marcio/stage_project/individual_analysis/sprint05/output/stereo_mfanalysis.csv"
-    )
+    parsivel_csv_path = OUTPUTFOlDER / "parsivel_mfanalysis.csv"
+    stereo_csv_path = OUTPUTFOlDER / "stereo_mfanalysis.csv"
     overall_comparison(parsivel_csv_path, stereo_csv_path)

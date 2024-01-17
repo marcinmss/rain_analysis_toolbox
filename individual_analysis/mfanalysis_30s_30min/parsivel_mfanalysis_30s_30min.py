@@ -17,7 +17,7 @@ from parsivel import ParsivelTimeSeries
 
 output_folder = Path(__file__).parent / "output/"
 parsivel_events_folder = Path(
-    "/home/marcio/stage_project/data/saved_events/sprint05/parsivel/"
+    "/home/marcio/stage_project/data/saved_events/Set01/events/parsivel/"
 )
 
 
@@ -26,7 +26,7 @@ def mf_analysis_multiple_events_parsivel(
 ):
     # Prepare the data for every event, keeping the first one as an ensemble
     preped_data = [
-        prep_data_ensemble(event.rain_rate, 2**5, fluc=fluctuations)
+        prep_data_ensemble(event.rain_rate, 2**6, fluc=fluctuations)
         for event in events
     ]
     preped_data = [concatenate(preped_data, axis=1)] + preped_data
@@ -36,6 +36,7 @@ def mf_analysis_multiple_events_parsivel(
     n_rows = 1
     figure = plt.figure()
     figure.set_dpi(200)
+    figure.set_layout_engine("tight")
     a = 8
     b = 6
     figure.set_size_inches(a * n_cols, b * n_rows)
@@ -132,7 +133,7 @@ def mf_analysis_multiple_events_parsivel(
 
     # Save the plot and the results
     name = "parsivel_mfanalysis"
-    name = name + "_with_fluctuations" if fluctuations is False else name
+    name = name + "_with_fluctuations" if fluctuations is True else name
 
     results = DataFrame(results, columns=columns_labels).set_index("event")
     results.to_csv(output_folder / f"{name}.csv")

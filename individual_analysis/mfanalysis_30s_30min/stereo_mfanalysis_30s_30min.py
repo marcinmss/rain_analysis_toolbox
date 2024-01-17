@@ -16,12 +16,9 @@ from numpy import concatenate
 from stereo3d.stereo3d_dataclass import Stereo3DSeries
 
 
-output_folder = Path("/home/marcio/stage_project/individual_analysis/sprint05/output/")
-parsivel_events_folder = Path(
-    "/home/marcio/stage_project/data/saved_events/sprint05/parsivel/"
-)
+output_folder = Path(__file__).parent / "output/"
 stereo_events_folder = Path(
-    "/home/marcio/stage_project/data/saved_events/sprint05/stereo/"
+    "/home/marcio/stage_project/data/saved_events/Set01/events/stereo/"
 )
 
 
@@ -30,7 +27,7 @@ def mf_analysis_multiple_events_stereo(
 ):
     # Prepare the data for every event, keeping the first one as an ensemble
     preped_data = [
-        prep_data_ensemble(event.rain_rate(), 2**5, fluc=fluctuations)
+        prep_data_ensemble(event.rain_rate(), 2**6, fluc=fluctuations)
         for event in events
     ]
     preped_data = [concatenate(preped_data, axis=1)] + preped_data
@@ -39,6 +36,7 @@ def mf_analysis_multiple_events_stereo(
     n_cols = 6
     n_rows = 1
     figure = plt.figure()
+    figure.set_layout_engine("tight")
     figure.set_dpi(200)
     a = 8
     b = 6
@@ -136,7 +134,7 @@ def mf_analysis_multiple_events_stereo(
 
     # Save the plot and the results
     name = "stereo_mfanalysis"
-    name = name + "_with_fluctuations" if fluctuations is False else name
+    name = name + "_with_fluctuations" if fluctuations is True else name
 
     results = DataFrame(results, columns=columns_labels).set_index("event")
     results.to_csv(output_folder / f"{name}.csv")
