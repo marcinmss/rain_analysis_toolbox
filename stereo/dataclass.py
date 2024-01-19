@@ -170,6 +170,15 @@ class Stereo3DSeries:
         return filter_by_distance_to_sensor(self, new_limits)
 
     """
+    Creates a new series with only with the drops within a certein distance
+    """
+
+    def filter_to_parsivel_resolution(self):
+        from stereo.filters import parsivel_filter
+
+        return parsivel_filter(self)
+
+    """
     New additions
     """
 

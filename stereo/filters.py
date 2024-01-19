@@ -9,7 +9,7 @@ Filter a parsivel Series to not include drops outside the parsivel minimal resol
 """
 
 
-def resolution_filter(series: Stereo3DSeries) -> Stereo3DSeries:
+def parsivel_filter(series: Stereo3DSeries) -> Stereo3DSeries:
     left = CLASSES_DIAMETER_BINS[1][1]
     new_rows = [row for row in series if left < row.diameter]
 
