@@ -1,6 +1,6 @@
 from typing import List
 from parsivel import parsivel_read_from_pickle as pars_read
-from stereo3d import stereo_read_from_pickle, Stereo3DSeries
+from stereo import stereo_read_from_pickle, Stereo3DSeries
 from matplotlib import pyplot as plt
 from parsivel import ParsivelTimeSeries
 import numpy as np
@@ -65,7 +65,7 @@ def overall_analysis(
     ax.set_title("Number of drops per area $(m^{-2})$")
     ax.set_ylabel("Parsivel")
     ax.set_xlabel("Stereo 3D")
-    pars_values = [event.npa_for_event() for event in parsivel_events]
+    pars_values = [event.number_drops_per_area_event() for event in parsivel_events]
     stereo_values = [event.npa_event() for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
