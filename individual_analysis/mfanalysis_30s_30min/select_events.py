@@ -1,5 +1,5 @@
 from stereo3d import stereo_read_from_pickle as std_read
-from parsivel import pars_read_from_pickle as pars_read
+from parsivel import parsivel_read_from_pickle as pars_read
 from aux_funcs.extract_events import is_event
 from pathlib import Path
 from matplotlib import pyplot as plt

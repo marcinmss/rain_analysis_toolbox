@@ -1,5 +1,5 @@
 from typing import List
-from parsivel import pars_read_from_pickle as pars_read
+from parsivel import parsivel_read_from_pickle as pars_read
 from matplotlib import pyplot as plt
 from parsivel import ParsivelTimeSeries
 import numpy as np

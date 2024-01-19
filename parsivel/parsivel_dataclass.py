@@ -75,9 +75,9 @@ class ParsivelTimeSeries:
 
     @classmethod
     def read_raw(cls, beggining: int, end: int, source_folder: str | Path):
-        from parsivel.read_write import pars_read_from_zips
+        from parsivel.read_write import parsivel_read_from_zips
 
-        return pars_read_from_zips(beggining, end, source_folder)
+        return parsivel_read_from_zips(beggining, end, source_folder)
 
     """
     Method for reading/writing the data in the pickle format
@@ -85,9 +85,9 @@ class ParsivelTimeSeries:
 
     @classmethod
     def load_pickle(cls, source_folder: str | Path):
-        from parsivel.read_write import pars_read_from_pickle
+        from parsivel.read_write import parsivel_read_from_pickle
 
-        return pars_read_from_pickle(source_folder)
+        return parsivel_read_from_pickle(source_folder)
 
     def to_pickle(self, file_path: str | Path):
         from parsivel.read_write import write_to_picle
@@ -98,80 +98,65 @@ class ParsivelTimeSeries:
     Methods for providing/calculating basic information about the series
     """
 
-    @property
     def rain_rate(self) -> ndarray[float, Any]:
         from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
 
-        volume_series = array([matrix_to_volume(matrix) for matrix in self.matrices])
+        volume_series = array([matrix_to_volume(matrix) for matrix in self.matrices()])
         return volume_series / self.area_of_study / self.resolution_seconds * 3600
 
-    @property
     def avg_rain_rate(self) -> float:
-        return mean(self.rain_rate, dtype=float)
+        return mean(self.rain_rate(), dtype=float)
 
-    @property
     def percentage_zeros(self) -> float:
-        n_zeros = sum(1 for is_rain in self.rain_rate if is_rain == 0)
+        n_zeros = sum(1 for is_rain in self.rain_rate() if is_rain == 0)
         return n_zeros / len(self)
 
-    @property
     def total_depth_for_event(self) -> float:
         from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
 
         return matrix_to_volume(self.matrix_for_event) / self.area_of_study
 
-    @property
     def npa(self) -> ndarray[float, Any]:
         area_m2 = self.area_of_study * 1e-6
         return array([item.ndrops for item in self]) / area_m2
 
-    @property
     def npa_for_event(self) -> float:
         area_m2 = self.area_of_study * 1e-6
         return npsum(self.matrix_for_event) / area_m2
 
-    @property
     def files_rain_rate(self) -> ndarray[float, Any]:
         return array([item.rain_rate for item in self])
 
-    @property
     def mean_diameter_for_event(self) -> float:
         from parsivel.indicators import get_mean_diameter
 
         return get_mean_diameter(self)
 
-    @property
     def mean_velocity_for_event(self) -> float:
         from parsivel.indicators import get_mean_velocity
 
         return get_mean_velocity(self)
 
-    @property
     def cumulative_rain_depth(self) -> ndarray[float, Any]:
         from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
 
-        volume_series = array([matrix_to_volume(matrix) for matrix in self.matrices])
+        volume_series = array([matrix_to_volume(matrix) for matrix in self.matrices()])
         return cumsum(volume_series / self.area_of_study)
 
-    @property
     def kinetic_energy_flow_for_event(self) -> float:
         from parsivel.indicators import get_kinetic_energy
 
         return get_kinetic_energy(self) / (self.area_of_study * 1e-6)
 
-    @property
     def calculated_rain_depth(self) -> ndarray[float, Any]:
-        return cumsum(array(self.rain_rate * self.resolution_seconds / 3600))
+        return cumsum(array(self.rain_rate() * self.resolution_seconds / 3600))
 
-    @property
     def temperature(self) -> ndarray[ndarray, Any]:
         return array([item.temperature for item in self])
 
-    @property
     def matrices(self) -> ndarray[ndarray, Any]:
         return array([item.matrix for item in self])
 
-    @property
     def ndrops_in_each_class(self):
         from parsivel.indicators import get_ndrops_in_each_diameter
 
@@ -215,7 +200,7 @@ class ParsivelTimeSeries:
     ):
         from aux_funcs.extract_events import is_event
 
-        return is_event(self.rain_rate, dry_period_min, threshold, tinterval_sec)
+        return is_event(self.rain_rate(), dry_period_min, threshold, tinterval_sec)
 
     def colect_events(self, event_series: ndarray):
         from parsivel.extract_events import grab_events

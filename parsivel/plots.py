@@ -22,7 +22,7 @@ def plot_rain_rate(
     ax.set_xlabel(r"$min$")
 
     # Plot the data
-    y = series.rain_rate
+    y = series.rain_rate()
     x = fromiter((tstep.timestamp for tstep in series), dtype=float)
     ax.plot(x, y, **style)
 

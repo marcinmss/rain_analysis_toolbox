@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Generator, List
 
 from numpy import array
-from stereo3d.stereo3d_dataclass import MAXDIST, MINDIST, Stereo3DSeries, Stereo3DRow
+from stereo.dataclass import MAXDIST, MINDIST, Stereo3DSeries, Stereo3DRow
 from csv import reader
 from zipfile import ZipFile
 
@@ -62,7 +62,7 @@ Function for reading the file between two periods from a source folder
 """
 
 
-def stereo3d_read_from_zips(
+def stereo_read_from_zips(
     beg: int, end: int, source_folder: str | Path
 ) -> Stereo3DSeries:
     start, finish = standard_to_dtime(beg), standard_to_dtime(end)

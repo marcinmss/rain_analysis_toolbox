@@ -1,4 +1,4 @@
-from parsivel.read_write import pars_read_from_pickle
+from parsivel.read_write import parsivel_read_from_pickle
 from multifractal_analysis.cascade_simulations import discreat_um_sym
 
 
@@ -16,7 +16,7 @@ from lab_mf_toolbox.Additional_tools_v2 import *
 from lab_mf_toolbox.Multifractal_tools_box_Python_HMCo_ENPC_v_0_93 import *
 from lab_mf_toolbox.Tools_data_base_use_v3 import *
 
-pars_event = pars_read_from_pickle(
+pars_event = parsivel_read_from_pickle(
     "/home/marcio/stage_project/data/saved_events/pasivel01.obj"
 )
 

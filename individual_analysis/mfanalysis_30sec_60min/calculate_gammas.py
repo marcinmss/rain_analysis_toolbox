@@ -1,6 +1,6 @@
 from multifractal_analysis import tm_analysis
-from parsivel import pars_read_from_pickle
-from stereo3d import stereo_read_from_pickle
+from parsivel import parsivel_read_from_pickle
+from stereo import stereo_read_from_pickle
 from pathlib import Path
 from multifractal_analysis.data_prep import prep_data_ensemble
 from numpy import concatenate
@@ -16,7 +16,8 @@ stereo_events_folder = Path(
 
 
 parsivel_events = [
-    pars_read_from_pickle(file_path) for file_path in parsivel_events_folder.iterdir()
+    parsivel_read_from_pickle(file_path)
+    for file_path in parsivel_events_folder.iterdir()
 ]
 
 stereo_events = [

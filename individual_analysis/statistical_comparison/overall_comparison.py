@@ -1,5 +1,5 @@
 from typing import List
-from parsivel import pars_read_from_pickle as pars_read
+from parsivel import parsivel_read_from_pickle as pars_read
 from stereo3d import stereo_read_from_pickle, Stereo3DSeries
 from matplotlib import pyplot as plt
 from parsivel import ParsivelTimeSeries
@@ -32,7 +32,7 @@ def overall_analysis(
     ax.set_title("Average Rain Rate $(mm.h^{-1})$")
     ax.set_ylabel("Parsivel")
     ax.set_xlabel("Stereo 3D")
-    pars_values = [np.mean(event.rain_rate) for event in parsivel_events]
+    pars_values = [np.mean(event.rain_rate()) for event in parsivel_events]
     stereo_values = [np.mean(event.rain_rate()) for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
@@ -43,8 +43,8 @@ def overall_analysis(
     ax.set_title("Total depth $(mm)$")
     ax.set_ylabel("Parsivel")
     ax.set_xlabel("Stereo 3D")
-    pars_values = [event.total_depth_for_event for event in parsivel_events]
-    stereo_values = [event.total_depth_for_event for event in stereo_converted_events]
+    pars_values = [event.total_depth_for_event() for event in parsivel_events]
+    stereo_values = [event.total_depth_for_event() for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
     plot_idx += 1
@@ -54,8 +54,8 @@ def overall_analysis(
     ax.set_title("Kinetic energy per Area $(j.m^{-2})$")
     ax.set_ylabel("Parsivel")
     ax.set_xlabel("Stereo 3D")
-    pars_values = [event.kinetic_energy_flow_for_event for event in parsivel_events]
-    stereo_values = [event.kinetic_energy_flow for event in stereo_converted_events]
+    pars_values = [event.kinetic_energy_flow_for_event() for event in parsivel_events]
+    stereo_values = [event.kinetic_energy_flow() for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
     plot_idx += 1
@@ -65,8 +65,8 @@ def overall_analysis(
     ax.set_title("Number of drops per area $(m^{-2})$")
     ax.set_ylabel("Parsivel")
     ax.set_xlabel("Stereo 3D")
-    pars_values = [event.npa_for_event for event in parsivel_events]
-    stereo_values = [event.npa_event for event in stereo_converted_events]
+    pars_values = [event.npa_for_event() for event in parsivel_events]
+    stereo_values = [event.npa_event() for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
     plot_idx += 1
@@ -76,8 +76,10 @@ def overall_analysis(
     ax.set_title("Mean Diameter $(mm)$")
     ax.set_ylabel("Parsivel")
     ax.set_xlabel("Stereo 3D")
-    pars_values = [event.mean_diameter_for_event for event in parsivel_events]
-    stereo_values = [event.mean_diameter_for_event for event in stereo_converted_events]
+    pars_values = [event.mean_diameter_for_event() for event in parsivel_events]
+    stereo_values = [
+        event.mean_diameter_for_event() for event in stereo_converted_events
+    ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
     plot_idx += 1
@@ -87,8 +89,10 @@ def overall_analysis(
     ax.set_title("Mean Velocity $(m.s^{-1})$")
     ax.set_ylabel("Parsivel")
     ax.set_xlabel("Stereo 3D")
-    pars_values = [event.mean_velocity_for_event for event in parsivel_events]
-    stereo_values = [event.mean_velocity_for_event for event in stereo_converted_events]
+    pars_values = [event.mean_velocity_for_event() for event in parsivel_events]
+    stereo_values = [
+        event.mean_velocity_for_event() for event in stereo_converted_events
+    ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
     plot_idx += 1

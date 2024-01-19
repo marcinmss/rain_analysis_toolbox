@@ -2,8 +2,8 @@
 Read the data for both devices, turn them into an usable object and save that object for latter use
 """
 from pathlib import Path
-from parsivel import pars_read_from_zips
-from stereo3d import stereo3d_read_from_zips
+from parsivel import parsivel_read_from_zips
+from stereo import stereo_read_from_zips
 
 
 BEGGINING = 20230705000000
@@ -16,10 +16,10 @@ parsivel_source_folder = Path("/home/marcio/stage_project/data/Pars_1/")
 
 def main():
     print("Reading the data for Stereo 3D...")
-    stereo_obj = stereo3d_read_from_zips(BEGGINING, END, stereo_source_folder)
+    stereo_obj = stereo_read_from_zips(BEGGINING, END, stereo_source_folder)
     print("    done.")
     print("Read the data for Parsivel...")
-    parsivel_obj = pars_read_from_zips(BEGGINING, END, parsivel_source_folder)
+    parsivel_obj = parsivel_read_from_zips(BEGGINING, END, parsivel_source_folder)
     print("    done.")
 
     # Save both objects

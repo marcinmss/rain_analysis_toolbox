@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from stereo3d.stereo3d_dataclass import Stereo3DSeries, BASEAREASTEREO3D
+from stereo import Stereo3DSeries, BASEAREASTEREO3D
 from numpy import array, zeros
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 

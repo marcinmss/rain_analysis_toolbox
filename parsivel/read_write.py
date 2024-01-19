@@ -49,7 +49,7 @@ Read from a folder of ziped files for each day with the standard format.
 """
 
 
-def pars_read_from_zips(
+def parsivel_read_from_zips(
     beg: int, end: int, source_folder: str | Path
 ) -> ParsivelTimeSeries:
     # Checks if the source folder is there
@@ -146,7 +146,7 @@ def write_to_picle(file_path: str | Path, series: ParsivelTimeSeries):
         pickle.dump(series, fh)
 
 
-def pars_read_from_pickle(file_path: str | Path) -> ParsivelTimeSeries:
+def parsivel_read_from_pickle(file_path: str | Path) -> ParsivelTimeSeries:
     file_path = Path(file_path)
     assert file_path.exists(), "File doesn't exists!!!"
     with open(file_path, "rb") as fh:

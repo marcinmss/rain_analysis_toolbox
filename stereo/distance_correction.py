@@ -1,7 +1,7 @@
 from typing import List
 from aux_funcs.calculations_for_parsivel_data import volume_drop
-from stereo3d.distance_analisys import area_of_session, volume_of_session
-from stereo3d.stereo3d_dataclass import MINDIST, MAXDIST, Stereo3DRow, Stereo3DSeries
+from stereo.distance_analisys import area_of_session, volume_of_session
+from stereo.dataclass import MINDIST, MAXDIST, Stereo3DRow, Stereo3DSeries
 from numpy import (
     argmax,
     array,

@@ -6,9 +6,9 @@ Created on Mon Jul 25 21:07:41 2022
 @author: jerry.jose
 """
 
-from parsivel.read_write import pars_read_from_pickle
+from parsivel.read_write import parsivel_read_from_pickle
 
-pars_event = pars_read_from_pickle(
+pars_event = parsivel_read_from_pickle(
     "/home/marcio/stage_project/data/saved_events/pasivel01.obj"
 )
 

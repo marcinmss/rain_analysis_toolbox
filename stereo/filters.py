@@ -1,7 +1,7 @@
 from numpy import array
 from parsivel.parsivel_dataclass import ParsivelTimeSeries
 from parsivel.matrix_classes import CLASSES_DIAMETER_BINS
-from stereo3d.stereo3d_dataclass import Stereo3DSeries
+from stereo.dataclass import Stereo3DSeries
 
 
 """

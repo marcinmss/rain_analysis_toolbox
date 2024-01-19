@@ -51,7 +51,7 @@ class Stereo3DSeries:
 
     @property
     def area_of_study(self):
-        from stereo3d.distance_analisys import area_of_session
+        from stereo.distance_analisys import area_of_session
 
         return area_of_session(self.limits_area_of_study)
 
@@ -72,45 +72,39 @@ class Stereo3DSeries:
     """
 
     def to_pickle(self, file_path: str | Path):
-        from stereo3d.read_write import write_to_picle
+        from stereo.read_write import write_to_picle
 
         return write_to_picle(file_path, self)
 
     def rain_rate(self, interval_seconds: float = 30) -> ndarray[float, Any]:
-        from stereo3d.indicators import rain_rate
+        from stereo.indicators import rain_rate
 
         return rain_rate(self, interval_seconds)
 
     def time_series(self, interval_seconds: float = 30) -> ndarray[float, Any]:
-        from stereo3d.indicators import time_series
+        from stereo.indicators import time_series
 
         return time_series(self, interval_seconds)
 
-    @property
     def npa(self, interval_seconds: int = 30) -> ndarray[float, Any]:
-        from stereo3d.indicators import get_npa
+        from stereo.indicators import get_npa
 
         return get_npa(self, interval_seconds)
 
-    @property
     def npa_event(self) -> float:
         return len(self) / (self.area_of_study * 1e-6)
 
-    @property
     def mean_diameter_for_event(self):
         return mean(self.diameters)
 
-    @property
     def mean_velocity_for_event(self):
         return mean(self.velocity)
 
-    @property
     def kinetic_energy_flow(self) -> float:
-        from stereo3d.indicators import get_kinetic_energy
+        from stereo.indicators import get_kinetic_energy
 
         return get_kinetic_energy(self) / (self.area_of_study * 1e-6)
 
-    @property
     def total_depth_for_event(self) -> float:
         return sum(volume_drop(item.diameter) / self.area_of_study for item in self)
 
@@ -119,7 +113,7 @@ class Stereo3DSeries:
 
     @property
     def ndrops_in_each_diameter_class(self):
-        from stereo3d.indicators import get_ndrops_in_diameter_classes
+        from stereo.indicators import get_ndrops_in_diameter_classes
 
         return get_ndrops_in_diameter_classes(self)
 
@@ -137,7 +131,7 @@ class Stereo3DSeries:
     """
 
     def plot_rain_rate(self, ax: Axes, style: dict = BASESTEREOSTYLE):
-        from stereo3d.plots import plot_rain_rate
+        from stereo.plots import plot_rain_rate
 
         plot_rain_rate(self, ax, style)
 
@@ -147,12 +141,12 @@ class Stereo3DSeries:
     """
 
     def acumulate_by_distance(self, N: int = 1024) -> List[ndarray[float, Any]]:
-        from stereo3d.distance_analisys import acumulate_by_distance
+        from stereo.distance_analisys import acumulate_by_distance
 
         return acumulate_by_distance(self, N)
 
     def split_by_distance_to_sensor(self, number_of_splits: int = 8):
-        from stereo3d.distance_analisys import split_by_distance_to_sensor
+        from stereo.distance_analisys import split_by_distance_to_sensor
 
         return split_by_distance_to_sensor(self, number_of_splits)
 
@@ -162,7 +156,7 @@ class Stereo3DSeries:
     """
 
     def convert_to_parsivel(self) -> ParsivelTimeSeries:
-        from stereo3d.convert_to_parsivel import convert_to_parsivel
+        from stereo.convert_to_parsivel import convert_to_parsivel
 
         return convert_to_parsivel(self)
 
@@ -171,7 +165,7 @@ class Stereo3DSeries:
     """
 
     def filter_by_distance_to_sensor(self, new_limits: Tuple[float, float]):
-        from stereo3d.distance_analisys import filter_by_distance_to_sensor
+        from stereo.distance_analisys import filter_by_distance_to_sensor
 
         return filter_by_distance_to_sensor(self, new_limits)
 
@@ -180,7 +174,7 @@ class Stereo3DSeries:
     """
 
     def extract_events(self, events_duration: List[Tuple[int, int]]):
-        from stereo3d.events import extract_events
+        from stereo.events import extract_events
 
         return extract_events(self, events_duration)
 

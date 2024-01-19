@@ -3,7 +3,7 @@ from matplotlib.pyplot import figure
 from stereo3d import stereo_read_from_pickle
 
 from stereo3d.plots import BASESTEREOSTYLE
-from parsivel import pars_read_from_pickle
+from parsivel import parsivel_read_from_pickle
 from parsivel.plots import plot_dsd
 
 parsivel_events_folder = Path(
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     stereo_event = stereo_read_from_pickle(
         next(stereo_events_folder.iterdir())
     ).convert_to_parsivel()
-    parsivel_event = pars_read_from_pickle(next(parsivel_events_folder.iterdir()))
+    parsivel_event = parsivel_read_from_pickle(next(parsivel_events_folder.iterdir()))
 
     # Plot the data and save figure
     fig = figure()

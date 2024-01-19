@@ -3,4 +3,4 @@ from parsivel.parsivel_dataclass import (
     ParsivelTimeStep,
     PARSIVELBASEAREA,
 )
-from parsivel.read_write import pars_read_from_zips, pars_read_from_pickle
+from parsivel.read_write import parsivel_read_from_zips, parsivel_read_from_pickle

@@ -1,5 +1,5 @@
 from typing import List
-from parsivel import pars_read_from_pickle
+from parsivel import parsivel_read_from_pickle
 from pathlib import Path
 from pandas import DataFrame
 from matplotlib import pyplot as plt
@@ -15,7 +15,7 @@ from numpy import concatenate
 from parsivel import ParsivelTimeSeries
 
 
-output_folder = Path(__file__).parent / "output/"
+OUTPUTFOLDER = Path(__file__).parent / "output/"
 parsivel_events_folder = Path(
     "/home/marcio/stage_project/data/saved_events/Set01/events/parsivel/"
 )
@@ -143,10 +143,10 @@ def mf_analysis_multiple_events_parsivel(
 if __name__ == "__main__":
     print("Reading The Events for 3D parsivel.")
     events = [
-        pars_read_from_pickle(file_path)
+        parsivel_read_from_pickle(file_path)
         for file_path in parsivel_events_folder.iterdir()
     ]
     print("Running Analysis for direct field.")
-    mf_analysis_multiple_events_parsivel(output_folder, False, events)
+    mf_analysis_multiple_events_parsivel(OUTPUTFOLDER, False, events)
     print("Running Analysis for the fluctuations.")
-    mf_analysis_multiple_events_parsivel(output_folder, True, events)
+    mf_analysis_multiple_events_parsivel(OUTPUTFOLDER, True, events)

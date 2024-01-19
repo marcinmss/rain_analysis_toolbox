@@ -1,5 +1,5 @@
-from stereo3d import stereo_read_from_pickle as std_read
-from parsivel import pars_read_from_pickle as pars_read
+from stereo import stereo_read_from_pickle as std_read
+from parsivel import parsivel_read_from_pickle as pars_read
 from aux_funcs.extract_events import is_event
 from pathlib import Path
 from matplotlib import pyplot as plt
@@ -29,7 +29,7 @@ def main():
     print("THE DATA FOR BOTH EVENTS WAS READ.")
 
     # Find events for that are detected both in the parsivel and stereo devices
-    parsivel_events = is_event(parsivel_full_event.rain_rate, 15, 0.7)
+    parsivel_events = is_event(parsivel_full_event.rain_rate(), 15, 0.7)
     stereo_events = is_event(stereo_full_event.rain_rate(), 15, 0.7)
     simutainous_events = logical_and(parsivel_events, stereo_events)
 
@@ -42,7 +42,7 @@ def main():
     figure.set_layout_engine("constrained")
     for i, event in enumerate(parsivel_events):
         ax = figure.add_subplot(n, n, i + 1)
-        ax.plot(event.rain_rate)
+        ax.plot(event.rain_rate())
 
     # Colect the events for the Stereo 3D as well and check to see is the durations match
     stereo_events = stereo_full_event.extract_events(

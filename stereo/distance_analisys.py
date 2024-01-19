@@ -1,7 +1,7 @@
 from itertools import pairwise
-from stereo3d import Stereo3DSeries
+from stereo import Stereo3DSeries
 from typing import Tuple, List, Any
-from stereo3d.stereo3d_dataclass import MINDIST, MAXDIST, BASEAREASTEREO3D
+from stereo.dataclass import MINDIST, MAXDIST, BASEAREASTEREO3D
 from numpy import arange, cos, linspace, pi, zeros, divide, array, ndarray
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 

@@ -2,7 +2,7 @@ from matplotlib.axes import Axes
 from numpy import fromiter, linspace, zeros
 
 from plots.styles import BASEPARSIVELSTYLE, BASESTEREOSTYLE
-from stereo3d.stereo3d_dataclass import Stereo3DSeries
+from stereo.dataclass import Stereo3DSeries
 
 """
 Functions to plot important fields for the parsivel
