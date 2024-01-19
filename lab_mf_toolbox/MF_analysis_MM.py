@@ -37,7 +37,7 @@ def floor_log(num, base):
 # alpha = 1.08
 # c1 = 0.18
 # R_data_all = discreat_um_sym(n, alpha, c1)
-R_data_all = pars_event.files_rain_rate
+R_data_all = pars_event.rain_rate_from_file
 # R_data_all = fluctuations(R_data_all, 1)
 
 

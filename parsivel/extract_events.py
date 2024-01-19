@@ -1,7 +1,7 @@
 from typing import List
 
 from numpy import ndarray
-from parsivel.parsivel_dataclass import ParsivelTimeSeries, ParsivelTimeStep
+from parsivel.dataclass import ParsivelTimeSeries, ParsivelTimeStep
 
 
 def grab_events(

@@ -4,10 +4,9 @@ from typing import Any, List, Tuple
 from matplotlib.axes import Axes
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 from numpy import array, cumsum, fromiter, mean, ndarray
-from parsivel.parsivel_dataclass import ParsivelTimeSeries
+from parsivel.dataclass import ParsivelTimeSeries
 from pathlib import Path
 
-from plots.styles import BASESTEREOSTYLE
 
 """
 DataClass for the 3dstereo device
@@ -21,6 +20,7 @@ DataClass for the 3dstereo device
 I am only gonna colect the usefull ones for now.
 """
 
+BASESTEREOSTYLE = {"color": "dodgerblue"}
 BASEAREASTEREO3D = 10000.0
 MINDIST = 200.0
 MAXDIST = 400.0

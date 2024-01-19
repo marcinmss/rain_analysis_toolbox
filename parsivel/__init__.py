@@ -1,4 +1,4 @@
-from parsivel.parsivel_dataclass import (
+from parsivel.dataclass import (
     ParsivelTimeSeries,
     ParsivelTimeStep,
     PARSIVELBASEAREA,

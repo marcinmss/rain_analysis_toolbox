@@ -1,4 +1,4 @@
-from parsivel.parsivel_dataclass import ParsivelTimeSeries
+from parsivel.dataclass import ParsivelTimeSeries
 from copy import deepcopy
 
 

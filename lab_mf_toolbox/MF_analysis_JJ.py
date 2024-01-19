@@ -53,7 +53,7 @@ def floor_log(num, base):
 ##loading data (change as you require)
 # R_data_all=exporting_R(start_evt,end_evt,disdro_name,path_outputs,path_daily_data_python) # The R series is also given as output of the function
 
-R_data_all = pars_event.files_rain_rate
+R_data_all = pars_event.rain_rate_from_file
 
 
 N_org = len(R_data_all)

@@ -1,12 +1,11 @@
 from matplotlib.axes import Axes
 from numpy import fromiter, linspace, ndarray, zeros
-from parsivel.parsivel_dataclass import ParsivelTimeSeries
+from parsivel.dataclass import ParsivelTimeSeries, BASEPARSIVELSTYLE
 from parsivel.matrix_classes import (
     CLASSES_DIAMETER_MIDDLE,
     CLASSES_DIAMETER,
     CLASSES_VELOCITY_MIDDLE,
 )
-from plots.styles import BASEPARSIVELSTYLE
 
 """
 Functions to plot important fields for the parsivel
