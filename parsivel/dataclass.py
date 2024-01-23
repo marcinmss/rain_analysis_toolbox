@@ -34,7 +34,7 @@ class ParsivelTimeStep(NamedTuple):
 
     @property
     def volume_mm3(self) -> float:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
         return matrix_to_volume(self.matrix)
 
@@ -83,7 +83,7 @@ class ParsivelTimeSeries:
     """
 
     def rain_rate(self) -> ndarray[float, Any]:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
         volume_series = array(
             [matrix_to_volume(matrix) for matrix in self.get_matrices_series()]
@@ -94,7 +94,7 @@ class ParsivelTimeSeries:
         return mean(self.rain_rate(), dtype=float)
 
     def cumulative_depth(self) -> ndarray[float, Any]:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
         volume_series = array(
             [matrix_to_volume(matrix) for matrix in self.get_matrices_series()]
@@ -112,7 +112,7 @@ class ParsivelTimeSeries:
         return get_nd3(self)
 
     def total_depth_for_event(self) -> float:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
         return matrix_to_volume(self.matrix_for_event) / self.area_of_study
 

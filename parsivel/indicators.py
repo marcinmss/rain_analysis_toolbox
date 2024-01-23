@@ -1,13 +1,35 @@
-from typing import Tuple
-from aux_funcs.calculations_for_parsivel_data import volume_drop
+from typing import Literal, Tuple
+from aux_funcs.general import volume_drop
 from parsivel.dataclass import ParsivelTimeSeries
 from numpy import ndarray, sum as npsum, zeros
 from parsivel.matrix_classes import (
     CLASSES_DIAMETER,
     CLASSES_DIAMETER_MIDDLE,
     CLASSES_VELOCITY_MIDDLE,
-    CLASSES_DIAMETER_BINS,
 )
+
+"""
+Given a standard 32x32 Parsivel matrix, calculates the aproximate total volume
+using the equivalent diameter
+"""
+
+
+def matrix_to_volume(matrix: ndarray | Literal[0]) -> float:
+    n_per_diameter = npsum(matrix, axis=0)
+    return sum(
+        [n * volume_drop(d) for (n, d) in zip(n_per_diameter, CLASSES_DIAMETER_MIDDLE)]
+    )
+
+
+def mean_diameter_matrix(matrix: ndarray | Literal[0]) -> float:
+    ndrops = 0.0
+    sum_diameters = 0.0
+    for diam, nd in zip(CLASSES_DIAMETER_MIDDLE, npsum(matrix, axis=0)):
+        ndrops += nd
+        sum_diameters += diam * nd
+
+    return sum_diameters / ndrops if ndrops > 0.0 else 0.0
+
 
 """
 Calculate the mean diameter and velocity
