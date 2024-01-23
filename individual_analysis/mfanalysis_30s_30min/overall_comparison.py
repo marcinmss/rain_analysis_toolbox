@@ -9,6 +9,11 @@ OUTPUTFOlDER = Path(__file__).parent / "output"
 WorkAround = namedtuple("WorkAround", ["variable_name", "correct_data"])
 
 
+def plot_identety(ax):
+    maximum_value = max(max(ax.get_xbound()), max(ax.get_ybound()))
+    ax.plot((0, maximum_value), (0, maximum_value), color="black")
+
+
 def overall_comparison(
     parsivel_csv_path: Path,
     stereo_csv_path: Path,
@@ -43,23 +48,21 @@ def overall_comparison(
         ("df", "direct_field"),
         ("alpha", "fluctuations"),
         ("c1", "fluctuations"),
-        ("beta", "direct_field"),
+        # ("beta", "direct_field"),
         ("h", "direct_field"),
         ("r_square", "direct_field"),
-        ("avg_rr", "direct_field"),
-        ("total_depth", "direct_field"),
-        ("dm", "direct_field"),
+        # ("avg_rr", "direct_field"),
+        # ("total_depth", "direct_field"),
+        # ("dm", "direct_field"),
     ]
 
     n_cols = 5
-    n_rows = 2
+    n_rows = 1
 
     figure = plt.figure()
     figure.set_dpi(200)
     figure.set_size_inches((n_cols * 5, n_rows * 4))
 
-    n_events = stereo_data["direct_field"].shape[0] - 1
-    x = np.arange(0, n_events) + 1
     for idx, (column, flag) in enumerate(variables, 1):
         ax = figure.add_subplot(n_rows, n_cols, idx)
 
@@ -69,42 +72,37 @@ def overall_comparison(
         print(f"{column}({flag}):")
         height = stereo_data[flag].loc["ensemble_of_events", column]
         print(f"    stereo:{height:.3f}")
-        if height != 0:
-            ax.hlines(
-                height,
-                1,
-                n_events,
-                label="Ensemble Stereo",
-                linestyle="--",
-                colors="dodgerblue",
-            )
+        # if height != 0:
+        #     ax.hlines(
+        #         height,
+        #         1,
+        #         n_events,
+        #         label="Ensemble Stereo",
+        #         linestyle="--",
+        #         colors="dodgerblue",
+        #     )
 
-        # Plot the graph
-        ax.scatter(x, y, label="Stereo", c="dodgerblue", s=5.0)
-
-        y = np.array(parsivel_data[flag][column][1:])
+        x = np.array(parsivel_data[flag][column][1:])
 
         # Plot the line for the average ensemble line
         height = parsivel_data[flag].loc["ensemble_of_events", column]
         print(f"    parsivel:{height:.3f}")
-        if height != 0:
-            ax.hlines(
-                height,
-                1,
-                n_events,
-                label="Ensemble Parsivel",
-                linestyle="--",
-                colors="orangered",
-            )
+        # if height != 0:
+        #     ax.hlines(
+        #         height,
+        #         1,
+        #         n_events,
+        #         label="Ensemble Parsivel",
+        #         linestyle="--",
+        #         colors="orangered",
+        #     )
 
         # Plot the graph
-        ax.scatter(x, y, label="Parsivel", c="orangered", s=5.0)
+        ax.scatter(x, y, label="Parsivel", c="orangered", s=5.0, marker="x")
 
         # Customize the axis
         ax.set_title(column.upper())
-        ax.set_ybound(min(ax.get_ybound()[0], -0.05), ax.get_ybound()[1] * 1.1)
-        if idx == 1:
-            ax.legend(frameon=False, loc=(5.0, -0.75))
+        plot_identety(ax)
 
     figure.savefig(OUTPUTFOlDER / "overall_comparison.png", bbox_inches="tight")
 
