@@ -3,6 +3,7 @@
 !/.gitignore
 
 # Ignore plots and saved data
+*.parquet
 *.png
 *.npy
 *.csv
