@@ -3,7 +3,7 @@ from stereo import Stereo3DSeries
 from typing import Tuple, List, Any
 from stereo.dataclass import MINDIST, MAXDIST, BASEAREASTEREO3D
 from numpy import arange, cos, linspace, pi, zeros, divide, array, ndarray
-from aux_funcs.calculations_for_parsivel_data import volume_drop
+from aux_funcs.general import volume_drop
 
 EPISILON = 10e-9
 CONEANGLE = BASEAREASTEREO3D / (MAXDIST**2 - MINDIST**2) * 2

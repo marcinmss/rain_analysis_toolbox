@@ -1,5 +1,4 @@
 from pathlib import Path
-from numpy import ceil
 from matplotlib.pyplot import figure
 from parsivel import ParsivelTimeSeries, parsivel_read_from_pickle
 
@@ -9,9 +8,8 @@ OUTPUTFOLDER = Path(__file__).parent / "output"
 def generate_comparison(
     parsivel_event: ParsivelTimeSeries, stereo_event: ParsivelTimeSeries
 ):
-    number_indicators = 5
-    ncols = 3
-    nrows = int(ceil(number_indicators / ncols))
+    ncols = 4
+    nrows = 1
     counter = 1
 
     fig = figure()
@@ -21,55 +19,50 @@ def generate_comparison(
 
     # N(d) series
     ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.number_drops_per_area_series(), color="orangered")
-    ax.plot(stereo_event.number_drops_per_area_series(), "dodgerblue")
+    ax.plot(
+        parsivel_event.number_drops_per_area_series(),
+        color="orangered",
+        label="Parsivel",
+    )
+    ax.plot(
+        stereo_event.number_drops_per_area_series(), "dodgerblue", label="3D Stereo"
+    )
     ax.set_title("Number of Drops per Area")
     ax.set_ylabel("$n.m^{-2}$")
     counter += 1
 
     # Rain rate
     ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.rain_rate(), "dodgerblue")
-    ax.plot(stereo_event.rain_rate(), color="orangered")
+    ax.plot(parsivel_event.rain_rate(), "dodgerblue", label="3D Stereo")
+    ax.plot(stereo_event.rain_rate(), color="orangered", label="Parsivel")
     ax.set_title("Rain Rate")
     ax.set_ylabel("$mm.h^{-1}$")
     counter += 1
 
     # Cumulative rain Depth
     ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.cumulative_depth(), color="orangered")
-    ax.plot(stereo_event.cumulative_depth(), "dodgerblue")
+    ax.plot(parsivel_event.cumulative_depth(), color="orangered", label="Parsivel")
+    ax.plot(stereo_event.cumulative_depth(), "dodgerblue", label="3D Stereo")
     ax.set_title("Cumulative Depth")
     ax.set_ylabel("$mm$")
-    counter += 1
-
-    # Ndrops per Class
-    ax = fig.add_subplot(nrows, ncols, counter)
-    x, y = parsivel_event.get_nd()
-    ax.plot(x, y, color="orangered")
-    x, y = stereo_event.get_nd()
-    ax.plot(x, y, "dodgerblue")
-    ax.set_title("Number of drops divided by Area for each Class")
-    ax.set_ylabel("N(d)")
-    ax.set_xlabel("Diameter $(mm)$")
-    ax.set_xbound(0, 6)
     counter += 1
 
     # dsd per class
     ax = fig.add_subplot(nrows, ncols, counter)
     x, y = parsivel_event.get_nd3()
-    ax.plot(x, y, color="orangered")
+    ax.plot(x, y, color="orangered", label="Parsivel")
     x, y = stereo_event.get_nd3()
-    ax.plot(x, y, "dodgerblue")
+    ax.plot(x, y, "dodgerblue", label="3D Stereo")
     ax.set_title("Drop size distribution")
     ax.set_ylabel("$N(d).d^{3}$")
     ax.set_xlabel("Diameter $(mm)$")
     ax.set_xbound(0, 6)
     counter += 1
 
-    handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels, loc=(0.75, 0.25), fontsize=16)
-    fig.savefig(OUTPUTFOLDER / "statistical_comparison_one_event.png")
+    ax.legend()
+    # handles, labels = ax.get_legend_handles_labels()
+    # fig.legend(handles, labels, loc=(1.15, 0.25), fontsize=16)
+    fig.savefig(OUTPUTFOLDER / "quick_look.png")
 
 
 if __name__ == "__main__":

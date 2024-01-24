@@ -1,4 +1,4 @@
-from stereo import stereo_read_from_pickle as std_read
+from stereo import stereo_read_from_pickle as stereo_read_from_pickle
 from parsivel import parsivel_read_from_pickle as pars_read
 from aux_funcs.extract_events import is_event
 from pathlib import Path
@@ -25,7 +25,7 @@ output_folder_stereo = Path(
 def main():
     # Read the main parsivel series
     parsivel_full_event = pars_read(pars_full_event)
-    stereo_full_event = std_read(str_full_event)
+    stereo_full_event = stereo_read_from_pickle(str_full_event)
     print("THE DATA FOR BOTH EVENTS WAS READ.")
 
     # Find events for that are detected both in the parsivel and stereo devices

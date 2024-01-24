@@ -1,4 +1,4 @@
-from stereo import stereo_read_from_pickle as std_read
+from stereo import stereo_read_from_pickle as stereo_read_from_pickle
 from pathlib import Path
 
 
@@ -10,7 +10,8 @@ if __name__ == "__main__":
         "/home/marcio/stage_project/data/saved_events/Set01/events/stereo/"
     )
     stereo_events = [
-        std_read(file_path) for file_path in sorted(stereo_folder.iterdir())
+        stereo_read_from_pickle(file_path)
+        for file_path in sorted(stereo_folder.iterdir())
     ]
     print("Read the data for stereo.")
 

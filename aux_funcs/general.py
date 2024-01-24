@@ -1,4 +1,4 @@
-from numpy import pi, exp
+from numpy import ndarray, pi, exp
 
 # from scipy.interpolate import CubicSpline
 
@@ -17,6 +17,6 @@ Formula for the Hermitte tendency line
 """
 
 
-def V_D_Lhermitte_1988(d_mm: float) -> float:
+def V_D_Lhermitte_1988(d_mm: float | ndarray) -> float | ndarray:
     d_m = d_mm * 1e-3
     return 9.25 * (1 - exp(-1 * (68000 * (d_m**2) + 488 * d_m)))

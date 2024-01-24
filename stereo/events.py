@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from stereo import Stereo3DSeries, BASEAREASTEREO3D
 from numpy import array, zeros
-from aux_funcs.calculations_for_parsivel_data import volume_drop
+from aux_funcs.general import volume_drop
 
 """
 Use the function to extract events given the intervals of beggining and end.

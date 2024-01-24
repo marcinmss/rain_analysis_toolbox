@@ -93,6 +93,9 @@ class ParsivelTimeSeries:
     def avg_rain_rate(self) -> float:
         return mean(self.rain_rate(), dtype=float)
 
+    def total_number_of_drops(self) -> int:
+        return npsum(self.matrix_for_event)
+
     def cumulative_depth(self) -> ndarray[float, Any]:
         from parsivel.indicators import matrix_to_volume
 
