@@ -2,8 +2,6 @@ from pathlib import Path
 from numpy import ceil
 from matplotlib.pyplot import figure
 from parsivel import ParsivelTimeSeries, parsivel_read_from_pickle
-from stereo.dataclass import BASESTEREOSTYLE
-from parsivel.dataclass import BASEPARSIVELSTYLE as BASEPARSIVELSTYLE
 
 OUTPUTFOLDER = Path(__file__).parent / "output"
 
@@ -23,24 +21,24 @@ def generate_comparison(
 
     # N(d) series
     ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.number_drops_per_area_series(), **BASEPARSIVELSTYLE)
-    ax.plot(stereo_event.number_drops_per_area_series(), **BASESTEREOSTYLE)
+    ax.plot(parsivel_event.number_drops_per_area_series(), color="orangered")
+    ax.plot(stereo_event.number_drops_per_area_series(), "dodgerblue")
     ax.set_title("Number of Drops per Area")
     ax.set_ylabel("$n.m^{-2}$")
     counter += 1
 
     # Rain rate
     ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.rain_rate(), **BASESTEREOSTYLE)
-    ax.plot(stereo_event.rain_rate(), **BASEPARSIVELSTYLE)
+    ax.plot(parsivel_event.rain_rate(), "dodgerblue")
+    ax.plot(stereo_event.rain_rate(), color="orangered")
     ax.set_title("Rain Rate")
     ax.set_ylabel("$mm.h^{-1}$")
     counter += 1
 
     # Cumulative rain Depth
     ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.cumulative_depth(), **BASEPARSIVELSTYLE)
-    ax.plot(stereo_event.cumulative_depth(), **BASESTEREOSTYLE)
+    ax.plot(parsivel_event.cumulative_depth(), color="orangered")
+    ax.plot(stereo_event.cumulative_depth(), "dodgerblue")
     ax.set_title("Cumulative Depth")
     ax.set_ylabel("$mm$")
     counter += 1
@@ -48,9 +46,9 @@ def generate_comparison(
     # Ndrops per Class
     ax = fig.add_subplot(nrows, ncols, counter)
     x, y = parsivel_event.get_nd()
-    ax.plot(x, y, **BASEPARSIVELSTYLE)
+    ax.plot(x, y, color="orangered")
     x, y = stereo_event.get_nd()
-    ax.plot(x, y, **BASESTEREOSTYLE)
+    ax.plot(x, y, "dodgerblue")
     ax.set_title("Number of drops divided by Area for each Class")
     ax.set_ylabel("N(d)")
     ax.set_xlabel("Diameter $(mm)$")
@@ -60,9 +58,9 @@ def generate_comparison(
     # dsd per class
     ax = fig.add_subplot(nrows, ncols, counter)
     x, y = parsivel_event.get_nd3()
-    ax.plot(x, y, **BASEPARSIVELSTYLE)
+    ax.plot(x, y, color="orangered")
     x, y = stereo_event.get_nd3()
-    ax.plot(x, y, **BASESTEREOSTYLE)
+    ax.plot(x, y, "dodgerblue")
     ax.set_title("Drop size distribution")
     ax.set_ylabel("$N(d).d^{3}$")
     ax.set_xlabel("Diameter $(mm)$")

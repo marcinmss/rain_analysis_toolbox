@@ -75,25 +75,34 @@ if __name__ == "__main__":
     del stereo_events
     print("Done.")
 
-    fig = figure()
-    fig.set_size_inches(8.5, 6.5)
-
-    # dsd per class
+    # Smooth the functions
     ws = 10
     ord = 5
-    ax = fig.add_subplot(1, 1, 1)
-    ax.plot(
-        moble_average(x, ws, ord), moble_average(y_stereo, ws, ord), color="dodgerblue"
-    )
-    ax.plot(
-        moble_average(x, ws, ord), moble_average(y_parsivel, ws, ord), color="orangered"
-    )
+    x = moble_average(x, ws, ord)
+    y_stereo = moble_average(y_stereo, ws, ord)
+    y_parsivel = moble_average(y_parsivel, ws, ord)
 
-    ax.set_title("Drop size distribution")
+    # Plot the graphs
+    fig = figure()
+    fig.set_size_inches(17, 6.5)
+
+    # Plot first graph
+    ax = fig.add_subplot(1, 2, 1)
+    ax.plot(x, y_stereo, color="dodgerblue")
+    ax.plot(x, y_parsivel, color="orangered")
     ax.set_ylabel("Cumulative Depth")
     ax.set_xlabel("$D_m$")
-    ax.set_xbound(0, 5)
+    ax.set_xbound(0, 2.5)
+
+    # Plot second graph
+    ax = fig.add_subplot(1, 2, 2)
+    error = abs((y_parsivel - y_stereo) / y_parsivel) * 100
+    ax.plot(x, error, color="dodgerblue")
+    ax.set_ylabel("Error")
+    ax.set_xlabel("$D_m$")
+    ax.set_xbound(0, 2.5)
+    ax.set_ybound(0, 100.0)
 
     handles, labels = ax.get_legend_handles_labels()
     fig.legend(handles, labels, loc=(0.75, 0.25), fontsize=16)
-    fig.savefig(OUTPUTFOLDER / "depth_vs_dm.png")
+    fig.savefig(OUTPUTFOLDER / "depth_vs_dm.png", bbox_inches="tight")
