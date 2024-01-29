@@ -2,14 +2,20 @@ from typing import List
 from numpy import array, ndarray, full
 
 
+"""
+Takes the rain-rate time series and returns a bolean array of the same 
+shape that is true if the time step is in an event and false if it is not.
+"""
+
+
 def is_event(
     rain_rate: ndarray,
     dry_period_min: int = 15,
     threshold: float = 0.7,
-    tinterval_sec: float = 30,
+    resolution_s: float = 30,
 ):
-    tinterval = tinterval_sec / 3600
-    buffer = int(dry_period_min * 60 / tinterval_sec)
+    tinterval = resolution_s / 3600
+    buffer = int(dry_period_min * 60 / resolution_s)
     rains = rain_rate > 0.001
     rains_inside_buffer = array(
         [any(rains[i - buffer : i + buffer]) for i in range(rains.size)]

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Any, List, Tuple
-
 from matplotlib.axes import Axes
 from aux_funcs.calculations_for_parsivel_data import volume_drop
 from numpy import array, cumsum, fromiter, mean, ndarray
@@ -76,6 +75,10 @@ class Stereo3DSeries:
 
         return write_to_picle(file_path, self)
 
+    """
+    Methods for calculating indicators from the data
+    """
+
     def rain_rate(self, interval_seconds: float = 30) -> ndarray[float, Any]:
         from stereo.indicators import rain_rate
 
@@ -85,14 +88,6 @@ class Stereo3DSeries:
         from stereo.indicators import time_series
 
         return time_series(self, interval_seconds)
-
-    def npa(self, interval_seconds: int = 30) -> ndarray[float, Any]:
-        from stereo.indicators import get_npa
-
-        return get_npa(self, interval_seconds)
-
-    def npa_event(self) -> float:
-        return len(self) / (self.area_of_study * 1e-6)
 
     def mean_diameter_for_event(self):
         return mean(self.diameters)
