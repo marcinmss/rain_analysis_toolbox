@@ -34,7 +34,9 @@ def main():
     simutainous_events = logical_and(parsivel_events, stereo_events)
 
     # Colect the detected events into parsivel time series and plot to look at them
-    parsivel_events = parsivel_full_event.colect_events(simutainous_events)
+    parsivel_events = parsivel_full_event.extract_events_from_events_series(
+        simutainous_events
+    )
     print(f"Total of {len(parsivel_events)} events detected.")
     n = int(np.ceil(len(parsivel_events) ** 0.5))
     figure = plt.figure()

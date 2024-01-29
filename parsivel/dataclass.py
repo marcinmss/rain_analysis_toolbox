@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, List, Literal, NamedTuple, Tuple
+from typing import Any, List, NamedTuple, Tuple
 from pathlib import Path
 from numpy import (
     array,
@@ -34,7 +34,7 @@ class ParsivelTimeStep(NamedTuple):
 
     @property
     def volume_mm3(self) -> float:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
         return matrix_to_volume(self.matrix)
 
@@ -83,18 +83,16 @@ class ParsivelTimeSeries:
     """
 
     def rain_rate(self) -> ndarray[float, Any]:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
-        volume_series = array(
-            [matrix_to_volume(matrix) for matrix in self.get_matrices_series()]
-        )
+        volume_series = array([matrix_to_volume(tstep.matrix) for tstep in self])
         return volume_series / self.area_of_study / self.resolution_seconds * 3600
 
     def avg_rain_rate(self) -> float:
         return mean(self.rain_rate(), dtype=float)
 
     def cumulative_depth(self) -> ndarray[float, Any]:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
         volume_series = array(
             [matrix_to_volume(matrix) for matrix in self.get_matrices_series()]
@@ -112,17 +110,9 @@ class ParsivelTimeSeries:
         return get_nd3(self)
 
     def total_depth_for_event(self) -> float:
-        from aux_funcs.calculations_for_parsivel_data import matrix_to_volume
+        from parsivel.indicators import matrix_to_volume
 
         return matrix_to_volume(self.matrix_for_event) / self.area_of_study
-
-    def number_drops_per_area_series(self) -> ndarray[float, Any]:
-        area_m2 = self.area_of_study * 1e-6
-        return array([item.ndrops for item in self]) / area_m2
-
-    def number_drops_per_area_event(self) -> float:
-        area_m2 = self.area_of_study * 1e-6
-        return npsum(self.matrix_for_event) / area_m2
 
     def mean_diameter_for_event(self) -> float:
         from parsivel.indicators import get_mean_diameter
@@ -174,8 +164,10 @@ class ParsivelTimeSeries:
         return [i * 30 for i in range(length)]
 
     @property
-    def matrix_for_event(self) -> ndarray | Literal[0]:
-        return sum((item.matrix for item in self))
+    def matrix_for_event(self) -> ndarray:
+        matrix = sum((item.matrix for item in self))
+        assert isinstance(matrix, ndarray)
+        return matrix
 
     @property
     def duration_readable(self) -> str:
@@ -187,13 +179,6 @@ class ParsivelTimeSeries:
     Extract events of the series
     """
 
-    def exstract_events(
-        self, minimal_time_lenght_min: int, buffer_min: int, threshold: float
-    ):
-        from parsivel.extract_events import extract_events
-
-        return extract_events(self, minimal_time_lenght_min, buffer_min, threshold)
-
     def find_events(
         self,
         dry_period_min: int = 15,
@@ -204,10 +189,10 @@ class ParsivelTimeSeries:
 
         return is_event(self.rain_rate(), dry_period_min, threshold, tinterval_sec)
 
-    def colect_events(self, event_series: ndarray):
-        from parsivel.extract_events import grab_events
+    def extract_events_from_events_series(self, event_series: ndarray):
+        from parsivel.extract_events import extract_events_from_events_series
 
-        return grab_events(self, event_series)
+        return extract_events_from_events_series(self, event_series)
 
     """
     Implementing filters to the series

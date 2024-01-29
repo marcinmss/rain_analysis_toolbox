@@ -1,7 +1,7 @@
 from matplotlib.axes import Axes
 from numpy import fromiter, linspace, ndarray, zeros
 from parsivel.dataclass import ParsivelTimeSeries, BASEPARSIVELSTYLE
-from parsivel.matrix_classes import (
+from parsivel.classes_values import (
     CLASSES_DIAMETER_MIDDLE,
     CLASSES_DIAMETER,
     CLASSES_VELOCITY_MIDDLE,
