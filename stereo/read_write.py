@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import Any, Generator, List, Tuple
+from typing import Any, Generator, List
 from pandas import DataFrame
 
-from numpy import array, ndarray
+from numpy import array
 from stereo.dataclass import MAXDIST, MINDIST, Stereo3DSeries, Stereo3DRow
 from csv import reader
 from zipfile import ZipFile
@@ -129,17 +129,15 @@ def stereo_read_from_zips(
 
 
 ###############################################################################
-################# FOR READING AND WRITING INTO THE PICLE FORMAT ###############
+################# FOR READING AND WRITING INTO THE PARQUET FORMAT #############
 ###############################################################################
 
 
-drop_fields = {
+tstep_fields = {
     "timestamp": "int64",
-    "timestamp_ms": "float64",
-    "diameter": "float64",
-    "velocity": "float64",
-    "distance_to_sensor": "float64",
-    "shape_parameter": "float64",
+    "rain_rate": "float64",
+    "temperature": "float64",
+    "matrix": "string",
 }
 
 
@@ -148,10 +146,10 @@ def write_to_parquet(file_path: str | Path, series: Stereo3DSeries):
     table = patable(
         DataFrame(
             data=[
-                [drop.__getattribute__(column) for column in drop_fields.keys()]
+                [drop.__getattribute__(column) for column in tstep_fields.keys()]
                 for drop in series
             ],
-            columns=[field for field in drop_fields.keys()],
+            columns=[field for field in tstep_fields.keys()],
         )
     )
 
@@ -165,7 +163,7 @@ def write_to_parquet(file_path: str | Path, series: Stereo3DSeries):
     }
 
     my_schema = schema(
-        [pa_field(field, dtype) for field, dtype in drop_fields.items()],
+        [pa_field(field, dtype) for field, dtype in tstep_fields.items()],
         metadata=series_metadata,
     )
 
