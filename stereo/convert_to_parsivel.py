@@ -1,7 +1,7 @@
 from parsivel import ParsivelTimeSeries, ParsivelTimeStep
 from stereo import Stereo3DSeries
 from aux_funcs.aux_datetime import tstamp_to_dt, range_dtime_30s, dt_to_tstamp
-from parsivel.matrix_classes import CLASSES_DIAMETER_BINS, CLASSES_VELOCITY_BINS
+from parsivel.classes_values import CLASSES_DIAMETER_BINS, CLASSES_VELOCITY_BINS
 
 """
 Auxiliary functions for classifiing the diameter and the speed into the Parsivel

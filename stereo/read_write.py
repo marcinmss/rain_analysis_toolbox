@@ -6,8 +6,6 @@ from numpy import array
 from stereo.dataclass import MAXDIST, MINDIST, Stereo3DSeries, Stereo3DRow
 from csv import reader
 from zipfile import ZipFile
-from pyarrow import schema, field as pa_field, table as patable
-from pyarrow.parquet import write_table, read_table
 
 from aux_funcs.aux_datetime import (
     round_startfinish_to_30s,
@@ -125,81 +123,6 @@ def stereo_read_from_zips(
 
     return Stereo3DSeries(
         "stereo3d", (tstamp0, tstampf), array(series), (MINDIST, MAXDIST)
-    )
-
-
-###############################################################################
-################# FOR READING AND WRITING INTO THE PARQUET FORMAT #############
-###############################################################################
-
-
-tstep_fields = {
-    "timestamp": "int64",
-    "rain_rate": "float64",
-    "temperature": "float64",
-    "matrix": "string",
-}
-
-
-def write_to_parquet(file_path: str | Path, series: Stereo3DSeries):
-    # Set up the table to reseave data
-    table = patable(
-        DataFrame(
-            data=[
-                [drop.__getattribute__(column) for column in tstep_fields.keys()]
-                for drop in series
-            ],
-            columns=[field for field in tstep_fields.keys()],
-        )
-    )
-
-    # Add the metadata for series
-    series_metadata = {
-        "device": series.device,
-        "duration_beg": str(series.duration[0]),
-        "duration_end": str(series.duration[1]),
-        "limits_area_of_study_beg": str(series.limits_area_of_study[0]),
-        "limits_area_of_study_end": str(series.limits_area_of_study[1]),
-    }
-
-    my_schema = schema(
-        [pa_field(field, dtype) for field, dtype in tstep_fields.items()],
-        metadata=series_metadata,
-    )
-
-    table = table.cast(my_schema)
-
-    file_path = Path(file_path)
-    assert file_path.parent.exists(), "The file path is invalid!"
-    write_table(table, file_path)
-
-
-def stereo_read_from_parquet(file_path: str | Path) -> Stereo3DSeries:
-    file_path = Path(file_path)
-    assert file_path.exists(), "File doesn't exists!!!"
-
-    print("Read table")
-    table = read_table(file_path)
-
-    metadata = table.schema.metadata
-    duration = (int(metadata[b"duration_beg"]), int(metadata[b"duration_end"]))
-    limits_area_of_study = (
-        float(metadata[b"limits_area_of_study_beg"]),
-        float(metadata[b"limits_area_of_study_end"]),
-    )
-    devie = str(metadata[b"device"])
-
-    print("Read the Metadata")
-
-    print("Converted to pandas")
-    table = table.to_pandas()
-
-    series = array([Stereo3DRow(**row[1]) for row in table.iterrows()])
-    return Stereo3DSeries(
-        devie,
-        duration,
-        series,
-        limits_area_of_study,
     )
 
 
