@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(
     name="analysis_toolbox",
-    version="0.0.1",
+    version="0.0.2",
     description="Simple tools for analysing distrometer data.",
     url="https://github.com/marcinmss/rain_analysis_toolbox",
     author="Marcio Matheus",
