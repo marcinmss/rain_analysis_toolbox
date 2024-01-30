@@ -1,8 +1,8 @@
 from typing import Tuple, Any
 from numpy import array, linspace, ndarray, zeros, ceil, floor
-from parsivel.matrix_classes import CLASSES_DIAMETER_MIDDLE
+from parsivel.classes_values import CLASSES_DIAMETER_MIDDLE
 from stereo.dataclass import Stereo3DSeries
-from aux_funcs.calculations_for_parsivel_data import volume_drop
+from aux_funcs.general import volume_drop
 from stereo.convert_to_parsivel import find_diameter_class
 
 """
