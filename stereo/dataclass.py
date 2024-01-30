@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 from matplotlib.axes import Axes
-from aux_funcs.calculations_for_parsivel_data import volume_drop
+from aux_funcs.general import volume_drop
 from numpy import array, cumsum, fromiter, mean, ndarray
 from parsivel.dataclass import ParsivelTimeSeries
 from pathlib import Path
@@ -135,11 +135,6 @@ class Stereo3DSeries:
     each range
     """
 
-    def acumulate_by_distance(self, N: int = 1024) -> List[ndarray[float, Any]]:
-        from stereo.distance_analisys import acumulate_by_distance
-
-        return acumulate_by_distance(self, N)
-
     def split_by_distance_to_sensor(self, number_of_splits: int = 8):
         from stereo.distance_analisys import split_by_distance_to_sensor
 
@@ -177,10 +172,10 @@ class Stereo3DSeries:
     New additions
     """
 
-    def extract_events(self, events_duration: List[Tuple[int, int]]):
-        from stereo.events import extract_events
+    def extract_events(self, is_event_array: ndarray):
+        from stereo.events import extract_events_from_is_event_series
 
-        return extract_events(self, events_duration)
+        return extract_events_from_is_event_series(is_event_array, self)
 
     def shrink_series(self, new_limits_tstamp: Tuple[int, int]):
         new_beg, new_end = new_limits_tstamp

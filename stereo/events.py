@@ -1,14 +1,40 @@
 from typing import List, Tuple
 from stereo import Stereo3DSeries, BASEAREASTEREO3D
-from numpy import array, zeros
-from aux_funcs.calculations_for_parsivel_data import volume_drop
+from numpy import array, ndarray, zeros
+from aux_funcs.general import volume_drop
+
+
+"""
+Takes the a large series and the is_event array and divide the large series into smaller ones based on the events detected.
+"""
+
+
+def extract_events_from_is_event_series(
+    is_event_series: ndarray,
+    series: Stereo3DSeries,
+):
+    # Take the time stamps from the beggining and end of every
+    last_one = True
+    beg = 0
+    list_durations = []
+    time_stamps = series.time_series()
+    for curr_one, curr_tstep in zip(is_event_series, time_stamps):
+        if last_one is False and curr_one is True:
+            beg = curr_tstep
+        elif last_one is True and curr_one is False:
+            list_durations.append((beg, curr_tstep - 30))
+        else:
+            last_one = curr_one
+
+    return extract_events_from_duration(series, list_durations)
+
 
 """
 Use the function to extract events given the intervals of beggining and end.
 """
 
 
-def extract_events(
+def extract_events_from_duration(
     series: Stereo3DSeries, events_duration: List[Tuple[int, int]]
 ) -> List[Stereo3DSeries]:
     output = []
