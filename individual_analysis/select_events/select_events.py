@@ -50,10 +50,12 @@ def main():
     stereo_events = stereo_full_event.extract_events(
         [pars_event.duration for pars_event in parsivel_events]
     )
-    all(
-        pars_event.duration == stereo_event.duration
-        for pars_event, stereo_event in zip(parsivel_events, stereo_events)
-    )
+    # all(
+    #     pars_event.duration == stereo_event.duration
+    #     for pars_event, stereo_event in zip(parsivel_events, stereo_events)
+    # )
+
+    print(f"# stereo_events = {len(stereo_events)}")
 
     # Filter the events by the mimimum legth we want
     minimum_length = 2**7

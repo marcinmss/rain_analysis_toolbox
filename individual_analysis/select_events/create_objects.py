@@ -18,13 +18,15 @@ def main():
     print("Reading the data for Stereo 3D...")
     stereo_obj = stereo_read_from_zips(BEGGINING, END, stereo_source_folder)
     print("    done.")
-    print("Read the data for Parsivel...")
-    parsivel_obj = parsivel_read_from_zips(BEGGINING, END, parsivel_source_folder)
-    print("    done.")
 
-    # Save both objects
     print("Saving object for Stereo 3D...")
     stereo_obj.to_pickle(OUTPUTFOLDER / "stereo_full_event.obj")
+    print("    done.")
+
+    del stereo_obj
+
+    print("Read the data for Parsivel...")
+    parsivel_obj = parsivel_read_from_zips(BEGGINING, END, parsivel_source_folder)
     print("    done.")
     print("Saving object for Parsivel...")
     parsivel_obj.to_pickle(OUTPUTFOLDER / "parsivel_full_event.obj")

@@ -109,6 +109,9 @@ class ParsivelTimeSeries:
 
         return get_nd3(self)
 
+    def get_number_drops(self) -> int:
+        return npsum(self.matrix_for_event)
+
     def total_depth_for_event(self) -> float:
         from parsivel.indicators import matrix_to_volume
 

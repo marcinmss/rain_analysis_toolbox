@@ -17,20 +17,20 @@ def overall_analysis(
     parsivel_events: List[ParsivelTimeSeries],
     stereo_converted_events: List[ParsivelTimeSeries],
 ):
-    dotstyle = {"s": 18.0, "c": "orangered", "marker": "."}
+    dotstyle = {"s": 14.0, "c": "orangered", "marker": "."}
     ncols = 3
     nrows = 2
     figure = plt.figure()
     figure.set_size_inches((ncols * 3 + 2, nrows * 3 + 1))
     figure.set_layout_engine("constrained")
-    figure.suptitle("Analisys for multiple events", fontsize=18)
+    figure.suptitle("Analisys for multiple events", fontsize=16)
     plot_idx = 1
 
     # Plot the rain rate
     ax = figure.add_subplot(nrows, ncols, plot_idx)
-    ax.set_title("Average Rain Rate $(mm.h^{-1})$")
-    ax.set_ylabel("Parsivel")
-    ax.set_xlabel("Stereo 3D")
+    ax.set_title("Average Rain Rate $(mm.h^{-1})$", fontdict={"fontsize": 14})
+    ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
+    ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
     pars_values = [np.mean(event.rain_rate()) for event in parsivel_events]
     stereo_values = [np.mean(event.rain_rate()) for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
@@ -39,9 +39,9 @@ def overall_analysis(
 
     # Plot the total rain depth
     ax = figure.add_subplot(nrows, ncols, plot_idx)
-    ax.set_title("Total depth $(mm)$")
-    ax.set_ylabel("Parsivel")
-    ax.set_xlabel("Stereo 3D")
+    ax.set_title("Total depth $(mm)$", fontdict={"fontsize": 14})
+    ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
+    ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
     pars_values = [event.total_depth_for_event() for event in parsivel_events]
     stereo_values = [event.total_depth_for_event() for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
@@ -50,9 +50,9 @@ def overall_analysis(
 
     # Plot the Kinecti energy per Area
     ax = figure.add_subplot(nrows, ncols, plot_idx)
-    ax.set_title("Kinetic energy per Area $(j.m^{-2})$")
-    ax.set_ylabel("Parsivel")
-    ax.set_xlabel("Stereo 3D")
+    ax.set_title("Kinetic energy per Area $(j.m^{-2})$", fontdict={"fontsize": 14})
+    ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
+    ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
     pars_values = [event.kinetic_energy_flow_for_event() for event in parsivel_events]
     stereo_values = [
         event.kinetic_energy_flow_for_event() for event in stereo_converted_events
@@ -63,12 +63,15 @@ def overall_analysis(
 
     # Plot the mean diameter
     ax = figure.add_subplot(nrows, ncols, plot_idx)
-    ax.set_title("Number of drops per area $(m^{-2})$")
-    ax.set_ylabel("Parsivel")
-    ax.set_xlabel("Stereo 3D")
-    pars_values = [event.number_drops_per_area_event() for event in parsivel_events]
+    ax.set_title("Number of drops per area $(m^{-2})$", fontdict={"fontsize": 14})
+    ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
+    ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
+    pars_values = [
+        event.get_number_drops() / event.area_of_study for event in parsivel_events
+    ]
     stereo_values = [
-        event.number_drops_per_area_event() for event in stereo_converted_events
+        event.get_number_drops() / event.area_of_study
+        for event in stereo_converted_events
     ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
@@ -76,9 +79,9 @@ def overall_analysis(
 
     # Plot the mean diameter
     ax = figure.add_subplot(nrows, ncols, plot_idx)
-    ax.set_title("Mean Diameter $(mm)$")
-    ax.set_ylabel("Parsivel")
-    ax.set_xlabel("Stereo 3D")
+    ax.set_title("Mean Diameter $(mm)$", fontdict={"fontsize": 14})
+    ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
+    ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
     pars_values = [event.mean_diameter_for_event() for event in parsivel_events]
     stereo_values = [
         event.mean_diameter_for_event() for event in stereo_converted_events
@@ -89,9 +92,9 @@ def overall_analysis(
 
     # Plot the mean velocity
     ax = figure.add_subplot(nrows, ncols, plot_idx)
-    ax.set_title("Mean Velocity $(m.s^{-1})$")
-    ax.set_ylabel("Parsivel")
-    ax.set_xlabel("Stereo 3D")
+    ax.set_title("Mean Velocity $(m.s^{-1})$", fontdict={"fontsize": 14})
+    ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
+    ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
     pars_values = [event.mean_velocity_for_event() for event in parsivel_events]
     stereo_values = [
         event.mean_velocity_for_event() for event in stereo_converted_events
@@ -105,10 +108,10 @@ def overall_analysis(
 
 if __name__ == "__main__":
     pars_folder = Path(
-        "/home/marcio/stage_project/data/saved_events/sprint05/parsivel/"
+        "/home/marcio/stage_project/data/saved_events/Set01/events/parsivel/"
     )
     stereo_folder = Path(
-        "/home/marcio/stage_project/data/saved_events/sprint05/stereo_converted/"
+        "/home/marcio/stage_project/data/saved_events/Set01/events/stereo_converted/"
     )
     parsivel_events = [
         pars_read(file_path) for file_path in sorted(pars_folder.iterdir())

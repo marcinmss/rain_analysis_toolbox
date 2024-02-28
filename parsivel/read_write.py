@@ -1,5 +1,5 @@
 from typing import Tuple
-from parsivel.dataclass import ParsivelTimeSeries, ParsivelTimeStep
+from parsivel.dataclass import ParsivelTimeSeries, ParsivelTimeStep, PARSIVELBASEAREA
 from pathlib import Path
 from zipfile import ZipFile
 from numpy import array, ndarray
@@ -10,7 +10,6 @@ from aux_funcs.aux_datetime import (
     range_dtime_30s,
 )
 
-from parsivel.dataclass import PARSIVELBASEAREA
 from aux_funcs.parse_filenames import construct_file_name, get_parser
 import pickle
 

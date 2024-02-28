@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Tuple
+from typing import Any, List, Tuple
 from matplotlib.axes import Axes
 from aux_funcs.general import volume_drop
 from numpy import array, cumsum, fromiter, mean, ndarray
@@ -172,7 +172,12 @@ class Stereo3DSeries:
     New additions
     """
 
-    def extract_events(self, is_event_array: ndarray):
+    def extract_events(self, list_durations: List[Tuple[int, int]]):
+        from stereo.events import extract_events_from_duration
+
+        return extract_events_from_duration(self, list_durations)
+
+    def extract_events_from_is_event_series(self, is_event_array: ndarray):
         from stereo.events import extract_events_from_is_event_series
 
         return extract_events_from_is_event_series(is_event_array, self)

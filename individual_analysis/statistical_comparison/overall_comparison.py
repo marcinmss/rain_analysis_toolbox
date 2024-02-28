@@ -102,14 +102,15 @@ def overall_analysis(
 
 if __name__ == "__main__":
     pars_folder = Path(
-        "/home/marcio/stage_project/data/saved_events/sprint05/parsivel/"
+        "/home/marcio/stage_project/data/saved_events/Set01/events/parsivel/"
     )
     stereo_folder = Path(
-        "/home/marcio/stage_project/data/saved_events/sprint05/stereo/"
+        "/home/marcio/stage_project/data/saved_events/Set01/events/stereo/"
     )
     parsivel_events = [
         pars_read(file_path) for file_path in sorted(pars_folder.iterdir())
     ]
+    print(f"# parsivel_events = {len(parsivel_events)}")
     stereo_events = [
         stereo_read_from_pickle(file_path)
         for file_path in sorted(stereo_folder.iterdir())
