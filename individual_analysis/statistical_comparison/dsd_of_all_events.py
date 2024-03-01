@@ -24,9 +24,9 @@ def overall_analysis(
     ax.plot(x, y, **BASEPARSIVELSTYLE)
     y = sum([event.get_nd3()[1] for event in stereo_events]) / len(stereo_events)
     ax.plot(x, y, **BASESTEREOSTYLE)
-    ax.set_title("Drop size distribution")
-    ax.set_ylabel("$N(d).d^{3}$")
-    ax.set_xlabel("Diameter $(mm)$")
+    ax.set_title("Drop size distribution", fontdict={"fontsize": 16})
+    ax.set_ylabel("$N(d).d^{3}$", fontdict={"fontsize": 13})
+    ax.set_xlabel("Diameter $(mm)$", fontdict={"fontsize": 13})
     ax.set_xbound(0, 6)
 
     handles, labels = ax.get_legend_handles_labels()
