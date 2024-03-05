@@ -21,16 +21,14 @@ def overall_analysis(
     ax = fig.add_subplot(1, 1, 1)
     x, _ = parsivel_events[0].get_nd3()
     y = sum([event.get_nd3()[1] for event in parsivel_events]) / len(parsivel_events)
-    ax.plot(x, y, **BASEPARSIVELSTYLE)
+    ax.plot(x, y, **BASEPARSIVELSTYLE, label="Parsivel")
     y = sum([event.get_nd3()[1] for event in stereo_events]) / len(stereo_events)
-    ax.plot(x, y, **BASESTEREOSTYLE)
-    ax.set_title("Drop size distribution", fontdict={"fontsize": 16})
-    ax.set_ylabel("$N(d).d^{3}$", fontdict={"fontsize": 13})
-    ax.set_xlabel("Diameter $(mm)$", fontdict={"fontsize": 13})
+    ax.plot(x, y, **BASESTEREOSTYLE, label="3D Stereo")
+    ax.set_ylabel("$N(d).d^{3}$", fontdict={"fontsize": 14})
+    ax.set_xlabel("Diameter $(mm)$", fontdict={"fontsize": 14})
     ax.set_xbound(0, 6)
 
-    handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels, loc=(0.75, 0.25), fontsize=16)
+    ax.legend(fontsize=12)
     fig.savefig(OUTPUTFOLDER / "mean_dsd_of_all_events.png")
 
 
