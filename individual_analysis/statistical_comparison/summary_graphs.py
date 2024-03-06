@@ -18,16 +18,12 @@ def overall_analysis(
     stereo_converted_events: List[ParsivelTimeSeries],
 ):
     dotstyle = {"s": 14.0, "c": "orangered", "marker": "."}
-    ncols = 3
-    nrows = 2
-    figure = plt.figure()
-    figure.set_size_inches((ncols * 3 + 2, nrows * 3 + 1))
-    figure.set_layout_engine("constrained")
-    figure.suptitle("Analisys for multiple events", fontsize=16)
-    plot_idx = 1
 
     # Plot the rain rate
-    ax = figure.add_subplot(nrows, ncols, plot_idx)
+    figure = plt.figure()
+    figure.set_layout_engine("constrained")
+    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
+    ax = figure.add_subplot(1, 1, 1)
     ax.set_title("Average Rain Rate $(mm.h^{-1})$", fontdict={"fontsize": 14})
     ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
     ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
@@ -35,21 +31,27 @@ def overall_analysis(
     stereo_values = [np.mean(event.rain_rate()) for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
-    plot_idx += 1
+    figure.savefig(output_folder / "summary_rain_rate.png")
 
     # Plot the total rain depth
-    ax = figure.add_subplot(nrows, ncols, plot_idx)
-    ax.set_title("Total depth $(mm)$", fontdict={"fontsize": 14})
+    figure = plt.figure()
+    figure.set_layout_engine("constrained")
+    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
+    ax = figure.add_subplot(1, 1, 1)
+    ax.set_title("Depth $(mm)$", fontdict={"fontsize": 14})
     ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
     ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
     pars_values = [event.total_depth_for_event() for event in parsivel_events]
     stereo_values = [event.total_depth_for_event() for event in stereo_converted_events]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
-    plot_idx += 1
+    figure.savefig(output_folder / "summary_depth.png")
 
     # Plot the Kinecti energy per Area
-    ax = figure.add_subplot(nrows, ncols, plot_idx)
+    figure = plt.figure()
+    figure.set_layout_engine("constrained")
+    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
+    ax = figure.add_subplot(1, 1, 1)
     ax.set_title("Kinetic energy per Area $(j.m^{-2})$", fontdict={"fontsize": 14})
     ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
     ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
@@ -59,10 +61,13 @@ def overall_analysis(
     ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
-    plot_idx += 1
+    figure.savefig(output_folder / "summary_kinetic.png")
 
     # Plot the mean diameter
-    ax = figure.add_subplot(nrows, ncols, plot_idx)
+    figure = plt.figure()
+    figure.set_layout_engine("constrained")
+    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
+    ax = figure.add_subplot(1, 1, 1)
     ax.set_title("Number of drops per area $(m^{-2})$", fontdict={"fontsize": 14})
     ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
     ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
@@ -75,10 +80,13 @@ def overall_analysis(
     ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
-    plot_idx += 1
+    figure.savefig(output_folder / "summary_ndrops.png")
 
     # Plot the mean diameter
-    ax = figure.add_subplot(nrows, ncols, plot_idx)
+    figure = plt.figure()
+    figure.set_layout_engine("constrained")
+    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
+    ax = figure.add_subplot(1, 1, 1)
     ax.set_title("Mean Diameter $(mm)$", fontdict={"fontsize": 14})
     ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
     ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
@@ -88,10 +96,13 @@ def overall_analysis(
     ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
-    plot_idx += 1
+    figure.savefig(output_folder / "summary_mean_diameter.png")
 
     # Plot the mean velocity
-    ax = figure.add_subplot(nrows, ncols, plot_idx)
+    figure = plt.figure()
+    figure.set_layout_engine("constrained")
+    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
+    ax = figure.add_subplot(1, 1, 1)
     ax.set_title("Mean Velocity $(m.s^{-1})$", fontdict={"fontsize": 14})
     ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
     ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
@@ -101,9 +112,7 @@ def overall_analysis(
     ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)
-    plot_idx += 1
-
-    figure.savefig(output_folder / "overall_comparison_with_filter.png")
+    figure.savefig(output_folder / "summary_mean_velocity.png")
 
 
 if __name__ == "__main__":
