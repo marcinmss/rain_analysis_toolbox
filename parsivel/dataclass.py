@@ -82,6 +82,12 @@ class ParsivelTimeSeries:
     Rain indicators
     """
 
+    def get_number_of_drops(self) -> int:
+        return npsum(self.matrix_for_event)
+
+    def get_number_of_drops_series(self) -> ndarray:
+        return array([npsum(tstep.matrix) for tstep in self])
+
     def rain_rate(self) -> ndarray[float, Any]:
         from parsivel.indicators import matrix_to_volume
 
@@ -109,7 +115,7 @@ class ParsivelTimeSeries:
 
         return get_nd3(self)
 
-    def get_number_drops(self) -> int:
+    def ndrops(self) -> int:
         return npsum(self.matrix_for_event)
 
     def total_depth_for_event(self) -> float:

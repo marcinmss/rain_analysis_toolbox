@@ -1,9 +1,6 @@
 from pathlib import Path
-from numpy import ceil
 from matplotlib.pyplot import figure
 from parsivel import ParsivelTimeSeries, parsivel_read_from_pickle
-from stereo.dataclass import BASESTEREOSTYLE
-from parsivel.dataclass import BASEPARSIVELSTYLE as BASEPARSIVELSTYLE
 
 OUTPUTFOLDER = Path(__file__).parent / "output"
 
@@ -11,67 +8,60 @@ OUTPUTFOLDER = Path(__file__).parent / "output"
 def generate_comparison(
     parsivel_event: ParsivelTimeSeries, stereo_event: ParsivelTimeSeries
 ):
-    number_indicators = 5
-    ncols = 3
-    nrows = int(ceil(number_indicators / ncols))
-    counter = 1
-
-    fig = figure()
-    # figure.suptitle(title, fontsize= 16)
-    fig.set_size_inches(16, nrows * 4)
+    # Ndrops per Area
+    fig = figure(dpi=300)
+    fig.set_size_inches((5, 4))
     fig.set_layout_engine("constrained")
-
-    # N(d) series
-    ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.number_drops_per_area_series(), **BASEPARSIVELSTYLE)
-    ax.plot(stereo_event.number_drops_per_area_series(), **BASESTEREOSTYLE)
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(parsivel_event.get_number_of_drops_series() / parsivel_event.area_of_study, color="orangered", label= "Parsivel")
+    ax.plot(stereo_event.get_number_of_drops_series() / stereo_event.area_of_study, color="dodgerblue", label= "3D Stereo")
     ax.set_title("Number of Drops per Area")
-    ax.set_ylabel("$n.m^{-2}$")
-    counter += 1
+    ax.set_ylabel("$n.m^{-2}$", fontdict={"fontsize": 14})
+    fig.savefig(OUTPUTFOLDER / "quick_look_ndrops.png")
 
     # Rain rate
-    ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.rain_rate(), **BASESTEREOSTYLE)
-    ax.plot(stereo_event.rain_rate(), **BASEPARSIVELSTYLE)
+    fig = figure(dpi=300)
+    fig.set_size_inches((5, 4))
+    fig.set_layout_engine("constrained")
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(parsivel_event.rain_rate(), color="orangered", label= "Parsivel")
+    ax.plot(stereo_event.rain_rate(), color="dodgerblue", label= "3D Stereo")
     ax.set_title("Rain Rate")
-    ax.set_ylabel("$mm.h^{-1}$")
-    counter += 1
+    ax.set_ylabel("$mm.h^{-1}$", fontdict={"fontsize": 14})
+    fig.savefig(OUTPUTFOLDER / "quick_look_rain_rate.png")
 
     # Cumulative rain Depth
-    ax = fig.add_subplot(nrows, ncols, counter)
-    ax.plot(parsivel_event.cumulative_depth(), **BASEPARSIVELSTYLE)
-    ax.plot(stereo_event.cumulative_depth(), **BASESTEREOSTYLE)
+    fig = figure(dpi=300)
+    fig.set_size_inches((5, 4))
+    fig.set_layout_engine("constrained")
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(parsivel_event.cumulative_depth(), color="orangered", label= "Parsivel")
+    ax.plot(stereo_event.cumulative_depth(), color="dodgerblue", label= "3D Stereo")
     ax.set_title("Cumulative Depth")
-    ax.set_ylabel("$mm$")
-    counter += 1
-
-    # Ndrops per Class
-    ax = fig.add_subplot(nrows, ncols, counter)
-    x, y = parsivel_event.get_nd()
-    ax.plot(x, y, **BASEPARSIVELSTYLE)
-    x, y = stereo_event.get_nd()
-    ax.plot(x, y, **BASESTEREOSTYLE)
-    ax.set_title("Number of drops divided by Area for each Class")
-    ax.set_ylabel("N(d)")
-    ax.set_xlabel("Diameter $(mm)$")
-    ax.set_xbound(0, 6)
-    counter += 1
+    ax.set_ylabel("$mm$", fontdict={"fontsize": 14})
+    fig.savefig(OUTPUTFOLDER / "quick_look_depth.png")
 
     # dsd per class
-    ax = fig.add_subplot(nrows, ncols, counter)
+    fig = figure(dpi=300)
+    fig.set_size_inches((5, 4))
+    fig.set_layout_engine("constrained")
+    ax = fig.add_subplot(1,1,1)
     x, y = parsivel_event.get_nd3()
-    ax.plot(x, y, **BASEPARSIVELSTYLE)
+    ax.plot(x, y, color="orangered", label= "Parsivel")
     x, y = stereo_event.get_nd3()
-    ax.plot(x, y, **BASESTEREOSTYLE)
+    ax.plot(x, y, color="dodgerblue", label= "3D Stereo")
     ax.set_title("Drop size distribution")
-    ax.set_ylabel("$N(d).d^{3}$")
-    ax.set_xlabel("Diameter $(mm)$")
+    ax.set_ylabel("$N(d).d^{3}$", fontdict={"fontsize": 14})
+    ax.set_xlabel("Diameter $(mm)$", fontdict={"fontsize": 14})
     ax.set_xbound(0, 6)
-    counter += 1
+    fig.savefig(OUTPUTFOLDER / "quick_look_dsd.png")
 
+    fig = figure(dpi=300)
+    fig.set_size_inches((5, 4))
+    fig.set_layout_engine("constrained")
     handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels, loc=(0.75, 0.25), fontsize=16)
-    fig.savefig(OUTPUTFOLDER / "statistical_comparison_one_event.png")
+    fig.legend(handles, labels, loc="center", fontsize=16)
+    fig.savefig(OUTPUTFOLDER / "quick_look_labels.png")
 
 
 if __name__ == "__main__":

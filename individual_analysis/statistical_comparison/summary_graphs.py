@@ -71,12 +71,9 @@ def overall_analysis(
     ax.set_title("Number of drops per area $(m^{-2})$", fontdict={"fontsize": 14})
     ax.set_ylabel("Parsivel", fontdict={"fontsize": 13})
     ax.set_xlabel("Stereo 3D", fontdict={"fontsize": 13})
-    pars_values = [
-        event.get_number_drops() / event.area_of_study for event in parsivel_events
-    ]
+    pars_values = [event.ndrops() / event.area_of_study for event in parsivel_events]
     stereo_values = [
-        event.get_number_drops() / event.area_of_study
-        for event in stereo_converted_events
+        event.ndrops() / event.area_of_study for event in stereo_converted_events
     ]
     ax.scatter(stereo_values, pars_values, **dotstyle)
     plot_identety(ax)

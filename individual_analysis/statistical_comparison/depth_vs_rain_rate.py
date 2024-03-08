@@ -3,7 +3,7 @@ from parsivel import parsivel_read_from_pickle as pars_read
 from matplotlib import pyplot as plt
 from parsivel import ParsivelTimeSeries
 from pathlib import Path
-from numpy import floor, linspace, zeros
+from numpy import linspace, zeros
 
 output_folder = Path(__file__).parent / "output"
 
@@ -38,28 +38,29 @@ def main(
 
     y_error = (y_parsivel - y_stereo) / y_parsivel
 
-    # Plot both graphs
-    figure = plt.figure()
-    figure.set_size_inches((2 * 3 + 2, 1 * 3 + 1))
-    figure.set_layout_engine("constrained")
-    figure.suptitle("Analisys based on rain rate", fontsize=16)
-
     # Plot the first graph
-    ax = figure.add_subplot(1, 2, 1)
-    ax.plot(x, y_stereo, c="dodgerblue")
+    figure = plt.figure(dpi=300)
+    figure.set_size_inches((5, 4))
+    figure.set_layout_engine("constrained")
+    ax = figure.add_subplot(1, 1, 1)
+    ax.plot(x, y_stereo, c="dodgerblue", label="Parsivel")
     print(f"max_y_stereo = {max(y_stereo)}")
-    ax.plot(x, y_parsivel, c="orangered")
+    ax.plot(x, y_parsivel, c="orangered", label="3D Stereo")
     ax.set_xlabel("rain rate $(mm.h^{-1})$", fontdict={"fontsize": 13})
     ax.set_ylabel("cummulative depth $(mm)$", fontdict={"fontsize": 13})
     ax.set_xbound(-0.5, 80)
+    ax.legend()
+    figure.savefig(output_folder / "depth_vs_rain_rate.png")
 
     # Plot the first graph
-    ax = figure.add_subplot(1, 2, 2)
+    figure = plt.figure(dpi=300)
+    figure.set_size_inches((5, 4))
+    figure.set_layout_engine("constrained")
+    ax = figure.add_subplot(1, 1, 1)
     ax.plot(x, y_error, c="dodgerblue")
     ax.set_xlabel("rain rate $(mm.h^{-1})$", fontdict={"fontsize": 13})
     ax.set_ylabel("error", fontdict={"fontsize": 13})
-
-    figure.savefig(output_folder / "depth_vs_rain_rate_.png")
+    figure.savefig(output_folder / "error_vs_rain_rate.png")
 
 
 if __name__ == "__main__":

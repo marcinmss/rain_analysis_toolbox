@@ -106,17 +106,14 @@ class Stereo3DSeries:
     def cumulative_rain_depht(self, interval_seconds: int = 30) -> ndarray[float, Any]:
         return cumsum(self.rain_rate(interval_seconds) * interval_seconds / 3600)
 
-    @property
     def ndrops_in_each_diameter_class(self):
         from stereo.indicators import get_ndrops_in_diameter_classes
 
         return get_ndrops_in_diameter_classes(self)
 
-    @property
     def avg_rain_rate(self) -> float:
         return mean(self.rain_rate(), dtype=float)
 
-    @property
     def percentage_zeros(self) -> float:
         n_zeros = sum(1 for is_rain in self.rain_rate() if is_rain == 0)
         return n_zeros / len(self)
