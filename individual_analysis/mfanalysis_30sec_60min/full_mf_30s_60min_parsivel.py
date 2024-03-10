@@ -29,7 +29,7 @@ stereo_events_folder = Path(
 parsivel_events = [
     parsivel_read_from_pickle(file_path) for file_path in parsivel_events_folder.iterdir()
 ]
-preped_data = [prep_data_ensemble(event.rain_rate, 2**7) for event in parsivel_events]
+preped_data = [prep_data_ensemble(event.rain_rate(), 2**7) for event in parsivel_events]
 preped_data = [concatenate(preped_data, axis=1)] + preped_data
 
 

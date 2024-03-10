@@ -26,7 +26,7 @@ def mf_analysis_multiple_events_parsivel(
 ):
     # Prepare the data for every event, keeping the first one as an ensemble
     preped_data = [
-        prep_data_ensemble(event.rain_rate, 2**6, fluc=fluctuations)
+        prep_data_ensemble(event.rain_rate(), 2**6, fluc=fluctuations)
         for event in events
     ]
     preped_data = [concatenate(preped_data, axis=1)] + preped_data

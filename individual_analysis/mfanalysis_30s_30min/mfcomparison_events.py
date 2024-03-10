@@ -1,6 +1,6 @@
 from collections import namedtuple
 from pandas import read_csv
-import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
 import numpy as np
 from pathlib import Path
 
@@ -43,25 +43,20 @@ def overall_comparison(
         ("df", "direct_field"),
         ("alpha", "fluctuations"),
         ("c1", "fluctuations"),
-        ("beta", "direct_field"),
+        # ("beta", "direct_field"),
         ("h", "direct_field"),
         ("r_square", "direct_field"),
-        ("avg_rr", "direct_field"),
-        ("total_depth", "direct_field"),
-        ("dm", "direct_field"),
+        # ("avg_rr", "direct_field"),
+        # ("total_depth", "direct_field"),
+        # ("dm", "direct_field"),
     ]
-
-    n_cols = 5
-    n_rows = 2
-
-    figure = plt.figure()
-    figure.set_dpi(200)
-    figure.set_size_inches((n_cols * 5, n_rows * 4))
 
     n_events = stereo_data["direct_field"].shape[0] - 1
     x = np.arange(0, n_events) + 1
+    handles, labels = "",""
     for idx, (column, flag) in enumerate(variables, 1):
-        ax = figure.add_subplot(n_rows, n_cols, idx)
+        fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
+        ax = fig.add_subplot(1,1,1)
 
         y = np.array(stereo_data[flag][column][1:])
 
@@ -103,10 +98,17 @@ def overall_comparison(
         # Customize the axis
         ax.set_title(column.upper())
         ax.set_ybound(min(ax.get_ybound()[0], -0.05), ax.get_ybound()[1] * 1.1)
-        if idx == 1:
-            ax.legend(frameon=False, loc=(5.0, -0.75))
 
-    figure.savefig(OUTPUTFOlDER / "overall_comparison.png", bbox_inches="tight")
+        fig.savefig(OUTPUTFOlDER / f"summary_{column}.png")
+        handles, labels = ax.get_legend_handles_labels()
+
+    # Plot the legend
+    fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1,1,1)
+    ax.set_axis_off()
+    fig.legend(handles, labels, loc="center", fontsize=16, frameon=False)
+    fig.savefig(OUTPUTFOlDER / f"summary_labels.png")
+
 
 
 if __name__ == "__main__":
