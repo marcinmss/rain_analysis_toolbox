@@ -8,6 +8,9 @@ OUTPUTFOlDER = Path(__file__).parent / "output"
 
 WorkAround = namedtuple("WorkAround", ["variable_name", "correct_data"])
 
+def plot_identety(ax):
+    maximum_value = max(max(ax.get_xbound()), max(ax.get_ybound()))
+    ax.plot((0, maximum_value), (0, maximum_value), zorder=0)
 
 def overall_comparison(
     parsivel_csv_path: Path,
@@ -58,46 +61,55 @@ def overall_comparison(
         fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
         ax = fig.add_subplot(1,1,1)
 
-        y = np.array(stereo_data[flag][column][1:])
+        x = np.array(stereo_data[flag][column][1:])
+
+
+        # Plot the graph
+        y = np.array(parsivel_data[flag][column][1:])
+        ax.scatter(x, y, label="Events", c="black", s=10.0, marker="x",zorder=10)
+
+        # Customize the axis
+        ax.set_title(column.upper())
+        ax.set_ylabel("Parsivel")
+        ax.set_xlabel("3D Stereo")
+        ax.set_ybound(min(ax.get_ybound()[0], -0.05), ax.get_ybound()[1] * 1.1)
+        plot_identety(ax)
+
 
         # Plot the line for the average ensemble line
         print(f"{column}({flag}):")
         height = stereo_data[flag].loc["ensemble_of_events", column]
+        xmin, xmax = ax.get_xbound()
         print(f"    stereo:{height:.3f}")
         if height != 0:
-            ax.hlines(
+            ax.vlines(
                 height,
-                1,
-                n_events,
+                xmin,
+                xmax,
                 label="Ensemble Stereo",
                 linestyle="--",
                 colors="dodgerblue",
+                zorder = 5,
+                alpha=0.7,
             )
 
-        # Plot the graph
-        ax.scatter(x, y, label="Stereo", c="dodgerblue", s=5.0)
-
-        y = np.array(parsivel_data[flag][column][1:])
 
         # Plot the line for the average ensemble line
         height = parsivel_data[flag].loc["ensemble_of_events", column]
         print(f"    parsivel:{height:.3f}")
+        ymin, ymax = ax.get_ybound()
         if height != 0:
             ax.hlines(
                 height,
-                1,
-                n_events,
+                ymin,
+                ymax,
                 label="Ensemble Parsivel",
                 linestyle="--",
                 colors="orangered",
+                zorder = 5,
+                alpha=0.7,
             )
 
-        # Plot the graph
-        ax.scatter(x, y, label="Parsivel", c="orangered", s=5.0)
-
-        # Customize the axis
-        ax.set_title(column.upper())
-        ax.set_ybound(min(ax.get_ybound()[0], -0.05), ax.get_ybound()[1] * 1.1)
 
         fig.savefig(OUTPUTFOlDER / f"summary_{column}.png")
         handles, labels = ax.get_legend_handles_labels()

@@ -47,7 +47,10 @@ class ParsivelTimeStep(NamedTuple):
         return ParsivelTimeStep(timestamp, 0.0, 0.0, zeros((32, 32), dtype=int))
 
 
+<<<<<<< Updated upstream
 @dataclass(slots=True)
+=======
+>>>>>>> Stashed changes
 class ParsivelTimeSeries:
     device: str
     duration: Tuple[int, int]  # beggining and end of the time series
