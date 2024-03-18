@@ -23,7 +23,9 @@ def main(
 
     LEFT = 0
     RIGHT = 100
-    y_limts = linspace(LEFT, RIGHT, RIGHT + 1)
+    NBINS = 20
+    BINSIZE = (RIGHT - LEFT) / NBINS
+    y_limts = linspace(LEFT, RIGHT, NBINS + 1)
     x = (y_limts[:-1] + y_limts[1:]) / 2
 
     y_stereo, y_parsivel = zeros(x.shape), zeros(x.shape)
@@ -32,9 +34,9 @@ def main(
     area_parsivel = parsivel_events[0].area_of_study
     for stereo_tstep, parsivel_tstep in zip(stereo_time_steps, parsivel_time_steps):
         stereo_rain_rate = stereo_tstep.volume_mm3 / area_stereo * 120
-        y_stereo[int((stereo_rain_rate - LEFT) // 1)] += stereo_rain_rate / 120
+        y_stereo[int((stereo_rain_rate - LEFT) // BINSIZE)] += stereo_rain_rate / 120
         parsivel_rain_rate = parsivel_tstep.volume_mm3 / area_parsivel * 120
-        y_parsivel[int((parsivel_rain_rate - LEFT) // 1)] += parsivel_rain_rate / 120
+        y_parsivel[int((parsivel_rain_rate - LEFT) // BINSIZE)] += parsivel_rain_rate / 120
 
     y_error = (y_parsivel - y_stereo) / y_parsivel
 
@@ -43,9 +45,9 @@ def main(
     figure.set_size_inches((5, 4))
     figure.set_layout_engine("constrained")
     ax = figure.add_subplot(1, 1, 1)
-    ax.plot(x, y_stereo, c="dodgerblue", label="Parsivel")
+    ax.plot(x, y_stereo, c="dodgerblue", label="3D Stereo")
     print(f"max_y_stereo = {max(y_stereo)}")
-    ax.plot(x, y_parsivel, c="orangered", label="3D Stereo")
+    ax.plot(x, y_parsivel, c="orangered", label="Parsivel")
     ax.set_xlabel("rain rate $(mm.h^{-1})$", fontdict={"fontsize": 13})
     ax.set_ylabel("cummulative depth $(mm)$", fontdict={"fontsize": 13})
     ax.set_xbound(-0.5, 80)

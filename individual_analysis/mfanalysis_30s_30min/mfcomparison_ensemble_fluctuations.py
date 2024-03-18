@@ -1,7 +1,5 @@
-from typing import List
 from parsivel import parsivel_read_from_pickle
 from pathlib import Path
-from pandas import DataFrame
 from matplotlib.pyplot import figure
 from multifractal_analysis import (
     spectral_analysis,
@@ -12,7 +10,8 @@ from multifractal_analysis import (
 )
 from multifractal_analysis.data_prep import prep_data_ensemble
 from numpy import  ndarray, concatenate
-from parsivel import ParsivelTimeSeries
+
+from stereo.read_write import stereo_read_from_pickle
 
 
 OUTPUTFOLDER = Path(__file__).parent / "output/"
@@ -20,54 +19,101 @@ parsivel_events_folder = Path(
     "/home/marcio/stage_project/data/saved_events/Set01/events/parsivel/"
 )
 
+stereo_events_folder = Path(
+    "/home/marcio/stage_project/data/saved_events/Set01/events/stereo/"
+)
+
 
 def plot_mfcomparison_graphs(
-    data: ndarray ,output_folder: Path, device:str
+    field: ndarray ,output_folder: Path, device:str, fluctuations: bool
 ):
-    name = ""
+    field_type = "fluc" if fluctuations is True else "df"
 
     fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
     ax = fig.add_subplot(1,1,1)
-    sa = spectral_analysis(data, ax)
-    fig.savefig(output_folder / f"mfcomparison_{device}_sa_{name}.png")
+    spectral_analysis(field, ax)
+    opeartion = "sa"
+    fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Run fractal dimension analysis and plot the graph
     fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
     ax = fig.add_subplot(1,1,1)
-    fd = fractal_dimension_analysis(data, ax)
+    fractal_dimension_analysis(field, ax)
+    opeartion = "fd"
+    fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Run trace moment analysis and plot the graph
     fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
     ax = fig.add_subplot(1,1,1)
-    tm = tm_analysis(data, ax)
+    tm_analysis(field, ax)
+    opeartion = "tm"
+    fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Run Double trace moment analysis and plot the graphs
     fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
     ax = fig.add_subplot(1,1,1)
-    dtm = dtm_analysis(data, ax)
+    dtm_analysis(field, ax)
+    opeartion = "dtm"
+    fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Plot the empirical k of q
     fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
     ax = fig.add_subplot(1,1,1)
-    empirical_k_of_q(data, ax)
-
-
-    fig.savefig(output_folder / f"{name}.png")
+    empirical_k_of_q(field, ax)
+    opeartion = "kofq"
+    fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
 
 if __name__ == "__main__":
     print("Reading The Events for Parsivel.")
-    events = [
-        parsivel_read_from_pickle(file_path)
+    events_rain_rate = [
+        parsivel_read_from_pickle(file_path).rain_rate()
         for file_path in parsivel_events_folder.iterdir()
     ]
     # Prepare the data for every event, keeping the first one as an ensemble
-    preped_data = concatenate([
-        prep_data_ensemble(event.rain_rate(), 2**6, fluc= True)
-        for event in events
+    print("Preparing the data for the direct field")
+    preped_data_df = concatenate([
+        prep_data_ensemble(event, 2**6, fluc= False)
+        for event in events_rain_rate
     ], axis=1)
-    print("    Running Analysis for direct field.")
-    plot_mfcomparison_graphs(preped_data, OUTPUTFOLDER, "parsivel")
 
-    print("    Running Analysis for fluctuations")
-    plot_mfcomparison_graphs(preped_data, OUTPUTFOLDER, "parsivel")
+    print("Preparing the data for the fluctuations")
+    preped_data_fluc = concatenate([
+        prep_data_ensemble(event, 2**6, fluc= True)
+        for event in events_rain_rate
+    ], axis=1)
+
+    del events_rain_rate
+
+    print("Running Analysis for direct field.")
+    plot_mfcomparison_graphs(preped_data_df, OUTPUTFOLDER, "parsivel", False)
+
+    print("Running Analysis for fluctuations.")
+    plot_mfcomparison_graphs(preped_data_fluc, OUTPUTFOLDER, "parsivel", True)
+
+    print("Reading The Events for Stereo.")
+    events_rain_rate = [
+        stereo_read_from_pickle(file_path).rain_rate()
+        for file_path in stereo_events_folder.iterdir()
+    ]
+
+    # Prepare the data for every event, keeping the first one as an ensemble
+    print("Preparing the data for the direct field")
+    preped_data_df = concatenate([
+        prep_data_ensemble(event, 2**6, fluc= False)
+        for event in events_rain_rate
+    ], axis=1)
+
+    print("Preparing the data for the fluctuations")
+    preped_data_fluc = concatenate([
+        prep_data_ensemble(event, 2**6, fluc= True)
+        for event in events_rain_rate
+    ], axis=1)
+
+    del events_rain_rate
+
+    print("Running Analysis for direct field.")
+    plot_mfcomparison_graphs(preped_data_df, OUTPUTFOLDER, "stereo", False)
+
+    print("Running Analysis for fluctuations.")
+    plot_mfcomparison_graphs(preped_data_fluc, OUTPUTFOLDER, "stereo", True)
