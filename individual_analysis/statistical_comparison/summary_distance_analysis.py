@@ -1,10 +1,8 @@
-from typing import List
 from parsivel import parsivel_read_from_pickle as pars_read
 from matplotlib import pyplot as plt
 from parsivel import ParsivelTimeSeries
 import numpy as np
 from pathlib import Path
-from matplotlib import colormaps
 from parsivel.read_write import parsivel_read_from_pickle
 
 from stereo import stereo_read_from_pickle
@@ -17,6 +15,9 @@ parsivel_events_folder = Path(
     "/home/marcio/stage_project/data/saved_events/Set01/parsivel_full_event.obj"
 )
 output_folder = Path(__file__).parent / "output/"
+
+AXESTITLEFONTSIZE = 18
+AXESLABELFONTSIZE = 16
 
 
 def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeSeries):
@@ -51,9 +52,9 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     )
     y_values = np.array([len(event) / event.area_of_study for event in sections])
     ax.scatter(x=x_values, y=y_values, color="dodgerblue", label="Value for Section")
-    ax.set_title("Number of Drops per Area", fontdict={"fontsize": 16})
-    ax.set_ylabel("$mm^{-2}$", fontdict={"fontsize": 14})
-    ax.set_xlabel("section number", fontdict={"fontsize": 14})
+    ax.set_title("Number of Drops per Area", fontsize=AXESTITLEFONTSIZE)
+    ax.set_ylabel("$mm^{-2}$", fontsize=AXESLABELFONTSIZE)
+    ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
     figure.savefig(output_folder / "distance_analysis_ndrops.png")
 
@@ -68,9 +69,9 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     )
     y_values = np.array([event.total_depth_for_event() for event in sections])
     ax.scatter(x=x_values, y=y_values, color="dodgerblue", label="Value for Section")
-    ax.set_title("Total Depht", fontdict={"fontsize": 16})
-    ax.set_ylabel("$mm$", fontdict={"fontsize": 14})
-    ax.set_xlabel("section number", fontdict={"fontsize": 14})
+    ax.set_title("Total depht", fontsize=AXESTITLEFONTSIZE)
+    ax.set_ylabel("$mm$", fontsize=AXESLABELFONTSIZE)
+    ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
     figure.savefig(output_folder / "distance_analysis_total_depth.png")
 
@@ -88,9 +89,9 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     )
     y_values = np.array([event.kinetic_energy_flow() for event in sections])
     ax.scatter(x=x_values, y=y_values, color="dodgerblue", label="Value for Section")
-    ax.set_title("Kinetic Energy by Area", fontdict={"fontsize": 16})
-    ax.set_ylabel("$J.m^{-2}$", fontdict={"fontsize": 14})
-    ax.set_xlabel("section number", fontdict={"fontsize": 14})
+    ax.set_title("Kinetic energy per area", fontsize=AXESTITLEFONTSIZE)
+    ax.set_ylabel("$J.m^{-2}$", fontsize=AXESLABELFONTSIZE)
+    ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
     figure.savefig(output_folder / "distance_analysis_kinetic.png")
 
@@ -105,9 +106,9 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     )
     y_values = np.array([event.mean_diameter_for_event() for event in sections])
     ax.scatter(x=x_values, y=y_values, color="dodgerblue", label="Value for Section")
-    ax.set_title("Mean Diameter", fontdict={"fontsize": 16})
-    ax.set_ylabel("$mm$", fontdict={"fontsize": 14})
-    ax.set_xlabel("section number", fontdict={"fontsize": 14})
+    ax.set_title("Mean diameter", fontsize=AXESTITLEFONTSIZE)
+    ax.set_ylabel("$mm$", fontsize=AXESLABELFONTSIZE)
+    ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
     figure.savefig(output_folder / "distance_analysis_mean_diameter.png")
 
@@ -122,9 +123,9 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     )
     y_values = np.array([event.mean_velocity_for_event() for event in sections])
     ax.scatter(x=x_values, y=y_values, color="dodgerblue", label="Value for Section")
-    ax.set_title("Mean Velocity", fontdict={"fontsize": 16})
-    ax.set_ylabel("$mm$", fontdict={"fontsize": 14})
-    ax.set_xlabel("section number", fontdict={"fontsize": 14})
+    ax.set_title("Mean velocity", fontsize=AXESTITLEFONTSIZE)
+    ax.set_ylabel("$mm$", fontsize=AXESLABELFONTSIZE)
+    ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
     figure.savefig(output_folder / "distance_analysis_mean_velocity.png")
 

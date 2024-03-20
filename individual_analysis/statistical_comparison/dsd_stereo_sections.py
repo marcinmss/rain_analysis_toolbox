@@ -10,6 +10,7 @@ stereo_events_folder = Path(
     "/home/marcio/stage_project/data/saved_events/Set01/stereo_full_event.obj"
 )
 output_folder = Path(__file__).parent / "output/"
+AXESLABELSFONTSIZE = 16
 
 if __name__ == "__main__":
     # Read the data for both devices
@@ -19,12 +20,11 @@ if __name__ == "__main__":
     del stereo_event
     print("Split the full event in sections")
 
-    cmap = colormaps["autumn_r"]
-    fig = figure()
-    fig.set_dpi(300)
+    cmap = colormaps["tab20b"]
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
     ax = fig.add_subplot(1, 1, 1)
-    ax.set_ylabel("$N(d).d^3$", fontdict={"fontsize": 13})
-    ax.set_xlabel("$diameter (mm)$", fontdict={"fontsize": 13})
+    ax.set_ylabel("$N(d).d^3$", fontsize=AXESLABELSFONTSIZE)
+    ax.set_xlabel("Diameter $(mm)$", fontsize=AXESLABELSFONTSIZE)
     for nsection, section in enumerate(sections, 1):
         converted_section = section.convert_to_parsivel()
         style = {"label": f"section_{nsection}", "color": cmap((nsection + 1) / 10)}

@@ -1,11 +1,14 @@
 from typing import List
 from parsivel import parsivel_read_from_pickle as pars_read
-from matplotlib import pyplot as plt
+from matplotlib.pyplot import figure
 from parsivel import ParsivelTimeSeries
 from pathlib import Path
 from numpy import linspace, zeros
 
 output_folder = Path(__file__).parent / "output"
+AXESTITLESFONTSIZE = 18
+AXESLABELSFONTSIZE = 16
+LEGENDFONTSIZE = 20
 
 
 def rain_rate(volume: float, area: float, resolution_seconds: float):
@@ -36,33 +39,31 @@ def main(
         stereo_rain_rate = stereo_tstep.volume_mm3 / area_stereo * 120
         y_stereo[int((stereo_rain_rate - LEFT) // BINSIZE)] += stereo_rain_rate / 120
         parsivel_rain_rate = parsivel_tstep.volume_mm3 / area_parsivel * 120
-        y_parsivel[int((parsivel_rain_rate - LEFT) // BINSIZE)] += parsivel_rain_rate / 120
+        y_parsivel[int((parsivel_rain_rate - LEFT) // BINSIZE)] += (
+            parsivel_rain_rate / 120
+        )
 
     y_error = (y_parsivel - y_stereo) / y_parsivel
 
     # Plot the first graph
-    figure = plt.figure(dpi=300)
-    figure.set_size_inches((5, 4))
-    figure.set_layout_engine("constrained")
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.plot(x, y_stereo, c="dodgerblue", label="3D Stereo")
     print(f"max_y_stereo = {max(y_stereo)}")
     ax.plot(x, y_parsivel, c="orangered", label="Parsivel")
-    ax.set_xlabel("rain rate $(mm.h^{-1})$", fontdict={"fontsize": 13})
-    ax.set_ylabel("cummulative depth $(mm)$", fontdict={"fontsize": 13})
+    ax.set_xlabel("Rain Rate $(mm.h^{-1})$", fontsize=AXESLABELSFONTSIZE)
+    ax.set_ylabel("Cummulative Depth $(mm)$", fontsize=AXESLABELSFONTSIZE)
     ax.set_xbound(-0.5, 80)
     ax.legend()
-    figure.savefig(output_folder / "depth_vs_rain_rate.png")
+    fig.savefig(output_folder / "depth_vs_rain_rate.png")
 
     # Plot the first graph
-    figure = plt.figure(dpi=300)
-    figure.set_size_inches((5, 4))
-    figure.set_layout_engine("constrained")
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.plot(x, y_error, c="dodgerblue")
-    ax.set_xlabel("rain rate $(mm.h^{-1})$", fontdict={"fontsize": 13})
-    ax.set_ylabel("error", fontdict={"fontsize": 13})
-    figure.savefig(output_folder / "error_vs_rain_rate.png")
+    ax.set_xlabel("Rain Rate $(mm.h^{-1})$", fontsize=AXESLABELSFONTSIZE)
+    ax.set_ylabel("Error", fontsize=AXESLABELSFONTSIZE)
+    fig.savefig(output_folder / "error_vs_rain_rate.png")
 
 
 if __name__ == "__main__":

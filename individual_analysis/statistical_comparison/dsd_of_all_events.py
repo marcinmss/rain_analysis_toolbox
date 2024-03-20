@@ -6,16 +6,18 @@ from stereo.dataclass import BASESTEREOSTYLE
 from parsivel.dataclass import BASEPARSIVELSTYLE as BASEPARSIVELSTYLE
 
 OUTPUTFOLDER = Path(__file__).parent / "output"
+AXESTITLESFONTSIZE = 18
+AXESLABELSFONTSIZE = 16
+LEGENDFONTSIZE = 20
 
 output_folder = Path(__file__).parent / "output"
 
 
 def overall_analysis(
     parsivel_events: List[ParsivelTimeSeries],
-    stereo_converted_events: List[ParsivelTimeSeries],
+    stereo_events: List[ParsivelTimeSeries],
 ):
-    fig = figure()
-    fig.set_size_inches(8.5, 6.5)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
 
     # dsd per class
     ax = fig.add_subplot(1, 1, 1)
@@ -24,11 +26,11 @@ def overall_analysis(
     ax.plot(x, y, **BASEPARSIVELSTYLE, label="Parsivel")
     y = sum([event.get_nd3()[1] for event in stereo_events]) / len(stereo_events)
     ax.plot(x, y, **BASESTEREOSTYLE, label="3D Stereo")
-    ax.set_ylabel("$N(d).d^{3}$", fontdict={"fontsize": 14})
-    ax.set_xlabel("Diameter $(mm)$", fontdict={"fontsize": 14})
+    ax.set_ylabel("$N(d).d^{3}$", fontsize=AXESLABELSFONTSIZE)
+    ax.set_xlabel("Diameter $(mm)$", fontsize=AXESLABELSFONTSIZE)
     ax.set_xbound(0, 6)
 
-    ax.legend(fontsize=12)
+    ax.legend(fontsize=12, frameon=False)
     fig.savefig(OUTPUTFOLDER / "mean_dsd_of_all_events.png")
 
 
