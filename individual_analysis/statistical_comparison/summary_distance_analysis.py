@@ -1,5 +1,4 @@
-from parsivel import parsivel_read_from_pickle as pars_read
-from matplotlib import pyplot as plt
+from matplotlib.pyplot import figure
 from parsivel import ParsivelTimeSeries
 import numpy as np
 from pathlib import Path
@@ -37,10 +36,8 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     print("Split the full event in sections")
 
     # Plot the Number of Drops per Area
-    figure = plt.figure()
-    figure.set_layout_engine("constrained")
-    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.hlines(
         y=len(stereo_event) / stereo_event.area_of_study, xmin=1, xmax=9, **stereo_style
     )
@@ -52,17 +49,15 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     )
     y_values = np.array([len(event) / event.area_of_study for event in sections])
     ax.scatter(x=x_values, y=y_values, color="dodgerblue", label="Value for Section")
-    ax.set_title("Number of Drops per Area", fontsize=AXESTITLEFONTSIZE)
+    ax.set_title("Number of drops per area", fontsize=AXESTITLEFONTSIZE)
     ax.set_ylabel("$mm^{-2}$", fontsize=AXESLABELFONTSIZE)
     ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
-    figure.savefig(output_folder / "distance_analysis_ndrops.png")
+    fig.savefig(output_folder / "distance_analysis_ndrops.png")
 
     # Plot the Total Depth
-    figure = plt.figure()
-    figure.set_layout_engine("constrained")
-    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.hlines(y=stereo_event.total_depth_for_event(), xmin=1, xmax=9, **stereo_style)
     ax.hlines(
         y=parsivel_event.total_depth_for_event(), xmin=1, xmax=9, **parsivel_style
@@ -73,13 +68,11 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     ax.set_ylabel("$mm$", fontsize=AXESLABELFONTSIZE)
     ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
-    figure.savefig(output_folder / "distance_analysis_total_depth.png")
+    fig.savefig(output_folder / "distance_analysis_total_depth.png")
 
     # Plot the Kinetic per Area
-    figure = plt.figure()
-    figure.set_layout_engine("constrained")
-    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.hlines(y=stereo_event.kinetic_energy_flow(), xmin=1, xmax=9, **stereo_style)
     ax.hlines(
         y=parsivel_event.kinetic_energy_flow_for_event(),
@@ -93,13 +86,11 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     ax.set_ylabel("$J.m^{-2}$", fontsize=AXESLABELFONTSIZE)
     ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
-    figure.savefig(output_folder / "distance_analysis_kinetic.png")
+    fig.savefig(output_folder / "distance_analysis_kinetic.png")
 
     # Plot the Mean Diameter
-    figure = plt.figure()
-    figure.set_layout_engine("constrained")
-    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.hlines(y=stereo_event.mean_diameter_for_event(), xmin=1, xmax=9, **stereo_style)
     ax.hlines(
         y=parsivel_event.mean_diameter_for_event(), xmin=1, xmax=9, **parsivel_style
@@ -110,13 +101,12 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     ax.set_ylabel("$mm$", fontsize=AXESLABELFONTSIZE)
     ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
-    figure.savefig(output_folder / "distance_analysis_mean_diameter.png")
+    fig.savefig(output_folder / "distance_analysis_mean_diameter.png")
 
     # Plot the Mean Velocity
-    figure = plt.figure()
-    figure.set_layout_engine("constrained")
-    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+
+    ax = fig.add_subplot(1, 1, 1)
     ax.hlines(y=stereo_event.mean_velocity_for_event(), xmin=1, xmax=9, **stereo_style)
     ax.hlines(
         y=parsivel_event.mean_velocity_for_event(), xmin=1, xmax=9, **parsivel_style
@@ -127,17 +117,15 @@ def overall_analysis(stereo_event: Stereo3DSeries, parsivel_event: ParsivelTimeS
     ax.set_ylabel("$mm$", fontsize=AXESLABELFONTSIZE)
     ax.set_xlabel("Section number", fontsize=AXESLABELFONTSIZE)
     ax.set_ybound(lower=0)
-    figure.savefig(output_folder / "distance_analysis_mean_velocity.png")
+    fig.savefig(output_folder / "distance_analysis_mean_velocity.png")
 
     # Plot the labels
     handles, labels = ax.get_legend_handles_labels()
-    figure = plt.figure()
-    figure.set_layout_engine("constrained")
-    figure.set_size_inches((1 * 3 + 2, 1 * 3 + 1))
-    ax = figure.add_subplot(1, 1, 1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.set_axis_off()
     ax.legend(handles, labels, loc="center", fontsize=14)
-    figure.savefig(output_folder / "distance_analysis_labels.png")
+    fig.savefig(output_folder / "distance_analysis_labels.png")
 
 
 if __name__ == "__main__":
