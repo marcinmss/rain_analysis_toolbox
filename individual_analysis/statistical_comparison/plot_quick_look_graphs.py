@@ -2,17 +2,28 @@ from pathlib import Path
 from matplotlib.pyplot import figure
 from numpy import fromiter
 from parsivel import ParsivelTimeSeries, parsivel_read_from_pickle
+from individual_analysis.analysis_variables import (
+    # PARSIVELBASECOLOR,
+    # STEREOBASECOLOR,
+    AXESTITLESFONTSIZE,
+    AXESLABELSFONTSIZE,
+    LEGENDFIGURESPECS,
+    FIGURESPECS,
+)
+
+PARSIVELEVENTSFOLDER = Path(
+    "/home/marcio/stage_project/data/saved_events/Set01/events/parsivel/"
+)
+STEREOEVENTSFOLDER = Path(
+    "/home/marcio/stage_project/data/saved_events/Set01/events/stereo_converted/"
+)
 
 OUTPUTFOLDER = Path(__file__).parent / "output"
-AXESTITLESFONTSIZE = 18
-AXESLABELSFONTSIZE = 16
 
 
-def generate_comparison(
-    parsivel_event: ParsivelTimeSeries, stereo_event: ParsivelTimeSeries
-):
+def main(parsivel_event: ParsivelTimeSeries, stereo_event: ParsivelTimeSeries):
     # Ndrops per Area
-    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    fig = figure(**FIGURESPECS)
     ax = fig.add_subplot(1, 1, 1)
 
     y_parsivel = (
@@ -28,7 +39,7 @@ def generate_comparison(
     fig.savefig(OUTPUTFOLDER / "quick_look_ndrops.png")
 
     # Rain rate
-    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    fig = figure(**FIGURESPECS)
     ax = fig.add_subplot(1, 1, 1)
     y_parsivel = parsivel_event.rain_rate()
     y_stereo = stereo_event.rain_rate()
@@ -40,7 +51,7 @@ def generate_comparison(
     fig.savefig(OUTPUTFOLDER / "quick_look_rain_rate.png")
 
     # Cumulative rain Depth
-    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    fig = figure(**FIGURESPECS)
     ax = fig.add_subplot(1, 1, 1)
     y_parsivel = parsivel_event.cumulative_depth()
     y_stereo = stereo_event.cumulative_depth()
@@ -52,7 +63,7 @@ def generate_comparison(
     fig.savefig(OUTPUTFOLDER / "quick_look_depth.png")
 
     # dsd per class
-    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    fig = figure(**FIGURESPECS)
     ax = fig.add_subplot(1, 1, 1)
     x, y = parsivel_event.get_nd3()
     ax.plot(x, y, color="orangered", label="Parsivel")
@@ -66,9 +77,9 @@ def generate_comparison(
     fig.savefig(OUTPUTFOLDER / "quick_look_dsd.png")
 
     # Plot the labels
-    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1, 1, 1)
-    ax.legend(handles, labels, loc="center", fontsize=AXESLABELSFONTSIZE, frameon=False)
+    fig = figure(**FIGURESPECS)
+    ax = fig.add_subplot()
+    ax.legend(handles, labels, **LEGENDFIGURESPECS)
     ax.set_axis_off()
     fig.savefig(OUTPUTFOLDER / "quick_look_labels.png")
 
@@ -77,20 +88,20 @@ def generate_comparison(
 
 
 if __name__ == "__main__":
-    pars_folder = Path(
-        "/home/marcio/stage_project/data/saved_events/Set01/events/parsivel/"
-    )
-    stereo_folder = Path(
-        "/home/marcio/stage_project/data/saved_events/Set01/events/stereo_converted/"
-    )
+    print("Reading the events for Parsivel.")
+    stereo_events = [
+        parsivel_read_from_pickle(file_path)
+        for file_path in sorted(STEREOEVENTSFOLDER.iterdir())
+    ]
+    print("Running analysis and plotting graphs.")
     parsivel_event = next(
         parsivel_read_from_pickle(file_path)
-        for file_path in sorted(pars_folder.iterdir())
+        for file_path in sorted(PARSIVELEVENTSFOLDER.iterdir())
     )
     stereo_event = next(
         parsivel_read_from_pickle(file_path)
-        for file_path in sorted(stereo_folder.iterdir())
+        for file_path in sorted(STEREOEVENTSFOLDER.iterdir())
     )
     print("READ THE DATA FOR BOTH DEVICES")
-    generate_comparison(parsivel_event, stereo_event)
+    main(parsivel_event, stereo_event)
     print("DONE.")

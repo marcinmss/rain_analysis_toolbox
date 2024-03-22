@@ -1,12 +1,15 @@
-from collections import namedtuple
 from pandas import read_csv
 from matplotlib.pyplot import figure
 import numpy as np
 from pathlib import Path
 
-OUTPUTFOlDER = Path(__file__).parent / "output"
+from individual_analysis.analysis_variables import FIGURESPECS, LEGENDFIGURESPECS
 
-WorkAround = namedtuple("WorkAround", ["variable_name", "correct_data"])
+OUTPUTFOLDER = Path(__file__).parent / "output"
+PARSIVELCSVPATH = OUTPUTFOLDER / "parsivel_mfanalysis.csv"
+PARSIVELCSVPATHFLUC = OUTPUTFOLDER / "parsivel_mfanalysis_with_fluctuations.csv"
+STEREOCSVPATHFLUC = OUTPUTFOLDER / "stereo_mfanalysis_with_fluctuations.csv"
+STEREOCSVPATH = OUTPUTFOLDER / "stereo_mfanalysis.csv"
 
 
 def plot_identety(ax):
@@ -14,31 +17,27 @@ def plot_identety(ax):
     ax.plot((0, maximum_value), (0, maximum_value), zorder=0)
 
 
-def overall_comparison(
-    parsivel_csv_path: Path,
-    stereo_csv_path: Path,
-    parsivel_fluctuations_csv_path: Path,
-    stereo_fluctuations_csv_path: Path,
-):
+if __name__ == "__main__":
+
     # Read the data frames
     stereo_data = {
         "direct_field": read_csv(
-            stereo_csv_path,
+            STEREOCSVPATH,
             index_col=0,
         ),
         "fluctuations": read_csv(
-            stereo_fluctuations_csv_path,
+            STEREOCSVPATHFLUC,
             index_col=0,
         ),
     }
 
     parsivel_data = {
         "direct_field": read_csv(
-            parsivel_csv_path,
+            PARSIVELCSVPATH,
             index_col=0,
         ),
         "fluctuations": read_csv(
-            parsivel_fluctuations_csv_path,
+            PARSIVELCSVPATHFLUC,
             index_col=0,
         ),
     }
@@ -58,10 +57,10 @@ def overall_comparison(
 
     n_events = stereo_data["direct_field"].shape[0] - 1
     x = np.arange(0, n_events) + 1
-    handles, labels = "", ""
+
     for idx, (column, flag, ax_title) in enumerate(variables, 1):
-        fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
-        ax = fig.add_subplot(1, 1, 1)
+        fig = figure(**FIGURESPECS)
+        ax = fig.add_subplot()
 
         x = np.array(stereo_data[flag][column][1:])
 
@@ -78,7 +77,7 @@ def overall_comparison(
 
         # Plot the line for the average ensemble line
         print(f"{column}({flag}):")
-        height = stereo_data[flag].loc["ensemble_of_events", column]
+        height = stereo_data[flag].loc["event_00", column]
         xmin, xmax = ax.get_xbound()
         print(f"    stereo:{height:.3f}")
         if height != 0:
@@ -94,7 +93,7 @@ def overall_comparison(
             )
 
         # Plot the line for the average ensemble line
-        height = parsivel_data[flag].loc["ensemble_of_events", column]
+        height = parsivel_data[flag].loc["event_00", column]
         print(f"    parsivel:{height:.3f}")
         ymin, ymax = ax.get_ybound()
         if height != 0:
@@ -109,29 +108,12 @@ def overall_comparison(
                 alpha=0.7,
             )
 
-        fig.savefig(OUTPUTFOlDER / f"summary_{column}.png")
+        fig.savefig(OUTPUTFOLDER / f"summary_{column}.png")
         handles, labels = ax.get_legend_handles_labels()
 
-    # Plot the legend
-    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1, 1, 1)
-    ax.set_axis_off()
-    ax.legend(handles, labels, loc="center", fontsize=16, frameon=False)
-    fig.savefig(OUTPUTFOlDER / "summary_labels.png")
-
-
-if __name__ == "__main__":
-    parsivel_csv_path = OUTPUTFOlDER / "parsivel_mfanalysis.csv"
-    parsivel_fluctuations_csv_path = (
-        OUTPUTFOlDER / "parsivel_mfanalysis_with_fluctuations.csv"
-    )
-    stereo_fluctuations_csv_path = (
-        OUTPUTFOlDER / "stereo_mfanalysis_with_fluctuations.csv"
-    )
-    stereo_csv_path = OUTPUTFOlDER / "stereo_mfanalysis.csv"
-    overall_comparison(
-        parsivel_csv_path,
-        stereo_csv_path,
-        parsivel_fluctuations_csv_path,
-        stereo_fluctuations_csv_path,
-    )
+        if idx > 0:
+            fig = figure(**FIGURESPECS)
+            ax = fig.add_subplot()
+            ax.set_axis_off()
+            ax.legend(handles, labels, **LEGENDFIGURESPECS)
+            fig.savefig(OUTPUTFOLDER / "summary_labels.png")
