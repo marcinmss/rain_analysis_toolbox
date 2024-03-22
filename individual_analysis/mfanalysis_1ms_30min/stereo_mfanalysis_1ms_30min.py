@@ -7,7 +7,7 @@ from lab_mf_toolbox.Additional_tools_v2 import *
 from lab_mf_toolbox.Multifractal_tools_box_Python_HMCo_ENPC_v_0_93 import *
 from lab_mf_toolbox.Tools_data_base_use_v3 import *
 
-from stereo import stereo_read_from_pickle
+from stereo.read_write import stereo_read_from_pickle
 from pathlib import Path
 from matplotlib import pyplot as plt
 from collections import namedtuple
@@ -16,9 +16,6 @@ from numpy import load, ndarray
 
 MFAnalysis = namedtuple("MFAnalysis", ["df", "sa", "tm", "dtm"])
 
-stereo_events_folder = Path(
-    "/home/marcio/stage_project/data/saved_events/sprint05/stereo/"
-)
 path_data_direct_field = Path(
     "/home/marcio/stage_project/data/saved_events/Set01/stereo_ensemble_direct_field_1ms_30min.npy"
 )
@@ -28,11 +25,6 @@ path_data_fluctuations = Path(
 OUTPUTDIRECTFIELD = Path(__file__).parent / "direct_field/"
 OUTPUTFLUCTUATIONS = Path(__file__).parent / "fluctuations/"
 
-
-# Read the data for each events
-stereo_events = [
-    stereo_read_from_pickle(file_path) for file_path in stereo_events_folder.iterdir()
-]
 
 # Define the scalling regime
 minimum_resolution = 0.001

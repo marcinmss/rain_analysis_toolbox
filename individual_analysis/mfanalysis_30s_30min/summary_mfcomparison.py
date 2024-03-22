@@ -8,9 +8,11 @@ OUTPUTFOlDER = Path(__file__).parent / "output"
 
 WorkAround = namedtuple("WorkAround", ["variable_name", "correct_data"])
 
+
 def plot_identety(ax):
     maximum_value = max(max(ax.get_xbound()), max(ax.get_ybound()))
     ax.plot((0, maximum_value), (0, maximum_value), zorder=0)
+
 
 def overall_comparison(
     parsivel_csv_path: Path,
@@ -43,12 +45,12 @@ def overall_comparison(
 
     # Plot all of the fields
     variables = [
-        ("df", "direct_field"),
-        ("alpha", "fluctuations"),
-        ("c1", "fluctuations"),
+        ("df", "direct_field", "Fractal dimension"),
+        ("alpha", "fluctuations", r"$\alpha$"),
+        ("c1", "fluctuations", r"$C_1$"),
         # ("beta", "direct_field"),
-        ("h", "direct_field"),
-        ("r_square", "direct_field"),
+        ("h", "direct_field", r"$H$"),
+        ("r_square", "direct_field", r"$R^2$"),
         # ("avg_rr", "direct_field"),
         # ("total_depth", "direct_field"),
         # ("dm", "direct_field"),
@@ -56,25 +58,23 @@ def overall_comparison(
 
     n_events = stereo_data["direct_field"].shape[0] - 1
     x = np.arange(0, n_events) + 1
-    handles, labels = "",""
-    for idx, (column, flag) in enumerate(variables, 1):
-        fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
-        ax = fig.add_subplot(1,1,1)
+    handles, labels = "", ""
+    for idx, (column, flag, ax_title) in enumerate(variables, 1):
+        fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+        ax = fig.add_subplot(1, 1, 1)
 
         x = np.array(stereo_data[flag][column][1:])
 
-
         # Plot the graph
         y = np.array(parsivel_data[flag][column][1:])
-        ax.scatter(x, y, label="Events", c="black", s=10.0, marker="x",zorder=10)
+        ax.scatter(x, y, label="Events", c="black", s=10.0, marker="x", zorder=10)
 
         # Customize the axis
-        ax.set_title(column.upper())
+        ax.set_title(ax_title)
         ax.set_ylabel("Parsivel")
         ax.set_xlabel("3D Stereo")
         ax.set_ybound(min(ax.get_ybound()[0], -0.05), ax.get_ybound()[1] * 1.1)
         plot_identety(ax)
-
 
         # Plot the line for the average ensemble line
         print(f"{column}({flag}):")
@@ -89,10 +89,9 @@ def overall_comparison(
                 label="Ensemble Stereo",
                 linestyle="--",
                 colors="dodgerblue",
-                zorder = 5,
+                zorder=5,
                 alpha=0.7,
             )
-
 
         # Plot the line for the average ensemble line
         height = parsivel_data[flag].loc["ensemble_of_events", column]
@@ -106,21 +105,19 @@ def overall_comparison(
                 label="Ensemble Parsivel",
                 linestyle="--",
                 colors="orangered",
-                zorder = 5,
+                zorder=5,
                 alpha=0.7,
             )
-
 
         fig.savefig(OUTPUTFOlDER / f"summary_{column}.png")
         handles, labels = ax.get_legend_handles_labels()
 
     # Plot the legend
-    fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1,1,1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     ax.set_axis_off()
-    fig.legend(handles, labels, loc="center", fontsize=16, frameon=False)
-    fig.savefig(OUTPUTFOlDER / f"summary_labels.png")
-
+    ax.legend(handles, labels, loc="center", fontsize=16, frameon=False)
+    fig.savefig(OUTPUTFOlDER / "summary_labels.png")
 
 
 if __name__ == "__main__":

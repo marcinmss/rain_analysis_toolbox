@@ -9,7 +9,7 @@ from multifractal_analysis import (
     empirical_k_of_q,
 )
 from multifractal_analysis.data_prep import prep_data_ensemble
-from numpy import  ndarray, concatenate
+from numpy import ndarray, concatenate
 
 from stereo.read_write import stereo_read_from_pickle
 
@@ -25,42 +25,47 @@ stereo_events_folder = Path(
 
 
 def plot_mfcomparison_graphs(
-    field: ndarray ,output_folder: Path, device:str, fluctuations: bool
+    field: ndarray, output_folder: Path, device: str, fluctuations: bool
 ):
     field_type = "fluc" if fluctuations is True else "df"
 
-    fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1,1,1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     spectral_analysis(field, ax)
     opeartion = "sa"
+    ax.set_title("")
     fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Run fractal dimension analysis and plot the graph
-    fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1,1,1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     fractal_dimension_analysis(field, ax)
     opeartion = "fd"
+    ax.set_title("")
     fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Run trace moment analysis and plot the graph
-    fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1,1,1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     tm_analysis(field, ax)
     opeartion = "tm"
+    ax.set_title("")
     fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Run Double trace moment analysis and plot the graphs
-    fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1,1,1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     dtm_analysis(field, ax)
     opeartion = "dtm"
+    ax.set_title("")
     fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
     # Plot the empirical k of q
-    fig = figure(dpi=300,figsize=(5, 4), layout="constrained")
-    ax = fig.add_subplot(1,1,1)
+    fig = figure(dpi=300, figsize=(5, 4), layout="constrained")
+    ax = fig.add_subplot(1, 1, 1)
     empirical_k_of_q(field, ax)
     opeartion = "kofq"
+    ax.set_title("")
     fig.savefig(output_folder / f"{device}_{field_type}_{opeartion}.png")
 
 
@@ -72,16 +77,16 @@ if __name__ == "__main__":
     ]
     # Prepare the data for every event, keeping the first one as an ensemble
     print("Preparing the data for the direct field")
-    preped_data_df = concatenate([
-        prep_data_ensemble(event, 2**6, fluc= False)
-        for event in events_rain_rate
-    ], axis=1)
+    preped_data_df = concatenate(
+        [prep_data_ensemble(event, 2**6, fluc=False) for event in events_rain_rate],
+        axis=1,
+    )
 
     print("Preparing the data for the fluctuations")
-    preped_data_fluc = concatenate([
-        prep_data_ensemble(event, 2**6, fluc= True)
-        for event in events_rain_rate
-    ], axis=1)
+    preped_data_fluc = concatenate(
+        [prep_data_ensemble(event, 2**6, fluc=True) for event in events_rain_rate],
+        axis=1,
+    )
 
     del events_rain_rate
 
@@ -99,16 +104,16 @@ if __name__ == "__main__":
 
     # Prepare the data for every event, keeping the first one as an ensemble
     print("Preparing the data for the direct field")
-    preped_data_df = concatenate([
-        prep_data_ensemble(event, 2**6, fluc= False)
-        for event in events_rain_rate
-    ], axis=1)
+    preped_data_df = concatenate(
+        [prep_data_ensemble(event, 2**6, fluc=False) for event in events_rain_rate],
+        axis=1,
+    )
 
     print("Preparing the data for the fluctuations")
-    preped_data_fluc = concatenate([
-        prep_data_ensemble(event, 2**6, fluc= True)
-        for event in events_rain_rate
-    ], axis=1)
+    preped_data_fluc = concatenate(
+        [prep_data_ensemble(event, 2**6, fluc=True) for event in events_rain_rate],
+        axis=1,
+    )
 
     del events_rain_rate
 

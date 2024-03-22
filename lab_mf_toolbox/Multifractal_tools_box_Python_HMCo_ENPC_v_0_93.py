@@ -250,7 +250,7 @@ def fractal_dimension(data,data_file_name,dim,l_range,file_index,file_name,plot_
         print('Error in fractal_dimension_1D, l_range has wrong size')
         
 
-    plt.savefig('evaluation_fractal_dimension.png')
+    plt.savefig('evaluation_fractal_dimension.png', bbox_inches = 'tight')
         
     
     return D1,D2,D3    
@@ -591,7 +591,7 @@ def TM(data,q_values,data_file_name,dim,l_range,file_index,file_name,plot_index)
             plt.setp(xtick,fontsize=14)
         for ytick in ax.get_yticklabels():
             plt.setp(ytick,fontsize=14)    
-        plt.savefig('evaluation_K_q_in_TM.png')
+        plt.savefig('evaluation_K_q_in_TM.png', bbox_inches = 'tight')
     
     
     if plot_index>0:
@@ -622,7 +622,7 @@ def TM(data,q_values,data_file_name,dim,l_range,file_index,file_name,plot_index)
         for ytick in ax.get_yticklabels():
             plt.setp(ytick,fontsize=14)        
     
-        plt.savefig('K_q_in_TM.png')
+        plt.savefig('K_q_in_TM.png', bbox_inches = 'tight')
     
     return Kq_1,Kq_2,Kq_3,r2_1,r2_2,r2_3    
     
@@ -914,7 +914,7 @@ def DTM(data,q_values,data_file_name,dim,l_range,DTM_index,file_index,file_name,
                     plt.setp(xtick,fontsize=14)
                     for ytick in ax.get_yticklabels():
                         plt.setp(ytick,fontsize=14)    
-                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png')
+                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png', bbox_inches = 'tight')
         
     elif nb_scale_reg == 1 :
         
@@ -950,7 +950,7 @@ def DTM(data,q_values,data_file_name,dim,l_range,DTM_index,file_index,file_name,
                     plt.setp(xtick,fontsize=14)
                     for ytick in ax.get_yticklabels():
                         plt.setp(ytick,fontsize=14)    
-                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png')
+                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png', bbox_inches = 'tight')
         
     elif nb_scale_reg == 2 :
         # Computing K_qeta        
@@ -998,7 +998,7 @@ def DTM(data,q_values,data_file_name,dim,l_range,DTM_index,file_index,file_name,
                     plt.setp(xtick,fontsize=14)
                     for ytick in ax.get_yticklabels():
                         plt.setp(ytick,fontsize=14)    
-                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png')
+                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png', bbox_inches = 'tight')
         
 
     elif nb_scale_reg == 3 :
@@ -1052,7 +1052,7 @@ def DTM(data,q_values,data_file_name,dim,l_range,DTM_index,file_index,file_name,
                     plt.setp(xtick,fontsize=14)
                     for ytick in ax.get_yticklabels():
                         plt.setp(ytick,fontsize=14)    
-                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png')
+                plt.savefig('DTM_test_q_'+str(q_values[n_q])+'.png', bbox_inches = 'tight')
 
 
     else :      
@@ -1119,7 +1119,7 @@ def DTM(data,q_values,data_file_name,dim,l_range,DTM_index,file_index,file_name,
                 plt.setp(xtick,fontsize=14)
             for ytick in ax.get_yticklabels():
                     plt.setp(ytick,fontsize=14)    
-            plt.savefig('Determination_UM_par_1.png')            
+            plt.savefig('Determination_UM_par_1.png', bbox_inches = 'tight')            
         alpha_1=np.mean(alpha_q)
         C1_1=np.mean(C1_q)
         if nb_q>1:
@@ -1187,7 +1187,7 @@ def DTM(data,q_values,data_file_name,dim,l_range,DTM_index,file_index,file_name,
                 plt.setp(xtick,fontsize=14)
             for ytick in ax.get_yticklabels():
                     plt.setp(ytick,fontsize=14)    
-            plt.savefig('Determination_UM_par_2.png')            
+            plt.savefig('Determination_UM_par_2.png', bbox_inches = 'tight')            
         alpha_2=np.mean(alpha_q)
         C1_2=np.mean(C1_q)
         if nb_q>1:
@@ -1234,7 +1234,7 @@ def DTM(data,q_values,data_file_name,dim,l_range,DTM_index,file_index,file_name,
                 plt.setp(xtick,fontsize=14)
             for ytick in ax.get_yticklabels():
                     plt.setp(ytick,fontsize=14)    
-            plt.savefig('Determination_UM_par_3.png')            
+            plt.savefig('Determination_UM_par_3.png', bbox_inches = 'tight')            
         alpha_3=np.mean(alpha_q)
         C1_3=np.mean(C1_q)
         if nb_q>1:
@@ -1355,7 +1355,7 @@ def assess_qD (alpha,C1,D,plot_index) :
             plt.setp(xtick,fontsize=14)
         for ytick in ax.get_yticklabels():
                 plt.setp(ytick,fontsize=14)    
-        plt.savefig('Determination_UM_par_3.png')
+        plt.savefig('Determination_UM_par_3.png', bbox_inches = 'tight')
     
 
     return qD
@@ -1598,7 +1598,7 @@ def spectral_analysis (data,data_file_name,k_range,dim,plot_index) :
     x_spec = x
     y_spec = y
     
-    plt.savefig('Spectral_analysis.png')
+    plt.savefig('Spectral_analysis.png', bbox_inches = 'tight')
     
     return bet_1,bet_2,bet_3, x_spec, y_spec
     

@@ -63,17 +63,15 @@ def spectral_analysis(field: ndarray, ax: Axes | None = None) -> SpectralAnalysi
     leftx, rightx = min(x), max(x)
     if ax is not None:
         ax.set_title("Spectral Analysis")
-        ax.set_ylabel(r"$\log _2 (E)$")
-        ax.set_xlabel(r"$\log _2 (k)$")
+        ax.set_ylabel(r"$\log (E)$")
+        ax.set_xlabel(r"$\log (k)$")
         ax.scatter(x, y, marker="x", c="k")
         # Plot the best fit line
         a, b = regression_line.angular_coef, regression_line.linear_coef
         ax.plot((leftx, rightx), (a * leftx + b, a * rightx + b), c="red")
 
         # Plot the text with the results
-        textstr = ", ".join(
-            (r"$\beta=$%.2f" % (beta,), r"$h=$%.2f" % (h,), r"$r^2=%.2f$" % (rsquare,))
-        )
+        textstr = ", ".join((r"$\beta=$%.2f" % (beta,), r"$r^2=%.2f$" % (rsquare,)))
 
         props = dict(boxstyle="round", facecolor="wheat", alpha=0.0)
 
