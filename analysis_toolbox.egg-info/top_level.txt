@@ -1,4 +1,0 @@
-aux_funcs
-multifractal_analysis
-parsivel
-stereo
