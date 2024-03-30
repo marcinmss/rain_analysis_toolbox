@@ -2,25 +2,32 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = [
+  "lab_mf_toolbox", 
+  "multifractal_analysis", 
+  "parsivel", 
+  "stereo",
+]
+
 
 [project]
-name="analysis_toolbox",
-version="0.0.2",
-description="Simple tools for analysing distrometer data.",
-dynamic = ["version"],
+name="rain_analysis_toolbox"
+version="0.0.2"
+description="Simple tools for analysing distrometer data."
 authors = [
   {name = "Marcio Matheus", email="marciomsantoss@gmail.com"}
-],
+]
 maintainers = [
   {name = "Marcio Matheus", email="marciomsantoss@gmail.com"}
-],
-requires-python = ">= 3.11",
+]
+requires-python = ">= 3.11"
 dependencies = [
     "numpy",
     "scipy",
     "matplotlib",
     "pandas",
-],
+]
 
 [project.urls]
-Repository = "https://github.com/marcinmss/rain_analysis_toolbox",
+Repository = "https://github.com/marcinmss/rain_analysis_toolbox"
