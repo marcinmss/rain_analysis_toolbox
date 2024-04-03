@@ -12,7 +12,7 @@ STEREOCSVPATHFLUC = OUTPUTFOLDER / "stereo_mfanalysis_with_fluctuations.csv"
 STEREOCSVPATH = OUTPUTFOLDER / "stereo_mfanalysis.csv"
 
 
-def plot_identety(ax):
+def plot_identity(ax):
     maximum_value = max(max(ax.get_xbound()), max(ax.get_ybound()))
     ax.plot((0, maximum_value), (0, maximum_value), zorder=0)
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         ax.set_ylabel("Parsivel")
         ax.set_xlabel("3D Stereo")
         ax.set_ybound(min(ax.get_ybound()[0], -0.05), ax.get_ybound()[1] * 1.1)
-        plot_identety(ax)
+        plot_identity(ax)
 
         # Plot the line for the average ensemble line
         print(f"{column}({flag}):")

@@ -27,7 +27,22 @@ dependencies = [
     "scipy",
     "matplotlib",
     "pandas",
+    "mypy",
 ]
 
 [project.urls]
 Repository = "https://github.com/marcinmss/rain_analysis_toolbox"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "numpy",
+    "scipy",
+    "matplotlib.pyplot",
+    "pandas",
+]
+ignore_missing_imports = true
